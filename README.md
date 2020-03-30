@@ -2,3 +2,7 @@
 
 # ansible-authentication-services
 Ansible automation for Authentication Services
+
+
+# Supported Platforms
+All Authentication Services supported platforms
