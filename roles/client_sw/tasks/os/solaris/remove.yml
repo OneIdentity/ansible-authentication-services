@@ -1,0 +1,13 @@
+---
+
+# ------------------------------------------------------------------------------
+# Solaris - remove package
+# ------------------------------------------------------------------------------
+
+# Remove package
+- name: remove {{ package }}
+  svr4pkg:
+    name: "{{ package }}"
+    state: absent 
+  register: pkg_remove 
+  changed_when: true 

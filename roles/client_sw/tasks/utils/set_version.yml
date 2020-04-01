@@ -1,0 +1,10 @@
+---
+
+# Parse version from version response, if no version this will set it to an 
+# empty string
+- set_fact: |
+    {{ package }}_vers_{{ flag }}={{ pkg_version.stdout 
+    | default("", true) 
+    | regex_search("(?=.*)[\d]+\.[\d]+\.[\d]+[\.-][\d]+") 
+    | default("", true) 
+    | replace("-", ".") }}

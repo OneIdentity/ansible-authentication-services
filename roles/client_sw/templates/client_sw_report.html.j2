@@ -1,0 +1,124 @@
+{# Configure output for missing and error values #}
+{% set missing_value = 'none' %}
+{% set error_value = 'error' %}
+
+{# HTML 5 doc #}
+<!doctype html>
+<html lang="en">
+
+{# HTML head #}
+<head>
+
+    {# Required meta tags for Bootstrap #}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    {# Bootstrap CSS #}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>One Identity Authentication Services</title>
+</head>
+<body>
+
+{# Create overall page container #}
+<div class="container-fluid">
+<div class="col">
+
+{# Create report title #}
+<div class="row">
+<nav class="navbar navbar-light">
+<a class="navbar-brand">
+
+{# Import base-64-encoded logo and embed in doc #}
+{% import 'Logo_2020-OneIdentity_FullColor_Horizontal.txt' as logo %}
+<img height="80" class="d-inline-block" alt="One Identity" src="data:image/png;base64,{{ logo | replace('\n', '') }}" >
+
+Authentication Services Client Software Report
+</a>
+</nav>
+</div>
+
+{# Create variable to hold data table header data #}
+{% set header = [ 
+    'Hostname', 
+    'IP Address', 
+    'OS Distro', 
+    'OS Version', 
+    'HW Arch', 
+    'Updated', 
+    'Package Name', 
+    'Package File', 
+    'Package Version', 
+    'State Request', 
+    'State Action', 
+    'Version Begin', 
+    'Version End'
+  ] %}
+
+{# Create data table #}
+<div class="row">
+<table class="table table-hover table-sm">
+
+  {# Create data table header #}
+  <thead class="thead-dark">
+  <tr>
+    {% for cell in header %}
+      <th>{{ cell }}</th>
+    {% endfor %}
+  </tr>
+  </thead>
+
+  {# Create data table body #}
+  <tbody>
+
+    {# Iterate over each host in alphabetical order #}
+    {% for host in ansible_play_hosts_all | sort %}
+
+      {# Iterate over each package of each host in alphabetical order to create line in data table #}
+      {% for pkg_key, pkg_val in client_sw_pkgs.items()|sort %}
+        {% set pkg_file = hostvars[host]['ansible_facts']['qas']['packages'][pkg_key]['file'] | default(missing_value) %}
+        {% set pkg_vers = hostvars[host]['ansible_facts']['qas']['packages'][pkg_key]['vers'] | default(missing_value) %}
+        {% set pkg_req = hostvars[host][pkg_key + '_req'] | default(error_value) %}
+        {% set pkg_act = hostvars[host][pkg_key + '_act'] | default(error_value) %}
+        {% set pkg_vers_beg = hostvars[host][pkg_key + '_vers_beg'] | default(missing_value, true) %}
+        {% set pkg_vers_end = hostvars[host][pkg_key + '_vers_end'] | default(missing_value, true) %}
+
+        {# Hide NOP lines if the report_hide_nop flag is set #}
+        {% if not client_sw_reports_hide_nops or pkg_file != 'none' or pkg_vers != 'none' or pkg_vers_beg != 'none' or pkg_vers_end != 'none' %}
+        <tr>
+        {{ '<th class="text-nowrap">%s</th> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td class="%s">%s</td> <td class="%s">%s</td> <td class="%s">%s</td> <td class="%s">%s</td>' | format(
+          host,
+          hostvars[host]['ansible_facts']['default_ipv4']['address'] | default(),
+          hostvars[host]['ansible_facts']['distribution'] | default(),
+          hostvars[host]['ansible_facts']['distribution_version'] | default(),
+          hostvars[host]['ansible_facts']['architecture'] | default(),
+          now(),
+          pkg_key,
+          pkg_file,
+          pkg_vers,
+          'table-primary' if pkg_req == 'present' else 'table-secondary' if pkg_req == 'absent' else '',
+          pkg_req,
+          'table-primary' if pkg_act == 'installed' or pkg_act == 'upgraded' or pkg_act == 'downgraded' else 'table-secondary' if pkg_act == 'removed' else 'table-danger' if pkg_act == 'failed' else '',
+          pkg_act,
+          'table-secondary' if pkg_vers_beg != pkg_vers_end and pkg_vers_beg != 'none' else '',
+          pkg_vers_beg,
+          'table-primary' if pkg_vers_beg != pkg_vers_end and pkg_vers_end != 'none' else '',
+          pkg_vers_end,
+        )}}
+        </tr>
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+  </tbody>
+  <caption>client software report (generated {{ now(fmt='%Y-%m-%d %H:%M:%S') }})</caption>
+</table>
+</div>
+</div>
+
+{# Bootstrap JavaScript, include at end of body per Bootstrap documentation #}
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+</body>
+</html>

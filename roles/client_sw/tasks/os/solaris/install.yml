@@ -1,0 +1,26 @@
+---
+
+# ------------------------------------------------------------------------------
+# Solaris - install package
+# ------------------------------------------------------------------------------
+
+# Package install, copy installer
+- include_tasks: utils/package_copy.yml
+
+# Package install, make response file
+- copy:
+    content: 'y\n'
+    dest: "{{ package_dest_dir }}/install.response"
+  changed_when: false
+  ignore_errors: true
+
+# Package install
+- name: install {{ package }}
+  svr4pkg:
+    name: "{{ package }}"
+    state: present 
+    src: "{{ package_dest }}"
+    response_file: "{{ package_dest_dir }}/install.response" 
+  #command:
+  #  cmd: pkgadd -d {{ package_dest }} -r {{ package_dest_dir }}/install.response all
+  register: pkg_install 

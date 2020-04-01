@@ -1,0 +1,143 @@
+---
+
+# Capture requested state
+- include_tasks: utils/set_state.yml
+  vars:
+    flag: req 
+    value: "{{ state }}" 
+  when: client_sw_reports_generate
+
+# Check if OS not supported
+# NOTE: This causes the host to fail so it won't show up the report  
+- name: OS {{ ansible_facts['os_family'] }} is not supported
+  block:
+    - include_tasks: utils/set_state.yml
+      vars:
+        flag: act 
+        value: failed
+    - fail:
+        msg: OS {{ ansible_facts['os_family'] }} is not supported
+  when: 
+    - ansible_facts['os_family'] | lower not in client_sw_os_families
+
+# Handle remove 
+- name: remove {{ package }} 
+  block:
+
+    - include_tasks: os/{{ ansible_facts['os_family'] | lower }}/remove.yml
+
+    - include_tasks: utils/set_state.yml
+      vars:
+        flag: act 
+        value: removed
+      when: client_sw_reports_generate
+
+  rescue:
+
+    - include_tasks: utils/set_state.yml
+      vars:
+        flag: act 
+        value: failed
+
+    - fail:
+        msg: failed to remove {{ package }} package
+      when: not client_sw_reports_generate or not client_sw_reports_soft_fail
+
+  when:
+    - state == 'absent'
+    - hostvars[inventory_hostname][package + '_vers_beg']
+
+# Handle install
+- name: install {{ package }} 
+  block:
+
+    - include_tasks: os/{{ ansible_facts['os_family'] | lower }}/install.yml
+
+    - include_tasks: utils/set_state.yml
+      vars:
+        flag: act 
+        value: installed 
+      when: client_sw_reports_generate
+
+  rescue:
+
+    - include_tasks: utils/set_state.yml
+      vars:
+        flag: act 
+        value: failed
+        
+    - fail:
+        msg: failed to install {{ package }} package
+      when: not client_sw_reports_generate or not client_sw_reports_soft_fail
+
+  when: 
+    - package in client_sw_dir['packages']
+    - state == 'present'
+    - not hostvars[inventory_hostname][package + '_vers_beg']
+
+# Handle upgrade
+- name: upgrade {{ package }}
+  block:
+
+    - include_tasks: os/{{ ansible_facts['os_family'] | lower }}/upgrade.yml
+
+    - include_tasks: utils/set_state.yml
+      vars:
+        flag: act 
+        value: upgraded
+      when: client_sw_reports_generate
+
+  rescue:
+
+    - include_tasks: utils/set_state.yml
+      vars:
+        flag: act 
+        value: failed
+
+    - fail:
+        msg: failed to upgrade {{ package }} package
+      when: not client_sw_reports_generate or not client_sw_reports_soft_fail
+
+  when: 
+    - package in client_sw_dir['packages']
+    - state == 'present'
+    - hostvars[inventory_hostname][package + '_vers_beg'] 
+    - hostvars[inventory_hostname][package + '_vers_beg'] < client_sw_dir['packages'][package]['vers']
+
+# Handle downgrade
+- name: downgrade {{ package }}
+  block:
+
+    - include_tasks: os/{{ ansible_facts['os_family'] | lower }}/downgrade.yml
+
+    - include_tasks: utils/set_state.yml
+      vars:
+        flag: act 
+        value: downgraded
+      when: client_sw_reports_generate
+
+  rescue:
+
+    - include_tasks: utils/set_state.yml
+      vars:
+        flag: act 
+        value: failed
+
+    - fail:
+        msg: failed to downgrade {{ package }} package
+      when: not client_sw_reports_generate or not client_sw_reports_soft_fail
+
+  when: 
+    - package in client_sw_dir['packages']
+    - state == 'present'
+    - hostvars[inventory_hostname][package + '_vers_beg'] 
+    - hostvars[inventory_hostname][package + '_vers_beg'] > client_sw_dir['packages'][package]['vers']
+
+# Handle no action 
+- include_tasks: utils/set_state.yml
+  vars:
+    flag: act 
+    value: none 
+  when:
+    - client_sw_reports_generate 
+    - not (hostvars[inventory_hostname][package + '_act'] | default('')) 

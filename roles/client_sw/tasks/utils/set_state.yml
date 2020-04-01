@@ -1,0 +1,4 @@
+---
+
+# Set state 
+- set_fact: "{{ package }}_{{ flag }}={{ value }}"

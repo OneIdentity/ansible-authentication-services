@@ -1,0 +1,35 @@
+{# Configure output for missing and error values #}
+{% set missing_value = 'none' %}
+{% set error_value = 'error' %}
+{# Create CSV header line #}
+hostname, ip_address, os_distro, os_version, hw_arch, updated, package_name, package_file, package_version, state_request, state_action, version_begin, version_end
+{# Iterate over each host in alphabetical order #}
+{% for host in ansible_play_hosts_all | sort %}
+{# Iterate over each package of each host in alphabetical order to create line in CSV #}
+{% for pkg_key, pkg_val in client_sw_pkgs.items()|sort %}
+{% set pkg_file = hostvars[host]['ansible_facts']['qas']['packages'][pkg_key]['file'] | default(missing_value) %}
+{% set pkg_vers = hostvars[host]['ansible_facts']['qas']['packages'][pkg_key]['vers'] | default(missing_value) %}
+{% set pkg_req = hostvars[host][pkg_key + '_req'] | default(error_value) %}
+{% set pkg_act = hostvars[host][pkg_key + '_act'] | default(error_value) %}
+{% set pkg_vers_beg = hostvars[host][pkg_key + '_vers_beg'] | default(missing_value, true) %}
+{% set pkg_vers_end = hostvars[host][pkg_key + '_vers_end'] | default(missing_value, true) %}
+{# Hide NOP lines if the report_hide_nop flag is set #}
+{% if not client_sw_reports_hide_nops or pkg_file != 'none' or pkg_vers != 'none' or pkg_vers_beg != 'none' or pkg_vers_end != 'none' %}
+{{ '%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s' | format(
+host,
+hostvars[host]['ansible_facts']['default_ipv4']['address'] | default(),
+hostvars[host]['ansible_facts']['distribution'] | default(),
+hostvars[host]['ansible_facts']['distribution_version'] | default(),
+hostvars[host]['ansible_facts']['architecture'] | default(),
+now(),
+pkg_key,
+pkg_file,
+pkg_vers,
+pkg_req,
+pkg_act,
+pkg_vers_beg,
+pkg_vers_end,
+)}}
+{% endif %}
+{% endfor %}
+{% endfor %}

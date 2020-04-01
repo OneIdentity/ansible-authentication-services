@@ -1,0 +1,70 @@
+---
+
+# Required keys 
+# ------------------------------------------------------------------------------
+
+# This can be a company/brand or product namespace under which all content lives
+namespace: oneidentity
+
+# The designation of this collection
+name: authentication_services  
+
+# Semantic versioning compliant version designation
+version: "0.0.1"
+
+# The path do the Markdown(.md) readme file
+readme: README.md
+
+# List of the collection's content authors: 'Full Name <email> (http://site)'
+authors:
+  - "Mark Stillings <mark.stillings@oneidentity.com>"
+
+
+# Optional keys
+# ------------------------------------------------------------------------------
+
+# Short description of collection
+description: >
+  The One Identity Authentication Services collection includes roles, modules, 
+  plugins, report templates, and sample playbooks to automate software deployment, 
+  configuration, Active Directory joining, monitoring, and report generation
+  for Authentication Services.  
+
+# A valid SPDX license identifier https://spdx.org/licenses/
+license: Apache-2.0
+
+# List of keywords to associate with collection for indexing/searching systems
+tags:
+- oneidentity
+- one_identity
+- quest
+- quest_software
+- authenticationservices
+- authentication_services
+- activedirectory
+- active_directory
+- ad
+- iam
+- identity
+- access
+- authentication
+- sso
+- unix
+- linux
+- macos
+
+
+# URL keys
+# ------------------------------------------------------------------------------
+
+# URL of originating repository
+repository: https://github.com/OneIdentity/ansible-authentication-services
+
+# URL to online docs
+documentation: https://github.com/OneIdentity/ansible-authentication-services/tree/master/docs
+
+# Homepage of the collection/project
+homepage: https://www.oneidentity.com/products/authentication-services
+
+# Issue tracking URL
+issues: https://github.com/OneIdentity/ansible-authentication-services/issues

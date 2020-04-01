@@ -1,0 +1,11 @@
+---
+
+# ------------------------------------------------------------------------------
+# HP-UX - remove package
+# ------------------------------------------------------------------------------
+
+# Remove package
+- name: remove {{ package }}
+  command:
+    cmd: swremove {{ package }}
+  register: pkg_remove 

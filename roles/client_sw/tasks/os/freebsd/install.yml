@@ -1,0 +1,17 @@
+---
+
+# ------------------------------------------------------------------------------
+# FreeBSD - install package 
+# ------------------------------------------------------------------------------
+
+# Package install, copy installer
+- include_tasks: utils/package_copy.yml
+
+# Package install
+- name: install {{ package }}
+  command:
+    cmd: pkg add -f {{ package_dest }}  
+  register: pkg_install 
+  ignore_errors: true
+  changed_when: true
+  failed_when: pkg_install.stdout | lower is search("failed")

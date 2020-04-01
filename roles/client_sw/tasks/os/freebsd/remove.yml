@@ -1,0 +1,14 @@
+---
+
+# ------------------------------------------------------------------------------
+# FreeBSD - remove package 
+# ------------------------------------------------------------------------------
+
+# Remove package
+- name: remove {{ package }} 
+  command:
+    cmd: pkg delete -fy {{ package }} 
+  register: pkg_remove 
+  ignore_errors: true
+  changed_when: pkg_remove.stdout | lower is search("deinstalling")
+  failed_when: pkg_remove.stdout | lower is search("failed")

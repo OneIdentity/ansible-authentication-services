@@ -1,0 +1,14 @@
+---
+
+# ------------------------------------------------------------------------------
+# Debian - install package 
+# ------------------------------------------------------------------------------
+
+# Package install, copy installer
+- include_tasks: utils/package_copy.yml
+
+# Package install
+- name: install {{ package }}
+  command:
+    cmd: dpkg -i --force-depends {{ package_dest }}
+  register: pkg_install 

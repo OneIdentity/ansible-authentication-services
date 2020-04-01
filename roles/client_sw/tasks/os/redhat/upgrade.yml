@@ -1,0 +1,14 @@
+---
+
+# ------------------------------------------------------------------------------
+# Redhat - upgrade package
+# ------------------------------------------------------------------------------
+
+# Package install, copy installer
+- include_tasks: utils/package_copy.yml
+
+# Package install
+- name: install {{ package }}
+  command:
+    cmd: rpm -Uvh --nodeps {{ package_dest }} 
+  register: pkg_install 

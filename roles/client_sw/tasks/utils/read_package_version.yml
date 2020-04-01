@@ -1,0 +1,7 @@
+---
+
+# Read package version
+- name: read {{ package }} version
+  block:
+    - include_tasks: os/{{ ansible_facts['os_family'] | lower }}/version.yml
+    - include_tasks: utils/set_version.yml 

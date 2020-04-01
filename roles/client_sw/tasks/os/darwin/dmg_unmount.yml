@@ -1,0 +1,11 @@
+---
+
+# ------------------------------------------------------------------------------
+# Darwin - unmount dmg
+# ------------------------------------------------------------------------------
+
+# Unmount dmg volume
+- name: unmount {{ package_dest }}
+  command: hdiutil detach {{ package_dest }}_vol
+  changed_when: false
+  failed_when: false

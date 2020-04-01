@@ -1,0 +1,17 @@
+---
+
+# ------------------------------------------------------------------------------
+# Darwin - mount dmg
+# ------------------------------------------------------------------------------
+
+# Mount dmg volume
+- name: mount {{ package_dest }}
+  command: hdiutil attach {{ package_dest }} -mountpoint  {{ package_dest }}_vol 
+  register: dmg_mount
+  changed_when: false
+
+# Grab pkg name
+- name: gather pkg name
+  shell: ls -d {{ package_dest }}_vol/*pkg
+  register: pkg_name
+  changed_when: false

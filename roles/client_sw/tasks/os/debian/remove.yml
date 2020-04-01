@@ -1,0 +1,11 @@
+---
+
+# ------------------------------------------------------------------------------
+# Debian - remove package 
+# ------------------------------------------------------------------------------
+
+# Remove package
+- name: remove {{ package }}
+  command:
+    cmd: dpkg --purge {{ package }}
+  register: pkg_remove 

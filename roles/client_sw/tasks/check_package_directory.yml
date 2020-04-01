@@ -1,0 +1,11 @@
+---
+
+# Check and parse client software package directory on client software host
+- name: software install package directory check and parse
+  client_sw_pkg_dir:
+    sys: "{{ ansible_facts['system'] }}" 
+    dist: "{{ ansible_facts['os_family'] }}" 
+    arch: "{{ ansible_facts['architecture'] }}" 
+    path: "{{ client_sw_dir }}" 
+  delegate_to: "{{ client_sw_host }}"
+  register: client_sw_dir 

@@ -1,0 +1,38 @@
+---
+
+all:
+
+  # Hosts can be grouped anyway you like
+  children:
+
+    # Here is a group for 'unix' hosts
+    unix:
+
+      # These variables are for 'unix' host group only
+      vars:
+        ansible_become: true
+        ansible_user: user 
+        ansible_become_password: pass 
+
+      # Unix hosts only
+      hosts:
+        redhat-1:
+        redhat-2:
+        ubuntu-1:
+        ubuntu-2:
+        solaris-1:
+        solaris-2:
+
+    # Here is a group for Mac hosts
+    darwin:
+
+      # These variables are for Mac hosts only 
+      vars:
+        ansible_become: false 
+        ansible_user: root
+        ansible_password: pass 
+
+      # Mac hosts only
+      hosts:
+        mac-1:
+        mac-2:

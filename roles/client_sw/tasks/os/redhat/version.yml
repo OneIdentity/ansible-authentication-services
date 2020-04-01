@@ -1,0 +1,14 @@
+---
+
+# ------------------------------------------------------------------------------
+# Redhat - grab package version 
+# ------------------------------------------------------------------------------
+
+# Grab installed version of package 
+- name: get {{ package }} version
+  command:
+    cmd: rpm -qa {{ package }}
+  register: pkg_version
+  changed_when: false
+  failed_when: false
+  ignore_errors: true

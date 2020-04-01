@@ -1,0 +1,75 @@
+---
+
+# Directories
+# ------------------------------------------------------------------------------
+
+# TODO: Have not tested putting the install package directory somewhere besides
+# the ansible controller.  The copy module that is used doesn't appear to
+# support doing this.  For now, this needs to stay set to the localhost (127.0.0.1)
+client_sw_host: '127.0.0.1' 
+
+# Directory on Ansible control node containing client software installer packages 
+client_sw_dir: /tmp/1id/client
+
+# Temporary directory on Ansible hosts for copied packages and files
+client_sw_tmp_dir: /tmp/1id
+
+
+# Client software state
+# ------------------------------------------------------------------------------
+
+# State values:
+# - check: check only, no changes to system
+# - present: ensure installed and the same version as in client_sw_dir
+# - absent: ensure not intalled 
+client_sw_pkgs:
+  vasclnt: check 
+  vasclnts: check 
+  vasgp: check 
+  vasgps: check 
+  vassc: check 
+  vascert: check 
+  dnsupdate: check 
+  pamdefender: check 
+  vasyp: check 
+  vasqa: check 
+  vasproxy: check 
+  vasdev: check 
+
+
+# Report generation variables
+# ------------------------------------------------------------------------------
+
+# Generate reports
+client_sw_reports_generate: true 
+
+# Soft fail masks normal Ansible fail which allows tasks to keep running for a 'failed'
+# host so that any and all of the failures will be shown in the reports.  
+# If disabled, a 'failed' host will not be shown in the report and no other tasks will 
+# be run for the 'failed' host. Only has an effect when client_sw_reports_generate is true.
+client_sw_reports_soft_fail: true
+
+# Hide NOP operations in report (no install package available and package not installed)
+client_sw_reports_hide_nops: true 
+
+# Create backups of previous reports so that they are not overwritten?
+client_sw_reports_backup: false 
+
+# On which host should the reports be generated.
+# TODO: This has only been tested on the Ansible control node (127.0.0.1)
+client_sw_reports_host: '127.0.0.1'  
+
+# List of reports to generate
+# src:  Is the report template file on the Ansible control node.
+#       With no or relative path Ansible will look in the client_sw role template directory.  
+#       Full path to find the template files elsewhere on the Ansible control node. 
+# dest: Is the destination file on the host (client_sw_reports_host.) 
+#       With no or relative path when the destination is the Ansible control node.
+#       (client_sw_reports_host = 127.0.0.1) relative to the playbook directory.
+#       Full path for other locations or on other hosts.  
+#       In either case the directory must already exist.
+client_sw_reports: 
+  - src:  client_sw_report.csv.j2   
+    dest: client_sw_report.csv
+  - src:  client_sw_report.html.j2
+    dest: client_sw_report.html

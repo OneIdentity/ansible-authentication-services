@@ -1,0 +1,12 @@
+---
+
+# ------------------------------------------------------------------------------
+# Darwin - remove package 
+# ------------------------------------------------------------------------------
+
+# Run installer
+- name: remove {{ package }}
+  command: /opt/quest/libexec/vas/macos/Uninstall.app/Contents/MacOS/Uninstall --console --force {{ package }}
+  register: pkg_remove 
+  ignore_errors: true
+  failed_when: pkg_remove.stdout | lower is search("failed")

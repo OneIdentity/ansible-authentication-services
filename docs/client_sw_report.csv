@@ -1,0 +1,7 @@
+hostname, ip_address, os_distro, os_version, hw_arch, updated, package_name, package_file, package_version, state_request, state_action, version_begin, version_end
+stmac14-1, 10.5.37.217, MacOSX, 10.14.6, x86_64, 2020-04-10 17:11:15.174206, vasclnt, VAS-4.2.3.25456.dmg, 4.2.3.25456, present, none, 4.2.3.25456, 4.2.3.25456
+stmac14-1, 10.5.37.217, MacOSX, 10.14.6, x86_64, 2020-04-10 17:11:15.229231, vasgp, VAS-4.2.3.25456.dmg, 4.2.3.25456, present, none, 4.2.3.25456, 4.2.3.25456
+stmac14-1, 10.5.37.217, MacOSX, 10.14.6, x86_64, 2020-04-10 17:11:15.288046, vassc, VAS-4.2.3.25456.dmg, 4.2.3.25456, present, none, 4.2.3.25456, 4.2.3.25456
+ubuntu18-4, 10.5.37.175, Ubuntu, 18.04, x86_64, 2020-04-10 17:11:15.488154, pamdefender, pamdefender_5.5.4-25456_amd64.deb, 5.5.4.25456, present, none, 5.5.4.25456, 5.5.4.25456
+ubuntu18-4, 10.5.37.175, Ubuntu, 18.04, x86_64, 2020-04-10 17:11:15.584746, vasclnt, vasclnt_4.2.3-25456_amd64.deb, 4.2.3.25456, present, none, 4.2.3.25456, 4.2.3.25456
+ubuntu18-4, 10.5.37.175, Ubuntu, 18.04, x86_64, 2020-04-10 17:11:15.683287, vasgp, vasgp_4.2.3-25456_amd64.deb, 4.2.3.25456, present, none, 4.2.3.25456, 4.2.3.25456

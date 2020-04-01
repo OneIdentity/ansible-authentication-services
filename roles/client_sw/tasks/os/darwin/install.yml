@@ -1,0 +1,22 @@
+---
+
+# ------------------------------------------------------------------------------
+# Darwin - install package 
+# ------------------------------------------------------------------------------
+
+# Package install, copy installer
+- include_tasks: utils/package_copy.yml
+
+# Unmount any Authentication Sercives installer dmg's
+- include_tasks: dmg_unmount.yml
+
+# Mount Authentication Services installer dmg
+- include_tasks: dmg_mount.yml
+
+# Run installer
+- name: install {{ package }} 
+  command: /usr/sbin/installer -pkg {{ pkg_name.stdout | default() }}/Contents/Packages/{{ package }}.pkg -target /
+  register: pkg_install 
+
+# Unmount any Authentication Sercives installer dmg's
+- include_tasks: dmg_unmount.yml

@@ -1,0 +1,55 @@
+---
+
+# ------------------------------------------------------------------------------
+# Main 
+# ------------------------------------------------------------------------------
+
+# NOTE: Authentication Services supports the following systems (install file type):
+#       - aix-71 (*.bff)
+#       - freebsd-x86_64 (*.txz)
+#       - hpux-ia64 (*.depot)
+#       - hpux-pa-11v3 (*.depot) 
+#       - linux-aarch64 (*.rpm, *.deb)
+#       - linux-ia64  (*.rpm)
+#       - linux-ppc64 (*.rpm) 
+#       - linux-ppc641e (*.rpm)
+#       - linux-s390 (*.rpm) 
+#       - linux-s390x (*.rpm)
+#       - linux-x86 (*.rpm, *.deb)
+#       - linux-x86_64 (*.rpm, *.deb)
+#       - macos-1012 (*.dmg)            # Multiple install packages in single dmg
+#       - solaris10-sparc (*.pkg)
+#       - solaris10-x64 (*.pkg)
+
+# NOTE: Ansible has following package managers implemented: 
+#       - Linux (*.deb) = apt 
+#       - Linux (*.rpm) = yum 
+#       - MacOS (*.dmg) = none
+#       - Solaris (*.pkg) = pkg5, pkgutil
+#       - FreeBSD (*.txz) = pkgng
+#       - AIX (*.bff) = installp
+#       - HP-UX (*.depot) = swdepot
+
+# NOTE: The Ansible package managers don't support our situation very well which is 
+#       packages not in a public repository.  If we use the Ansible package mananger
+#       modules we have to copy the package over to check if it is present.  This is
+#       not a good solution so we have implemented a version check that is run first 
+#       so that we know what action needs to happen to bring the package state in
+#       compliance with the requested state.  The install package is only copied over
+#       if we need to do an install, upgrade, or downgrade.
+#       The version check is then run again after all changes are complete to gather
+#       the end state and double-check the action success.
+
+- block:
+
+  # Check directory of client software install packages
+  - include_tasks: check_package_directory.yml
+
+  # Perform client software management tasks
+  - include_tasks: run_package_tasks.yml
+
+  always:
+
+  # Generate reports
+  - include_tasks: generate_reports.yml
+    when: client_sw_reports_generate
