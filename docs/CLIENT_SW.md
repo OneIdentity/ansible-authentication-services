@@ -14,7 +14,10 @@ All of the variables shown below have a default value but can be overriden to su
 
 * `client_sw_dir` should be set to the `client` directory on the [Authentication Services](https://www.oneidentity.com/products/authentication-services/) install ISO.  The entire ISO can be mounted or just this subdirectory copied to the Ansible control node.  The subdirectories of the `client` directory contain install packages for all supported systems and architectures.  Only the systems and architectures needed for your environment need to be included.   
 
-    Default value is `client_sw_dir: /tmp/1id/client`
+    Default value is: 
+    ```yaml
+    client_sw_dir: /tmp/1id/client
+    ```
 
     For example, the `client` directory on the [Authentication Services](https://www.oneidentity.com/products/authentication-services/) 4.2.3.25456 install ISO contains the following subdirectories:
 
@@ -44,7 +47,10 @@ All of the variables shown below have a default value but can be overriden to su
 
 * `client_sw_tmp_dir` sets the temporary directory on Ansible hosts for storing files that need to be copied over to the hosts during software deployment operations.  The directory is created if it doesn't exist and is removed after all operations are completed.
 
-    Default value is `client_sw_tmp_dir: /tmp/1id`
+    Default value is: 
+    ```yaml
+    client_sw_tmp_dir: /tmp/1id
+    ```
 
 ### Client software state
 
@@ -56,7 +62,7 @@ All of the variables shown below have a default value but can be overriden to su
 
     Default value is:
 
-    ```
+    ```yaml
     client_sw_pkgs:
       vasclnt: check 
       vasclnts: check 
@@ -76,7 +82,7 @@ All of the variables shown below have a default value but can be overriden to su
 
     For example, if you wanted to make sure vasclnt and vasgp are installed and up to date in your environment and you don't use any other packages then `client_sw_pkgs` would be set as follows:
 
-    ```
+    ```yaml
     client_sw_pkgs:
       vasclnt: present 
       vasgp: present 
@@ -86,31 +92,46 @@ All of the variables shown below have a default value but can be overriden to su
 
 * `client_sw_reports_generate` enables report generation.  Reports are generated at the end of a `client_sw` role run for all hosts and all package specified in `client_sw_pkgs`
 
-  Default value is `client_sw_reports_generate: true`
+  Default value is: 
+  ```yaml
+  client_sw_reports_generate: true
+  ```
 
   Disabling report generation if not needed will increase the speed of the `client_sw` role.
 
 * `client_sw_reports_soft_fail` enables masking Ansible failures for software install failures and allows the host to continue to run even after a failure.  The failures will be shown in the report but not in the Ansible run summary.  This only has an effect if `client_sw_reports_generate` is enabled.
 
-  Default value is `client_sw_reports_soft_fail: true`
+  Default value is: 
+  ```yaml
+  client_sw_reports_soft_fail: true
+  ```
 
 * `client_sw_reports_hide_nops` enables suppressing lines in the report for packages on a host for which there is not an installer package present and the package is not installed on the host.  This is useful if you specify a package in `client_sw_pkgs` that is only available for some system so that is doesn't show up in the report for non-supported systems.
 
-  Default value is `client_sw_reports_hide_nops: true`
+  Default value is: 
+  ```yaml
+  client_sw_reports_hide_nops: true
+  ```
 
 * `client_sw_reports_backup` enables backup of prior reports by renaming them with the date and time they were generated so that the latest reports do not override the previous reports.
 
-  Default value is `client_sw_reports_backup: false`
+  Default value is: 
+  ```yaml
+  client_sw_reports_backup: false
+  ```
 
 * `client_sw_reports_host` is the machine on which the reports should be generated.  The default is the Ansible control node.
 
-  Default value is `client_sw_reports_host: 127.0.0.1`
+  Default value is: 
+  ```yaml
+  client_sw_reports_host: 127.0.0.1
+  ```
 
 * `client_sw_reports` is a list of dictionaries that contain the reports to be generated.  The default value creates a CSV and HTML report using the templates includes with the `client_sw` role.
 
   Default value is:
 
-  ``` 
+  ```yaml
   client_sw_reports: 
     - src:  client_sw_report.csv.j2   
       dest: client_sw_report.csv
@@ -155,6 +176,6 @@ Only the `client_sw_dir` and `client_sw_pkgs` variables are overriden in this pl
     - name: oneidentity.authentication_services.client_sw
 ```
 
-See sample [HTML](client_sw_report.html) and [CSV](client_sw_report.csv) reports generated from a run of this sample playbook.
+See sample [HTML](http://htmlpreview.github.io/?https://github.com/OneIdentity/ansible-authentication-services/blob/master/docs/client_sw_report.html) and [CSV](client_sw_report.csv) reports generated from a run of this sample playbook.
 
 For a copy of this and other sample playbooks see [examples](../examples/README.md)
