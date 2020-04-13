@@ -128,5 +128,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# For Ansible, don't include any files in files directories
-**/files/*/
+# Ignore Ansible collection build artifact
+*.tar.gz
