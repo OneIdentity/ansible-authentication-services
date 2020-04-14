@@ -39,7 +39,7 @@ The One Identity Authentication Services Ansible Collection, referred to as `ans
     * See One Identity Authentication Services [documentation](https://support.oneidentity.com/authentication-services/4.2.3/technical-documents) for Authentication Services requirements and instructions.
 
 ### From Ansible Galaxy 
-The collection will soon be available through [Ansible Galaxy](https://galaxy.ansible.com/) until then please use the [Local Build and Install](###LocalBuildandInstall) instructions. 
+The collection will soon be available through [Ansible Galaxy](https://galaxy.ansible.com/) until then please use the [From GitHub](#FromGitHub) or [Local Build and Install](#LocalBuildandInstall) instructions. 
 
 To install from [Ansible Galaxy](https://galaxy.ansible.com/) you can use the [ansible-galaxy](https://docs.ansible.com/ansible/latest/cli/ansible-galaxy.html) command to install the collection on your control node:
 
@@ -51,6 +51,22 @@ By default, the collection is installed in `~/.ansible/collections`.   The insta
 
 ```bash
 ansible-galaxy collection install oneidentity.authentication_services -p /somewhere/collections
+```
+
+### From GitHub
+
+For the examples in this section please see [releases](https://github.com/OneIdentity/ansible-authentication-services/releases) page to find the latest [Authentication Services](https://www.oneidentity.com/products/authentication-services/) collection binary (*.tar.gz file) and use the URL to this binary in place of the URL's shown below.  Collection binary is under the 'Assets' section for each release (right click on the *.tar.gz file and select 'Copy link address' to copy URL).
+
+To install from [GitHub](https://github.com/OneIdentity/ansible-authentication-services) you can use the [ansible-galaxy](https://docs.ansible.com/ansible/latest/cli/ansible-galaxy.html) command to install the collection on your control node:
+
+```
+ansible-galaxy collection install https://github.com/OneIdentity/ansible-authentication-services/releases/download/v0.0.1/oneidentity-authentication_services-0.0.1.tar.gz
+```
+
+By default, the collection is installed in `~/.ansible/collections`.   The installation location can be changed by using the `-p` option with the [ansible-galaxy](https://docs.ansible.com/ansible/latest/cli/ansible-galaxy.html) command: 
+
+```
+ansible-galaxy collection install https://github.com/OneIdentity/ansible-authentication-services/releases/download/v0.0.1/oneidentity-authentication_services-0.0.1.tar.gz -p /somewhere/collections
 ```
 
 ### Local Build and Install
