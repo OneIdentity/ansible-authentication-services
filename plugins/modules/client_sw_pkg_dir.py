@@ -196,7 +196,7 @@ def run_module():
 
     # Exit - fail 
     if err:
-        module.fail_json(msg = err, **result)
+        module.fail_json(msg = err) #, **result)
 
     # Exit - success
     module.exit_json(**result)
@@ -242,8 +242,8 @@ def run_normal(params, result):
     }
 
     # Check for no packages found
-    if not packages:
-        err = 'no packages found'
+    if not err and not packages:
+        err = 'No packages found at ' + path + ' for sys=' + sys + ', dist=' + dist + ', arch=' + arch
 
     # Return
     return err, result
@@ -432,7 +432,7 @@ def process_macos_packages(dmg_pkgs):
 
     # Check for no packages found
     if not packages:
-        err = 'no packages found'
+        err = 'No packages found in ' + ' '.join(dmg_pkgs)
 
     return err, packages
 

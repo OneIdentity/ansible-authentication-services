@@ -2,7 +2,7 @@
 
 # Authentication Services Ansible Collection
 
-The One Identity Authentication Services Ansible Collection, referred to as `ansible-authentication-services`, consists of roles, modules, plugins, report templates, and sample playbooks to automate software deployment, configuration, Active Directory joining, profiling, and report generation for Authentication Services. 
+The One Identity Authentication Services Ansible Collection, referred to as `ansible-authentication-services`, consists of roles, modules, plugins, report templates, and sample playbooks to automate software deployment, configuration, Active Directory joining, profiling, and report generation for [Authentication Services](https://www.oneidentity.com/products/authentication-services/). 
 
 ## Collection Contents
 
@@ -30,44 +30,62 @@ The One Identity Authentication Services Ansible Collection, referred to as `ans
 
 * [Ansible](https://github.com/ansible/ansible) version 2.9 or later
 
-    * `Collections are a new feature of Ansible introduced in version 2.9.  Please use the latest 2.9 release for the best user experience.`
+    * `Collections are a new feature introduced in Ansible version 2.9.  Please use the latest 2.9+ release for the best user experience.`
 
-* [One Identity Authentication Services](https://www.oneidentity.com/products/authentication-services/) version 4.2.x or later
+* One Identity [Authentication Services](https://www.oneidentity.com/products/authentication-services/) version 4.2.x or later
 
     * `This collection expects the components and structure of Authentication Services 4.2.x or later.`
     * See collection role [documentation](docs/) for specific, per-role  requirements and instructions.
-    * See One Identity Authentication Services [documentation](https://support.oneidentity.com/authentication-services/4.2.3/technical-documents) for Authentication Services requirements and instructions.
+    * See One Identity [Authentication Services documentation](https://support.oneidentity.com/authentication-services/4.2.3/technical-documents) for Authentication Services requirements and instructions.
 
 ### From Ansible Galaxy 
 The collection will soon be available through [Ansible Galaxy](https://galaxy.ansible.com/) until then please use the [From GitHub](#FromGitHub) or [Local Build and Install](#LocalBuildandInstall) instructions. 
 
-To install from [Ansible Galaxy](https://galaxy.ansible.com/) you can use the [ansible-galaxy](https://docs.ansible.com/ansible/latest/cli/ansible-galaxy.html) command to install the collection on your control node:
+To install from [Ansible Galaxy](https://galaxy.ansible.com/) you can use the [ansible-galaxy](https://docs.ansible.com/ansible/latest/cli/ansible-galaxy.html) command to install the collection on your control node.  See [Ansible documentation](https://docs.ansible.com/ansible/devel/user_guide/collections_using.html#installing-collections) for futher information.
 
+Using `ansible-galaxy` command:
 ```bash
 ansible-galaxy collection install oneidentity.authentication_services
 ```
 
-By default, the collection is installed in `~/.ansible/collections`.   The installation location can be changed by using the `-p` option with the [ansible-galaxy](https://docs.ansible.com/ansible/latest/cli/ansible-galaxy.html) command: 
-
-```bash
-ansible-galaxy collection install oneidentity.authentication_services -p /somewhere/collections
+The collection can also be added to a project's `requirements.yml` file
+```yaml
+---
+collections:
+  - name: oneidentity.authentication_services
 ```
+
+and installed using the `ansible-galaxy` command.  This method allows all required collections for a project to be specified in one place and installed with one command.
+```bash
+ansible-galaxy collection install -r requirements.yml
+```
+
+When used with [Ansible Tower](https://www.ansible.com/products/tower) and [Ansible AWX](https://github.com/ansible/awx) the collections in the project's `requirements.yml` file are automatically installed each time a project is run and there is no need to use the `ansible-galaxy` command.
 
 ### From GitHub
 
-For the examples in this section please see [releases](https://github.com/OneIdentity/ansible-authentication-services/releases) page to find the latest [Authentication Services](https://www.oneidentity.com/products/authentication-services/) collection binary (*.tar.gz file) and use the URL to this binary in place of the URL's shown below.  Collection binary is under the 'Assets' section for each release (right click on the *.tar.gz file and select 'Copy link address' to copy URL).
+For the examples in this section please see `ansible-authentication-services` [releases page](https://github.com/OneIdentity/ansible-authentication-services/releases) to find the latest collection build artifact (*.tar.gz file) and use the URL to this file in place of the URL's shown below.  The collection build artifact is under the 'Assets' section for each release (right click on the *.tar.gz file and select 'Copy link address' to copy URL).
 
-To install from [GitHub](https://github.com/OneIdentity/ansible-authentication-services) you can use the [ansible-galaxy](https://docs.ansible.com/ansible/latest/cli/ansible-galaxy.html) command to install the collection on your control node:
+To install from [GitHub](https://github.com/OneIdentity/ansible-authentication-services) you can use the [ansible-galaxy](https://docs.ansible.com/ansible/latest/cli/ansible-galaxy.html) command to install the collection on your control node.  See [Ansible documentation](https://docs.ansible.com/ansible/devel/user_guide/collections_using.html#installing-collections) for futher information.
 
-```
+Using `ansible-galaxy` command:
+```bash
 ansible-galaxy collection install https://github.com/OneIdentity/ansible-authentication-services/releases/download/v0.0.1/oneidentity-authentication_services-0.0.1.tar.gz
 ```
 
-By default, the collection is installed in `~/.ansible/collections`.   The installation location can be changed by using the `-p` option with the [ansible-galaxy](https://docs.ansible.com/ansible/latest/cli/ansible-galaxy.html) command: 
+The collection can also be added to a project's `requirements.yml` file
+```yaml
+---
+collections:
+  - name: https://github.com/OneIdentity/ansible-authentication-services/releases/download/v0.0.1/oneidentity-authentication_services-0.0.1.tar.gz
+```
 
+and installed using the `ansible-galaxy` command.  This method allows all required collections for a project to be specified in one place and installed with one command.
+```bash
+ansible-galaxy collection install -r requirements.yml
 ```
-ansible-galaxy collection install https://github.com/OneIdentity/ansible-authentication-services/releases/download/v0.0.1/oneidentity-authentication_services-0.0.1.tar.gz -p /somewhere/collections
-```
+
+When used with [Ansible Tower](https://www.ansible.com/products/tower) and [Ansible AWX](https://github.com/ansible/awx) the collections in the project's `requirements.yml` file are automatically installed each time a project is run and there is no need to use the `ansible-galaxy` command.
 
 ### Local Build and Install
 
@@ -75,34 +93,46 @@ For local build and installation, you can clone the Git repository, build the co
 
 1. Clone the Git repository:
 
-```bash
-git clone https://github.com/OneIdentity/ansible-authentication-services.git
-```
+    ```bash
+    git clone https://github.com/OneIdentity/ansible-authentication-services.git
+    ```
 
-2. Run a local build inside the collection using the [ansible-galaxy](https://docs.ansible.com/ansible/latest/cli/ansible-galaxy.html) command:
+2. Run a local build inside the collection using the [ansible-galaxy](https://docs.ansible.com/ansible/latest/cli/ansible-galaxy.html) command in the root directory of the cloned repository:
 
-```bash
-cd ansible-authentication-services
-ansible-galaxy collection build
-```
+    ```bash
+    cd ansible-authentication-services
+    ansible-galaxy collection build
+    ```
 
-The build command will generate an Ansible Galaxy collection artifact with a `tar.gz` file extension, sample output will look the following:
+    The build command will generate an Ansible Galaxy collection artifact with a `tar.gz` file extension, sample output will look like the following:
 
-```
-Created collection for oneidentity.authentication_services at /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.1.tar.gz
-```
+    ```
+    Created collection for oneidentity.authentication_services at /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.1.tar.gz
+    ```
 
-3. Install the locally built collection artifact using the [ansible-galaxy](https://docs.ansible.com/ansible/latest/cli/ansible-galaxy.html) command:
+    `Pleae note the path shown above is just an example, the path to your build artifact will be in the root directory of the cloned repository.`
 
-```bash
-ansible-galaxy collection install /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.1.tar.gz
-```
+3. Install the locally-built collection artifact using the [ansible-galaxy](https://docs.ansible.com/ansible/latest/cli/ansible-galaxy.html) command to install the collection on your control node.  See [Ansible documentation](https://docs.ansible.com/ansible/devel/user_guide/collections_using.html#installing-collections) for futher information.
 
-By default, the collection is installed in `~/.ansible/collections`.   The installation location can be changed by using the `-p` option with the [ansible-galaxy](https://docs.ansible.com/ansible/latest/cli/ansible-galaxy.html) command: 
+    Using `ansible-galaxy` command:
 
-```bash
-ansible-galaxy collection install /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.1.tar.gz -p /somewhere/collections
-```
+    ```bash
+    ansible-galaxy collection install /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.1.tar.gz
+    ```
+
+    The collection can also be added to a project's `requirements.yml` file
+    ```yaml
+    ---
+    collections:
+    - name: /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.1.tar.gz
+    ```
+
+    and installed using the `ansible-galaxy` command.  This method allows all required collections for a project to be specified in one place and installed with one command.
+    ```bash
+    ansible-galaxy collection install -r requirements.yml
+    ```
+
+When used with [Ansible Tower](https://www.ansible.com/products/tower) and [Ansible AWX](https://github.com/ansible/awx) the collections in the project's `requirements.yml` file are automatically installed each time a project is run and there is no need to use the `ansible-galaxy` command.
 
 ## Usage
 
@@ -110,7 +140,7 @@ The collection provides various sample playbooks in the [examples](examples/READ
 
 ## Supported Platforms
 
-All Authentication Services supported [platforms](https://support.oneidentity.com/technical-documents/authentication-services/4.2.3/release-notes/2#TOPIC-1376245) except IBM AIX and Amazon Linux AMI.  Support for IBM AIX and Amazon Linux AMI will be added soon.
+All Authentication Services supported [platforms](https://support.oneidentity.com/technical-documents/authentication-services/4.2.3/release-notes/2#TOPIC-1376245) except IBM AIX.  Support for IBM AIX will be added soon.
 
 ## Notes
 
@@ -122,7 +152,7 @@ All Authentication Services supported [platforms](https://support.oneidentity.co
 
 ### TODO's
 
-* Add support to client_sw role for IBM AIX and Amazon Linux AMI platforms.
+* Add support to client_sw role for IBM AIX.
 * Implement client_join role.
 * Implement client_profile role.
 * Other roles/features depending on interest may include roles to automate server software deployment, server configuration, and server profiling.
