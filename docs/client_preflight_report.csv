@@ -1,0 +1,865 @@
+hostname,group,ip_address,os_distro,os_version,hw_arch,time,changed,unreachable,failed,details
+centos8-1,esx_systems,10.5.37.154,CentOS,8.1,x86_64,2020-06-19 18:35:03,False,False,False,"changed: false
+failed: false
+hostname: centos8-1
+msg: ''
+params:
+  domain: stillings.net
+  extra_args: null
+  facts: true
+  facts_key: sas_client_preflight_preflight
+  facts_verbose: true
+  password: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+  path: ''
+  servers: []
+  timeout: 5
+  timesync: false
+  username: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+steps:
+- description: Install Checks
+  message: ''
+  result: Success
+- description: Check for Supported operating system and correct OS patches
+  message: OS and patches checked - OK
+  result: Success
+- description: Check for sufficient disk space to install software
+  message: 33365488 kB available on /etc:/opt:/var - OK
+  result: Success
+- description: Join Checks
+  message: ''
+  result: Success
+- description: Check that the hostname of the system is not 'localhost'
+  message: centos8-1, hostname is not localhost
+  result: Success
+- description: Check that the DNS Top Level Domain (TLD) is not '.local'
+  message: stillings.net, TLD is not local
+  result: Success
+- description: Check if the name service is configured to use DNS
+  message: DNS lookups enabled in /etc/nsswitch.conf
+  result: Success
+- description: Check /etc/resolv.conf for proper formatting of nameservice entries and that the nameservers can be resolved
+  message: stillings.net, resolv.conf OK
+  result: Success
+- description: Check for a nameserver that has the appropriate DNS SRV records for Active Directory
+  message: stillings.net, mark-dc-01.stillings.net
+  result: Success
+- description: Selects a writable DC with port 389 (UDP) open to use for the checks
+  message: stillings.net, DC for stillings.net is mark-dc-01.stillings.net and port 389 (UDP) is open
+  result: Success
+- description: Display AD site of user running checks if available
+  message: Site for stillings.net is Default-First-Site-Name
+  result: Success
+- description: Check if port 464 (TCP) is open for Kerberos Kpasswd
+  message: mark-dc-01.stillings.net, Pinged port 464 (TCP) on mark-dc-01.stillings.net
+  result: Success
+- description: Check if port 88 (TCP) is open for Kerberos traffic
+  message: mark-dc-01.stillings.net, Pinged port 88 on mark-dc-01.stillings.net using TCP
+  result: Success
+- description: Check if port 389 (TCP) is open for LDAP
+  message: mark-dc-01.stillings.net, Pinged port 389 (TCP) on mark-dc-01.stillings.net
+  result: Success
+- description: Check for Global Catalog and port 3268 (TCP) is open to the GC
+  message: stillings.net, Found global catalog at mark-dc-01.stillings.net and able to ping on port 3268 (TCP)
+  result: Success
+- description: Check for a valid time skew against Active Directory DC
+  message: mark-dc-01.stillings.net, timesync ok with mark-dc-01.stillings.net
+  result: Success
+- description: Check for QAS Application Configuration
+  message: mark-dc-01.stillings.net, CN={786E0064-A470-46B9-83FB-C7539C9FA27C}, CN=Authentication Services, CN=Quest Software, CN=Program Data, DC=stillings, DC=net
+  result: Success
+- description: Post Join Checks
+  message: ''
+  result: Success
+- description: Check if port 445 (TCP) is open for Microsoft Directory Services
+  message: mark-dc-01.stillings.net, Pinged port 445 (TCP) on mark-dc-01.stillings.net
+  result: Success
+unreachable: false
+version: 4.2.3.25456
+"
+debian10-1,esx_systems,10.5.37.189,Debian,10,x86_64,2020-06-19 18:34:52,False,False,False,"changed: false
+failed: false
+hostname: debian10-1
+msg: ''
+params:
+  domain: stillings.net
+  extra_args: null
+  facts: true
+  facts_key: sas_client_preflight_preflight
+  facts_verbose: true
+  password: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+  path: ''
+  servers: []
+  timeout: 5
+  timesync: false
+  username: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+steps:
+- description: Install Checks
+  message: ''
+  result: Success
+- description: Check for Supported operating system and correct OS patches
+  message: OS and patches checked - OK
+  result: Success
+- description: Check for sufficient disk space to install software
+  message: 36749704 kB available on /etc:/opt:/var - OK
+  result: Success
+- description: Join Checks
+  message: ''
+  result: Success
+- description: Check that the hostname of the system is not 'localhost'
+  message: debian10-1, hostname is not localhost
+  result: Success
+- description: Check that the DNS Top Level Domain (TLD) is not '.local'
+  message: stillings.net, TLD is not local
+  result: Success
+- description: Check if the name service is configured to use DNS
+  message: DNS lookups enabled in /etc/nsswitch.conf
+  result: Success
+- description: Check /etc/resolv.conf for proper formatting of nameservice entries and that the nameservers can be resolved
+  message: stillings.net, resolv.conf OK
+  result: Success
+- description: Check for a nameserver that has the appropriate DNS SRV records for Active Directory
+  message: stillings.net, mark-dc-01.stillings.net
+  result: Success
+- description: Selects a writable DC with port 389 (UDP) open to use for the checks
+  message: stillings.net, DC for stillings.net is mark-dc-01.stillings.net and port 389 (UDP) is open
+  result: Success
+- description: Display AD site of user running checks if available
+  message: Site for stillings.net is Default-First-Site-Name
+  result: Success
+- description: Check if port 464 (TCP) is open for Kerberos Kpasswd
+  message: mark-dc-01.stillings.net, Pinged port 464 (TCP) on mark-dc-01.stillings.net
+  result: Success
+- description: Check if port 88 (TCP) is open for Kerberos traffic
+  message: mark-dc-01.stillings.net, Pinged port 88 on mark-dc-01.stillings.net using TCP
+  result: Success
+- description: Check if port 389 (TCP) is open for LDAP
+  message: mark-dc-01.stillings.net, Pinged port 389 (TCP) on mark-dc-01.stillings.net
+  result: Success
+- description: Check for Global Catalog and port 3268 (TCP) is open to the GC
+  message: stillings.net, Found global catalog at mark-dc-01.stillings.net and able to ping on port 3268 (TCP)
+  result: Success
+- description: Check for a valid time skew against Active Directory DC
+  message: mark-dc-01.stillings.net, timesync ok with mark-dc-01.stillings.net
+  result: Success
+- description: Check for QAS Application Configuration
+  message: mark-dc-01.stillings.net, CN={786E0064-A470-46B9-83FB-C7539C9FA27C}, CN=Authentication Services, CN=Quest Software, CN=Program Data, DC=stillings, DC=net
+  result: Success
+- description: Post Join Checks
+  message: ''
+  result: Success
+- description: Check if port 445 (TCP) is open for Microsoft Directory Services
+  message: mark-dc-01.stillings.net, Pinged port 445 (TCP) on mark-dc-01.stillings.net
+  result: Success
+unreachable: false
+version: 4.2.3.25456
+"
+fedora31-1,esx_systems,10.5.37.125,Fedora,31,x86_64,2020-06-19 18:34:52,False,False,False,"changed: false
+failed: false
+hostname: fedora31-1
+msg: ''
+params:
+  domain: stillings.net
+  extra_args: null
+  facts: true
+  facts_key: sas_client_preflight_preflight
+  facts_verbose: true
+  password: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+  path: ''
+  servers: []
+  timeout: 5
+  timesync: false
+  username: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+steps:
+- description: Install Checks
+  message: ''
+  result: Success
+- description: Check for Supported operating system and correct OS patches
+  message: OS and patches checked - OK
+  result: Success
+- description: Check for sufficient disk space to install software
+  message: 12799268 kB available on /etc:/opt:/var - OK
+  result: Success
+- description: Join Checks
+  message: ''
+  result: Success
+- description: Check that the hostname of the system is not 'localhost'
+  message: fedora31-1, hostname is not localhost
+  result: Success
+- description: Check that the DNS Top Level Domain (TLD) is not '.local'
+  message: stillings.net, TLD is not local
+  result: Success
+- description: Check if the name service is configured to use DNS
+  message: DNS lookups enabled in /etc/nsswitch.conf
+  result: Success
+- description: Check /etc/resolv.conf for proper formatting of nameservice entries and that the nameservers can be resolved
+  message: stillings.net, resolv.conf OK
+  result: Success
+- description: Check for a nameserver that has the appropriate DNS SRV records for Active Directory
+  message: stillings.net, mark-dc-01.stillings.net
+  result: Success
+- description: Selects a writable DC with port 389 (UDP) open to use for the checks
+  message: stillings.net, DC for stillings.net is mark-dc-01.stillings.net and port 389 (UDP) is open
+  result: Success
+- description: Display AD site of user running checks if available
+  message: Site for stillings.net is Default-First-Site-Name
+  result: Success
+- description: Check if port 464 (TCP) is open for Kerberos Kpasswd
+  message: mark-dc-01.stillings.net, Pinged port 464 (TCP) on mark-dc-01.stillings.net
+  result: Success
+- description: Check if port 88 (TCP) is open for Kerberos traffic
+  message: mark-dc-01.stillings.net, Pinged port 88 on mark-dc-01.stillings.net using TCP
+  result: Success
+- description: Check if port 389 (TCP) is open for LDAP
+  message: mark-dc-01.stillings.net, Pinged port 389 (TCP) on mark-dc-01.stillings.net
+  result: Success
+- description: Check for Global Catalog and port 3268 (TCP) is open to the GC
+  message: stillings.net, Found global catalog at mark-dc-01.stillings.net and able to ping on port 3268 (TCP)
+  result: Success
+- description: Check for a valid time skew against Active Directory DC
+  message: mark-dc-01.stillings.net, timesync ok with mark-dc-01.stillings.net
+  result: Success
+- description: Check for QAS Application Configuration
+  message: mark-dc-01.stillings.net, CN={786E0064-A470-46B9-83FB-C7539C9FA27C}, CN=Authentication Services, CN=Quest Software, CN=Program Data, DC=stillings, DC=net
+  result: Success
+- description: Post Join Checks
+  message: ''
+  result: Success
+- description: Check if port 445 (TCP) is open for Microsoft Directory Services
+  message: mark-dc-01.stillings.net, Pinged port 445 (TCP) on mark-dc-01.stillings.net
+  result: Success
+unreachable: false
+version: 4.2.3.25456
+"
+freebsd11-2,esx_systems,10.5.37.199,FreeBSD,11.3,amd64,2020-06-19 18:34:53,False,False,False,"changed: false
+failed: false
+hostname: freebsd11-2
+msg: ''
+params:
+  domain: stillings.net
+  extra_args: null
+  facts: true
+  facts_key: sas_client_preflight_preflight
+  facts_verbose: true
+  password: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+  path: ''
+  servers: []
+  timeout: 5
+  timesync: false
+  username: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+steps:
+- description: Install Checks
+  message: ''
+  result: Success
+- description: Check for Supported operating system and correct OS patches
+  message: OS and patches checked - OK
+  result: Success
+- description: Check for sufficient disk space to install software
+  message: 580096 kB available on /etc:/opt:/var - OK
+  result: Success
+- description: Join Checks
+  message: ''
+  result: Success
+- description: Check that the hostname of the system is not 'localhost'
+  message: freebsd11-2, hostname is not localhost
+  result: Success
+- description: Check that the DNS Top Level Domain (TLD) is not '.local'
+  message: stillings.net, TLD is not local
+  result: Success
+- description: Check if the name service is configured to use DNS
+  message: DNS lookups enabled in /etc/nsswitch.conf
+  result: Success
+- description: Check /etc/resolv.conf for proper formatting of nameservice entries and that the nameservers can be resolved
+  message: stillings.net, resolv.conf OK
+  result: Success
+- description: Check for a nameserver that has the appropriate DNS SRV records for Active Directory
+  message: stillings.net, mark-dc-01.stillings.net
+  result: Success
+- description: Selects a writable DC with port 389 (UDP) open to use for the checks
+  message: stillings.net, DC for stillings.net is mark-dc-01.stillings.net and port 389 (UDP) is open
+  result: Success
+- description: Display AD site of user running checks if available
+  message: Site for stillings.net is Default-First-Site-Name
+  result: Success
+- description: Check if port 464 (TCP) is open for Kerberos Kpasswd
+  message: mark-dc-01.stillings.net, Pinged port 464 (TCP) on mark-dc-01.stillings.net
+  result: Success
+- description: Check if port 88 (TCP) is open for Kerberos traffic
+  message: mark-dc-01.stillings.net, Pinged port 88 on mark-dc-01.stillings.net using TCP
+  result: Success
+- description: Check if port 389 (TCP) is open for LDAP
+  message: mark-dc-01.stillings.net, Pinged port 389 (TCP) on mark-dc-01.stillings.net
+  result: Success
+- description: Check for Global Catalog and port 3268 (TCP) is open to the GC
+  message: stillings.net, Found global catalog at mark-dc-01.stillings.net and able to ping on port 3268 (TCP)
+  result: Success
+- description: Check for a valid time skew against Active Directory DC
+  message: mark-dc-01.stillings.net, timesync ok with mark-dc-01.stillings.net
+  result: Success
+- description: Check for QAS Application Configuration
+  message: mark-dc-01.stillings.net, CN={786E0064-A470-46B9-83FB-C7539C9FA27C}, CN=Authentication Services, CN=Quest Software, CN=Program Data, DC=stillings, DC=net
+  result: Success
+- description: Post Join Checks
+  message: ''
+  result: Success
+- description: Check if port 445 (TCP) is open for Microsoft Directory Services
+  message: mark-dc-01.stillings.net, Pinged port 445 (TCP) on mark-dc-01.stillings.net
+  result: Success
+unreachable: false
+version: 4.2.3.25456
+"
+oel8-1,esx_systems,10.5.37.85,OracleLinux,8.0,x86_64,2020-06-19 18:34:53,False,False,False,"changed: false
+failed: false
+hostname: oel8-1
+msg: ''
+params:
+  domain: stillings.net
+  extra_args: null
+  facts: true
+  facts_key: sas_client_preflight_preflight
+  facts_verbose: true
+  password: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+  path: ''
+  servers: []
+  timeout: 5
+  timesync: false
+  username: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+steps:
+- description: Install Checks
+  message: ''
+  result: Success
+- description: Check for Supported operating system and correct OS patches
+  message: OS and patches checked - OK
+  result: Success
+- description: Check for sufficient disk space to install software
+  message: 36490676 kB available on /etc:/opt:/var - OK
+  result: Success
+- description: Join Checks
+  message: ''
+  result: Success
+- description: Check that the hostname of the system is not 'localhost'
+  message: oel8-1, hostname is not localhost
+  result: Success
+- description: Check that the DNS Top Level Domain (TLD) is not '.local'
+  message: stillings.net, TLD is not local
+  result: Success
+- description: Check if the name service is configured to use DNS
+  message: DNS lookups enabled in /etc/nsswitch.conf
+  result: Success
+- description: Check /etc/resolv.conf for proper formatting of nameservice entries and that the nameservers can be resolved
+  message: stillings.net, resolv.conf OK
+  result: Success
+- description: Check for a nameserver that has the appropriate DNS SRV records for Active Directory
+  message: stillings.net, mark-dc-01.stillings.net
+  result: Success
+- description: Selects a writable DC with port 389 (UDP) open to use for the checks
+  message: stillings.net, DC for stillings.net is mark-dc-01.stillings.net and port 389 (UDP) is open
+  result: Success
+- description: Display AD site of user running checks if available
+  message: Site for stillings.net is Default-First-Site-Name
+  result: Success
+- description: Check if port 464 (TCP) is open for Kerberos Kpasswd
+  message: mark-dc-01.stillings.net, Pinged port 464 (TCP) on mark-dc-01.stillings.net
+  result: Success
+- description: Check if port 88 (TCP) is open for Kerberos traffic
+  message: mark-dc-01.stillings.net, Pinged port 88 on mark-dc-01.stillings.net using TCP
+  result: Success
+- description: Check if port 389 (TCP) is open for LDAP
+  message: mark-dc-01.stillings.net, Pinged port 389 (TCP) on mark-dc-01.stillings.net
+  result: Success
+- description: Check for Global Catalog and port 3268 (TCP) is open to the GC
+  message: stillings.net, Found global catalog at mark-dc-01.stillings.net and able to ping on port 3268 (TCP)
+  result: Success
+- description: Check for a valid time skew against Active Directory DC
+  message: mark-dc-01.stillings.net, timesync ok with mark-dc-01.stillings.net
+  result: Success
+- description: Check for QAS Application Configuration
+  message: mark-dc-01.stillings.net, CN={786E0064-A470-46B9-83FB-C7539C9FA27C}, CN=Authentication Services, CN=Quest Software, CN=Program Data, DC=stillings, DC=net
+  result: Success
+- description: Post Join Checks
+  message: ''
+  result: Success
+- description: Check if port 445 (TCP) is open for Microsoft Directory Services
+  message: mark-dc-01.stillings.net, Pinged port 445 (TCP) on mark-dc-01.stillings.net
+  result: Success
+unreachable: false
+version: 4.2.3.25456
+"
+opensuse15-1,esx_systems,10.5.37.212,openSUSE Leap,15.1,x86_64,2020-06-19 18:34:52,False,False,False,"changed: false
+failed: false
+hostname: opensuse15-1
+msg: ''
+params:
+  domain: stillings.net
+  extra_args: null
+  facts: true
+  facts_key: sas_client_preflight_preflight
+  facts_verbose: true
+  password: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+  path: ''
+  servers: []
+  timeout: 5
+  timesync: false
+  username: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+steps:
+- description: Install Checks
+  message: ''
+  result: Success
+- description: Check for Supported operating system and correct OS patches
+  message: OS and patches checked - OK
+  result: Success
+- description: Check for sufficient disk space to install software
+  message: 34964268 kB available on /etc - OK, 34964268 kB available on /opt - OK, 34964268 kB available on /var - OK
+  result: Success
+- description: Join Checks
+  message: ''
+  result: Success
+- description: Check that the hostname of the system is not 'localhost'
+  message: opensuse15-1, hostname is not localhost
+  result: Success
+- description: Check that the DNS Top Level Domain (TLD) is not '.local'
+  message: stillings.net, TLD is not local
+  result: Success
+- description: Check if the name service is configured to use DNS
+  message: DNS lookups enabled in /etc/nsswitch.conf
+  result: Success
+- description: Check /etc/resolv.conf for proper formatting of nameservice entries and that the nameservers can be resolved
+  message: stillings.net, resolv.conf OK
+  result: Success
+- description: Check for a nameserver that has the appropriate DNS SRV records for Active Directory
+  message: stillings.net, mark-dc-01.stillings.net
+  result: Success
+- description: Selects a writable DC with port 389 (UDP) open to use for the checks
+  message: stillings.net, DC for stillings.net is mark-dc-01.stillings.net and port 389 (UDP) is open
+  result: Success
+- description: Display AD site of user running checks if available
+  message: Site for stillings.net is Default-First-Site-Name
+  result: Success
+- description: Check if port 464 (TCP) is open for Kerberos Kpasswd
+  message: mark-dc-01.stillings.net, Pinged port 464 (TCP) on mark-dc-01.stillings.net
+  result: Success
+- description: Check if port 88 (TCP) is open for Kerberos traffic
+  message: mark-dc-01.stillings.net, Pinged port 88 on mark-dc-01.stillings.net using TCP
+  result: Success
+- description: Check if port 389 (TCP) is open for LDAP
+  message: mark-dc-01.stillings.net, Pinged port 389 (TCP) on mark-dc-01.stillings.net
+  result: Success
+- description: Check for Global Catalog and port 3268 (TCP) is open to the GC
+  message: stillings.net, Found global catalog at mark-dc-01.stillings.net and able to ping on port 3268 (TCP)
+  result: Success
+- description: Check for a valid time skew against Active Directory DC
+  message: mark-dc-01.stillings.net, timesync ok with mark-dc-01.stillings.net
+  result: Success
+- description: Check for QAS Application Configuration
+  message: mark-dc-01.stillings.net, CN={786E0064-A470-46B9-83FB-C7539C9FA27C}, CN=Authentication Services, CN=Quest Software, CN=Program Data, DC=stillings, DC=net
+  result: Success
+- description: Post Join Checks
+  message: ''
+  result: Success
+- description: Check if port 445 (TCP) is open for Microsoft Directory Services
+  message: mark-dc-01.stillings.net, Pinged port 445 (TCP) on mark-dc-01.stillings.net
+  result: Success
+unreachable: false
+version: 4.2.3.25456
+"
+rhel8-1,esx_systems,10.5.37.12,RedHat,8.1,x86_64,2020-06-19 20:34:56,False,False,False,"changed: false
+failed: false
+hostname: rhel8-1
+msg: ''
+params:
+  domain: stillings.net
+  extra_args: null
+  facts: true
+  facts_key: sas_client_preflight_preflight
+  facts_verbose: true
+  password: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+  path: ''
+  servers: []
+  timeout: 5
+  timesync: false
+  username: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+steps:
+- description: Install Checks
+  message: ''
+  result: Success
+- description: Check for Supported operating system and correct OS patches
+  message: OS and patches checked - OK
+  result: Success
+- description: Check for sufficient disk space to install software
+  message: 33436680 kB available on /etc:/opt:/var - OK
+  result: Success
+- description: Join Checks
+  message: ''
+  result: Success
+- description: Check that the hostname of the system is not 'localhost'
+  message: rhel8-1, hostname is not localhost
+  result: Success
+- description: Check that the DNS Top Level Domain (TLD) is not '.local'
+  message: stillings.net, TLD is not local
+  result: Success
+- description: Check if the name service is configured to use DNS
+  message: DNS lookups enabled in /etc/nsswitch.conf
+  result: Success
+- description: Check /etc/resolv.conf for proper formatting of nameservice entries and that the nameservers can be resolved
+  message: stillings.net, resolv.conf OK
+  result: Success
+- description: Check for a nameserver that has the appropriate DNS SRV records for Active Directory
+  message: stillings.net, mark-dc-01.stillings.net
+  result: Success
+- description: Selects a writable DC with port 389 (UDP) open to use for the checks
+  message: stillings.net, DC for stillings.net is mark-dc-01.stillings.net and port 389 (UDP) is open
+  result: Success
+- description: Display AD site of user running checks if available
+  message: Site for stillings.net is Default-First-Site-Name
+  result: Success
+- description: Check if port 464 (TCP) is open for Kerberos Kpasswd
+  message: mark-dc-01.stillings.net, Pinged port 464 (TCP) on mark-dc-01.stillings.net
+  result: Success
+- description: Check if port 88 (TCP) is open for Kerberos traffic
+  message: mark-dc-01.stillings.net, Pinged port 88 on mark-dc-01.stillings.net using TCP
+  result: Success
+- description: Check if port 389 (TCP) is open for LDAP
+  message: mark-dc-01.stillings.net, Pinged port 389 (TCP) on mark-dc-01.stillings.net
+  result: Success
+- description: Check for Global Catalog and port 3268 (TCP) is open to the GC
+  message: stillings.net, Found global catalog at mark-dc-01.stillings.net and able to ping on port 3268 (TCP)
+  result: Success
+- description: Check for a valid time skew against Active Directory DC
+  message: mark-dc-01.stillings.net, timesync ok with mark-dc-01.stillings.net
+  result: Success
+- description: Check for QAS Application Configuration
+  message: mark-dc-01.stillings.net, CN={786E0064-A470-46B9-83FB-C7539C9FA27C}, CN=Authentication Services, CN=Quest Software, CN=Program Data, DC=stillings, DC=net
+  result: Success
+- description: Post Join Checks
+  message: ''
+  result: Success
+- description: Check if port 445 (TCP) is open for Microsoft Directory Services
+  message: mark-dc-01.stillings.net, Pinged port 445 (TCP) on mark-dc-01.stillings.net
+  result: Success
+unreachable: false
+version: 4.2.3.25456
+"
+sles15-1,esx_systems,10.5.37.191,SLES,15,x86_64,2020-06-19 18:34:53,False,False,False,"changed: false
+failed: false
+hostname: sles15-1
+msg: ''
+params:
+  domain: stillings.net
+  extra_args: null
+  facts: true
+  facts_key: sas_client_preflight_preflight
+  facts_verbose: true
+  password: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+  path: ''
+  servers: []
+  timeout: 5
+  timesync: false
+  username: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+steps:
+- description: Install Checks
+  message: ''
+  result: Success
+- description: Check for Supported operating system and correct OS patches
+  message: OS and patches checked - OK
+  result: Success
+- description: Check for sufficient disk space to install software
+  message: 24396892 kB available on /etc - OK, 24396892 kB available on /opt - OK, 24396892 kB available on /var - OK
+  result: Success
+- description: Join Checks
+  message: ''
+  result: Success
+- description: Check that the hostname of the system is not 'localhost'
+  message: sles15-1, hostname is not localhost
+  result: Success
+- description: Check that the DNS Top Level Domain (TLD) is not '.local'
+  message: stillings.net, TLD is not local
+  result: Success
+- description: Check if the name service is configured to use DNS
+  message: DNS lookups enabled in /etc/nsswitch.conf
+  result: Success
+- description: Check /etc/resolv.conf for proper formatting of nameservice entries and that the nameservers can be resolved
+  message: stillings.net, [10.5.37.22] does not appear to be a network-accessible host. (ping failed), Verify that the nameservers in resolv.conf are reachable on
+    port 53 (TCP & UDP). This test may fail if a firewall is dropping ICMP pings.
+  result: Information
+- description: Check for a nameserver that has the appropriate DNS SRV records for Active Directory
+  message: stillings.net, mark-dc-01.stillings.net
+  result: Success
+- description: Selects a writable DC with port 389 (UDP) open to use for the checks
+  message: stillings.net, DC for stillings.net is mark-dc-01.stillings.net and port 389 (UDP) is open
+  result: Success
+- description: Display AD site of user running checks if available
+  message: Site for stillings.net is Default-First-Site-Name
+  result: Success
+- description: Check if port 464 (TCP) is open for Kerberos Kpasswd
+  message: mark-dc-01.stillings.net, Pinged port 464 (TCP) on mark-dc-01.stillings.net
+  result: Success
+- description: Check if port 88 (TCP) is open for Kerberos traffic
+  message: mark-dc-01.stillings.net, Pinged port 88 on mark-dc-01.stillings.net using TCP
+  result: Success
+- description: Check if port 389 (TCP) is open for LDAP
+  message: mark-dc-01.stillings.net, Pinged port 389 (TCP) on mark-dc-01.stillings.net
+  result: Success
+- description: Check for Global Catalog and port 3268 (TCP) is open to the GC
+  message: stillings.net, Found global catalog at mark-dc-01.stillings.net and able to ping on port 3268 (TCP)
+  result: Success
+- description: Check for a valid time skew against Active Directory DC
+  message: mark-dc-01.stillings.net, timesync ok with mark-dc-01.stillings.net
+  result: Success
+- description: Check for QAS Application Configuration
+  message: mark-dc-01.stillings.net, CN={786E0064-A470-46B9-83FB-C7539C9FA27C}, CN=Authentication Services, CN=Quest Software, CN=Program Data, DC=stillings, DC=net
+  result: Success
+- description: Post Join Checks
+  message: ''
+  result: Success
+- description: Check if port 445 (TCP) is open for Microsoft Directory Services
+  message: mark-dc-01.stillings.net, Pinged port 445 (TCP) on mark-dc-01.stillings.net
+  result: Success
+unreachable: false
+version: 4.2.3.25456
+"
+solaris11-1,esx_systems,10.5.37.87,Solaris,11.4,i386,2020-06-19 18:59:47,False,False,True,"changed: false
+failed: true
+hostname: solaris11-1
+msg: |-
+  client_preflight:
+  Failure: stillings.net, Unable to Authenticate, Check username/password, possible timesync issue, prior failures/advisories
+  Failure: stillings.net, No servers found, See previous failures or pass a valid DC on the command line
+  Failure: host localhost unreachable on port 464 (TCP), QAS needs this port open, ensure it is not firewalled
+  Failure: host localhost unreachable on port 389 (TCP), QAS needs this port open, ensure it is not firewalled
+params:
+  domain: stillings.net
+  extra_args: null
+  facts: true
+  facts_key: sas_client_preflight_preflight
+  facts_verbose: true
+  password: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+  path: ''
+  servers: []
+  timeout: 5
+  timesync: false
+  username: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+steps:
+- description: Install Checks
+  message: ''
+  result: Success
+- description: Check for Supported operating system and correct OS patches
+  message: OS and patches checked - OK
+  result: Success
+- description: Check for sufficient disk space to install software
+  message: 45661341 kB available on /etc /opt - OK, 45661341 kB available on /var - OK
+  result: Success
+- description: Join Checks
+  message: ''
+  result: Success
+- description: Test Authentication to domain
+  message: stillings.net, Unable to Authenticate, Check username/password, possible timesync issue, prior failures/advisories
+  result: Failure
+- description: Check that the hostname of the system is not 'localhost'
+  message: solaris11-1, hostname is not localhost
+  result: Success
+- description: Check that the DNS Top Level Domain (TLD) is not '.local'
+  message: stillings.net, TLD is not local
+  result: Success
+- description: Check if the name service is configured to use DNS
+  message: DNS lookups enabled in /etc/nsswitch.conf
+  result: Success
+- description: Check /etc/resolv.conf for proper formatting of nameservice entries and that the nameservers can be resolved
+  message: stillings.net, resolv.conf OK
+  result: Success
+- description: Check for a nameserver that has the appropriate DNS SRV records for Active Directory
+  message: stillings.net, mark-dc-01.stillings.net
+  result: Success
+- description: Selects a writable DC with port 389 (UDP) open to use for the checks
+  message: stillings.net, No servers found, See previous failures or pass a valid DC on the command line
+  result: Failure
+- description: Display AD site of user running checks if available
+  message: No Active Directory Site configured for this host, You may need to configure your Site for the domain
+  result: Advisory
+- description: Check if port 464 (TCP) is open for Kerberos Kpasswd
+  message: host localhost unreachable on port 464 (TCP), QAS needs this port open, ensure it is not firewalled
+  result: Failure
+- description: Check if port 88 (TCP) is open for Kerberos traffic
+  message: Unable to ping port 88 on  using TCP. Ensure it is not firewalled and that the host is reachable., Ensure port 88 (TCP) is not firewalled and the host
+    is reachable.
+  result: Advisory
+- description: Check if port 389 (TCP) is open for LDAP
+  message: host localhost unreachable on port 389 (TCP), QAS needs this port open, ensure it is not firewalled
+  result: Failure
+- description: Check for Global Catalog and port 3268 (TCP) is open to the GC
+  message: stillings.net, Unable to determine global catalog, QAS performs best when it can see a GC, check your domain configuration
+  result: Advisory
+- description: Check for a valid time skew against Active Directory DC
+  message: Unable to get time from, Ensure port 123 (UDP) is not firewalled
+  result: Advisory
+- description: Check for QAS Application Configuration
+  message: stillings.net, Required ports are not open, See prior port check failures
+  result: Skipped
+- description: Post Join Checks
+  message: ''
+  result: Success
+- description: Check if port 445 (TCP) is open for Microsoft Directory Services
+  message: host localhost unreachable on port 445 (TCP), QAS needs this port open, ensure it is not firewalled
+  result: Advisory
+unreachable: false
+version: 4.2.2.25350
+"
+stmac14-1,mac_systems,10.5.37.217,MacOSX,10.14.6,x86_64,2020-06-19 18:34:52,False,False,True,"changed: false
+failed: true
+hostname: stmac14-1
+msg: |-
+  client_preflight:
+  Failure: stillings.net, Unable to Authenticate, Check username/password, possible timesync issue, prior failures/advisories
+  Failure: stillings.net, No servers found, See previous failures or pass a valid DC on the command line
+  Failure: host localhost unreachable on port 464 (TCP), QAS needs this port open, ensure it is not firewalled
+  Failure: host localhost unreachable on port 389 (TCP), QAS needs this port open, ensure it is not firewalled
+params:
+  domain: stillings.net
+  extra_args: null
+  facts: true
+  facts_key: sas_client_preflight_preflight
+  facts_verbose: true
+  password: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+  path: ''
+  servers: []
+  timeout: 5
+  timesync: false
+  username: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+steps:
+- description: Install Checks
+  message: ''
+  result: Success
+- description: Check for Supported operating system and correct OS patches
+  message: OS and patches checked - OK
+  result: Success
+- description: Check for sufficient disk space to install software
+  message: 48412236 kB available on /etc:/opt:/var - OK
+  result: Success
+- description: Join Checks
+  message: ''
+  result: Success
+- description: Test Authentication to domain
+  message: stillings.net, Unable to Authenticate, Check username/password, possible timesync issue, prior failures/advisories
+  result: Failure
+- description: Check that the hostname of the system is not 'localhost'
+  message: stmac14-1.stewart.manor, hostname is not localhost
+  result: Success
+- description: Check that the DNS Top Level Domain (TLD) is not '.local'
+  message: stillings.net, TLD is not local
+  result: Success
+- description: Check /etc/resolv.conf for proper formatting of nameservice entries and that the nameservers can be resolved
+  message: stillings.net, resolv.conf OK
+  result: Success
+- description: Check for a nameserver that has the appropriate DNS SRV records for Active Directory
+  message: stillings.net, Possible bad /etc/resolv.conf file, port 53 (UDP) is firewalled, or DNS lookups are slower than expected, See man page for resolv.conf,
+    check that Port 53 (UDP) is not firewalled, or rerun preflight with -d5 and --verbose for more information
+  result: Advisory
+- description: Selects a writable DC with port 389 (UDP) open to use for the checks
+  message: stillings.net, No servers found, See previous failures or pass a valid DC on the command line
+  result: Failure
+- description: Display AD site of user running checks if available
+  message: No Active Directory Site configured for this host, You may need to configure your Site for the domain
+  result: Advisory
+- description: Check if port 464 (TCP) is open for Kerberos Kpasswd
+  message: host localhost unreachable on port 464 (TCP), QAS needs this port open, ensure it is not firewalled
+  result: Failure
+- description: Check if port 88 (TCP) is open for Kerberos traffic
+  message: Unable to ping port 88 on  using TCP. Ensure it is not firewalled and that the host is reachable., Ensure port 88 (TCP) is not firewalled and the host
+    is reachable.
+  result: Advisory
+- description: Check if port 389 (TCP) is open for LDAP
+  message: host localhost unreachable on port 389 (TCP), QAS needs this port open, ensure it is not firewalled
+  result: Failure
+- description: Check for Global Catalog and port 3268 (TCP) is open to the GC
+  message: stillings.net, Unable to determine global catalog, QAS performs best when it can see a GC, check your domain configuration
+  result: Advisory
+- description: Check for a valid time skew against Active Directory DC
+  message: Unable to get time from, Ensure port 123 (UDP) is not firewalled
+  result: Advisory
+- description: Check for QAS Application Configuration
+  message: stillings.net, Required ports are not open, See prior port check failures
+  result: Skipped
+- description: Post Join Checks
+  message: ''
+  result: Success
+- description: Check if port 445 (TCP) is open for Microsoft Directory Services
+  message: host localhost unreachable on port 445 (TCP), QAS needs this port open, ensure it is not firewalled
+  result: Advisory
+unreachable: false
+version: 4.2.2.25350
+"
+ubuntu18-7,esx_systems,10.5.37.9,Ubuntu,18.04,x86_64,2020-06-20 00:34:52,False,False,False,"changed: false
+failed: false
+hostname: ubuntu18-7
+msg: ''
+params:
+  domain: stillings.net
+  extra_args: null
+  facts: true
+  facts_key: sas_client_preflight_preflight
+  facts_verbose: true
+  password: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+  path: ''
+  servers: []
+  timeout: 5
+  timesync: false
+  username: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+steps:
+- description: Install Checks
+  message: ''
+  result: Success
+- description: Check for Supported operating system and correct OS patches
+  message: OS and patches checked - OK
+  result: Success
+- description: Check for sufficient disk space to install software
+  message: 43642968 kB available on /etc:/opt:/var - OK
+  result: Success
+- description: Join Checks
+  message: ''
+  result: Success
+- description: Check that the hostname of the system is not 'localhost'
+  message: ubuntu18-7, hostname is not localhost
+  result: Success
+- description: Check that the DNS Top Level Domain (TLD) is not '.local'
+  message: stillings.net, TLD is not local
+  result: Success
+- description: Check if the name service is configured to use DNS
+  message: DNS lookups enabled in /etc/nsswitch.conf
+  result: Success
+- description: Check /etc/resolv.conf for proper formatting of nameservice entries and that the nameservers can be resolved
+  message: stillings.net, resolv.conf OK
+  result: Success
+- description: Check for a nameserver that has the appropriate DNS SRV records for Active Directory
+  message: stillings.net, mark-dc-01.stillings.net
+  result: Success
+- description: Selects a writable DC with port 389 (UDP) open to use for the checks
+  message: stillings.net, DC for stillings.net is mark-dc-01.stillings.net and port 389 (UDP) is open
+  result: Success
+- description: Display AD site of user running checks if available
+  message: Site for stillings.net is Default-First-Site-Name
+  result: Success
+- description: Check if port 464 (TCP) is open for Kerberos Kpasswd
+  message: mark-dc-01.stillings.net, Pinged port 464 (TCP) on mark-dc-01.stillings.net
+  result: Success
+- description: Check if port 88 (TCP) is open for Kerberos traffic
+  message: mark-dc-01.stillings.net, Pinged port 88 on mark-dc-01.stillings.net using TCP
+  result: Success
+- description: Check if port 389 (TCP) is open for LDAP
+  message: mark-dc-01.stillings.net, Pinged port 389 (TCP) on mark-dc-01.stillings.net
+  result: Success
+- description: Check for Global Catalog and port 3268 (TCP) is open to the GC
+  message: stillings.net, Found global catalog at mark-dc-01.stillings.net and able to ping on port 3268 (TCP)
+  result: Success
+- description: Check for a valid time skew against Active Directory DC
+  message: mark-dc-01.stillings.net, timesync ok with mark-dc-01.stillings.net
+  result: Success
+- description: Check for QAS Application Configuration
+  message: mark-dc-01.stillings.net, CN={786E0064-A470-46B9-83FB-C7539C9FA27C}, CN=Authentication Services, CN=Quest Software, CN=Program Data, DC=stillings, DC=net
+  result: Success
+- description: Post Join Checks
+  message: ''
+  result: Success
+- description: Check if port 445 (TCP) is open for Microsoft Directory Services
+  message: mark-dc-01.stillings.net, Pinged port 445 (TCP) on mark-dc-01.stillings.net
+  result: Success
+unreachable: false
+version: 4.2.3.25456
+"

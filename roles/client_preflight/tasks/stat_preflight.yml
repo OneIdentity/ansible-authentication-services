@@ -1,0 +1,7 @@
+---
+
+# Stat preflight on host
+- name: check if preflight exists
+  stat:
+    path: /opt/quest/bin/preflight
+  register: result

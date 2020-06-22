@@ -1,0 +1,41 @@
+---
+
+# ------------------------------------------------------------------------------
+# Main 
+# ------------------------------------------------------------------------------
+
+- block:
+
+    # Gather facts
+    - include_tasks: gather_facts.yml
+
+    # Run stat on preflight
+    - include_tasks: stat_preflight.yml
+
+    # Run preflight if already on host (no copy just run)
+    - include_tasks: preflight_no_copy.yml
+      when: result.stat is undefined or result.stat.exists
+
+    # Run preflight if not already on host (copy, run, then remove)
+    - include_tasks: preflight_with_copy.yml
+      when: result.stat is defined and not result.stat.exists
+
+    # We get here on success
+    - include_tasks: utils/set_fact_success.yml
+   
+  ignore_unreachable: true
+
+  rescue:
+
+    # Set unreachable status and fail
+    - include_tasks: utils/set_fact_unreachable.yml
+      when: result.unreachable is defined and result.unreachable == true
+
+    # Set fail status and fail
+    - include_tasks: utils/set_fact_failed.yml
+
+  always:
+
+    # Generate reports
+    - include_tasks: generate_reports.yml
+      when: client_preflight_reports_generate

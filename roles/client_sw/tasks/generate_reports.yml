@@ -1,9 +1,6 @@
 ---
 
 # Generate reports (this runs once after all hosts are done)
-# TODO: Maybe we can move report generation:
-#       - To a separate role by utilizing caching?
-#       - To after the run using a custom callback plugin?
 - name: generate reports
   template:
     src:  "{{ item.src }}"
@@ -11,5 +8,5 @@
     backup: "{{ client_sw_reports_backup }}"
   with_items: "{{ client_sw_reports }}"
   delegate_to: "{{ client_sw_reports_host }}"    
-  run_once: True
-  changed_when: False
+  run_once: true
+  changed_when: false

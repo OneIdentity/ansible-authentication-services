@@ -3,7 +3,7 @@
 
 # ------------------------------------------------------------------------------
 # Copyright (c) 2020, One Identity LLC
-# File: client_sw_pkg_dir.py
+# File: client_sw_pkgs.py
 # Desc: Ansible module for client_sw role that checks package install directory
 #       for packages for the specified system, distribution, and architecture.
 # Auth: Mark Stillings
@@ -16,14 +16,14 @@
 # ------------------------------------------------------------------------------
 
 ANSIBLE_METADATA = {
-    'metadata_version': '0.1',
+    'metadata_version': '0.2',
     'status': ['preview'],
     'supported_by': 'community'
 }
 
 DOCUMENTATION = """ 
 ---
-module: client_sw_pkg_dir 
+module: client_sw_pkgs 
 
 short_description: Checks and parses Authentication Services client software install directory 
 
@@ -51,6 +51,18 @@ options:
         description:
             - Client software directory
         required: true
+    facts:
+        description:
+            - Generate Ansible facts?
+        type: bool
+        required: false
+        default: false
+    facts_key:
+        description:
+            - Ansible facts key
+        type: str
+        required: false
+        default: 'client_sw_pkgs' 
 
 author:
     - Mark Stillings (mark.stillings@oneidentity.com)
@@ -58,12 +70,12 @@ author:
 
 EXAMPLES = """
 - name: Normal usage
-  client_sw_pkg_dir:
+  client_sw_pkgs:
     sys: linux  
     dist: debian 
     arch: amd64
     path: /var/tmp/authentication_services/client
-  register: sw_dir_pkgs 
+  register: client_sw_pkgs_result
 """
 
 RETURN = """ 
@@ -75,6 +87,31 @@ packages:
     description: The discovered packages and versions in supplied path
     type: dict
     returned: always
+ansible_facts:
+    description: All return data is placed in Ansible facts
+    type: dict
+    returned: when facts parameter is true 
+    keys:
+        changed:
+            description: Did the state of the host change?
+            type: bool
+            returned: always
+        failed:
+            description: Did the module fail?
+            type: bool
+            returned: always
+        msg:
+            description: Additional information if failed
+            type: str
+            returned: always
+        params:
+            description: Parameters passed in
+            type: dict
+            returned: always
+        packages:
+            description: The discovered packages and versions in supplied path
+            type: dict
+            returned: always
 """
 
 
@@ -91,6 +128,10 @@ import re
 # ------------------------------------------------------------------------------
 # Constants 
 # ------------------------------------------------------------------------------
+
+# Arg choices and defaults
+FACTS_DEFAULT = False
+FACTS_KEY_DEFAULT = 'client_sw_pkgs'
 
 # Package paths for all supported systems and architectures 
 PKG_PATHS = {
@@ -122,7 +163,10 @@ PKG_PATHS = {
     'hp-ux': {
         '9000/800': 'hpux-pa-11v3',
         'ia64': 'hpux-ia64' 
-    } 
+    },
+    'aix': {
+        'chrp': 'aix-71'
+    },
 }
 
 # Package file extensions for all supported distributions
@@ -135,7 +179,8 @@ PKG_EXTENSIONS = {
     'freebsd': 'txz',
     'solaris': 'pkg',
     'darwin': 'dmg',
-    'hp-ux': 'depot' 
+    'hp-ux': 'depot', 
+    'aix': 'bff' 
 }
 
 
@@ -160,7 +205,7 @@ def run_module():
         'dist': \
         {
             'type': 'str',
-            'required': False 
+            'required': True
         },
         'arch': \
         {
@@ -171,6 +216,18 @@ def run_module():
         {
             'type': 'str',
             'required': True
+        },
+        'facts': \
+        {
+            'type': 'bool',
+            'required': False,
+            'default': FACTS_DEFAULT
+        },
+        'facts_key': \
+        {
+            'type': 'str',
+            'required': False,
+            'default': FACTS_KEY_DEFAULT
         } 
     }
 
@@ -178,9 +235,10 @@ def run_module():
     result = \
     {
         'changed': False,
+        'failed': False,
+        'msg': '',
         'params': {},
-        'packages': {},
-        'ansible_facts': {} 
+        'packages': {} 
     }
 
     # Lean on boilerplate code in AnsibleModule class
@@ -193,10 +251,6 @@ def run_module():
     # NOTE: This module makes no changes so check mode doesn't need to be handled
     #       specially 
     err, result = run_normal(module.params, result)
-
-    # Exit - fail 
-    if err:
-        module.fail_json(msg = err) #, **result)
 
     # Exit - success
     module.exit_json(**result)
@@ -222,6 +276,8 @@ def run_normal(params, result):
     sys = params['sys'].lower()
     dist = params['dist'].lower()
     arch = params['arch'].lower()
+    facts = params['facts']
+    facts_key = params['facts_key'] if params['facts_key'] else FACTS_KEY_DEFAULT
 
     # Check directory
     err = check_dir(path)
@@ -231,19 +287,16 @@ def run_normal(params, result):
         err, packages = find_packages(path, sys, dist, arch)
 
     # Build result 
+    result['changed'] = False   # Never makes any changes to the host
+    result['failed'] = err is not None
+    result['msg'] = err if err is not None else ''
     result['params'] = params 
     result['packages'] = packages 
-    result['ansible_facts'] = \
-    {
-        'qas': \
-        {
-            'packages': packages
-        }
-    }
 
-    # Check for no packages found
-    if not err and not packages:
-        err = 'No packages found at ' + path + ' for sys=' + sys + ', dist=' + dist + ', arch=' + arch
+    # Create ansible_facts data
+    if facts:
+        result_facts = result.copy()
+        result['ansible_facts'] = {facts_key: result_facts} 
 
     # Return
     return err, result
@@ -293,12 +346,20 @@ def find_packages(sw_path, sys, dist, arch):
     if not err:
         pkgs_path = sw_path + '/' + pkgs_dir
         err, packages = parse_packages(pkgs_path, pkgs_ext) 
-    
+   
     # NOTE: Authentication Services macOS packages are grouped into dmg files, 
     #       so need to do some post-processing 
     if not err and sys == 'darwin':
         err, packages = process_macos_packages(packages)
-    
+
+     # Find preflight
+    if not err:
+        packages['preflight'] = find_preflight(pkgs_path)
+
+    # Check for no packages found
+    if not err and not packages:
+        err = 'No packages found at ' + sw_path + ' for sys=' + sys + ', dist=' + dist + ', arch=' + arch
+
     # Return
     return err, packages 
 
@@ -462,6 +523,28 @@ def process_dmg_package(dmg_pkgs, dmg_pkg, pkg_names):
             }
 
     return packages
+
+# ------------------------------------------------------------------------------
+def find_preflight(path):
+    """
+    Find preflight
+    """
+
+    # Return values
+    preflight = None
+
+    # Glob the package directory to find preflight
+    pkgs_str = path + '/preflight'
+    pkgs = glob.glob(pkgs_str) 
+    if pkgs:
+        preflight = \
+        {
+            'path': pkgs[0],
+            'file': 'preflight', 
+            'vers': '' 
+        }
+
+    return preflight
 
 # ------------------------------------------------------------------------------
 def main():

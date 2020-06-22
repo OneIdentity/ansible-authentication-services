@@ -5,5 +5,5 @@
   file:
     path: "{{ package_dest_dir }}"
     state: directory 
-  ignore_errors: True
+  ignore_errors: true
   changed_when: false

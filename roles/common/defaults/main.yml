@@ -1,4 +1,48 @@
 ---
 
-# NOTE: Empty for now but will stay as placeholder if we need to add
-# variables that should be overridden.
+# Client software settings
+# ------------------------------------------------------------------------------
+
+# TODO: It would be nice to put the install package directory somewhere besides
+# the ansible controller.  The copy module that is used doesn't supoport doing
+# this.  For now, this needs to stay set to the localhost (127.0.0.1)
+client_sw_host: '127.0.0.1' 
+
+# Directory on Ansible control node containing client software installer packages 
+client_sw_dir: /tmp/1id/client
+
+# Temporary directory on Ansible hosts for copied packages and files
+client_sw_tmp_dir: /tmp/1id
+
+
+# Client general settings
+# ------------------------------------------------------------------------------
+
+client_domain: 
+client_username: 
+client_password: 
+client_servers: []
+client_account_name:
+client_account_container:
+
+
+# Facts settings
+# ------------------------------------------------------------------------------
+
+facts_generate: true
+facts_verbose: true
+
+
+# Reports settings
+# ------------------------------------------------------------------------------
+
+reports_generate: true 
+reports_backup: false
+
+# Format of details section in both HTML and CSV reports
+# Valid options are: 'yaml' or 'json'
+reports_details_format: yaml 
+
+# On which host should the reports be generated.
+# TODO: This has only been tested on the Ansible control node (127.0.0.1)
+reports_host: '127.0.0.1'  

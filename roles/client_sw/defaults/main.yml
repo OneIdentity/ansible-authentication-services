@@ -1,20 +1,5 @@
 ---
 
-# Directories
-# ------------------------------------------------------------------------------
-
-# TODO: Have not tested putting the install package directory somewhere besides
-# the ansible controller.  The copy module that is used doesn't appear to
-# support doing this.  For now, this needs to stay set to the localhost (127.0.0.1)
-client_sw_host: '127.0.0.1' 
-
-# Directory on Ansible control node containing client software installer packages 
-client_sw_dir: /tmp/1id/client
-
-# Temporary directory on Ansible hosts for copied packages and files
-client_sw_tmp_dir: /tmp/1id
-
-
 # Client software state
 # ------------------------------------------------------------------------------
 
@@ -22,7 +7,7 @@ client_sw_tmp_dir: /tmp/1id
 # - check: check only, no changes to system
 # - present: ensure installed and the same version as in client_sw_dir
 # - absent: ensure not intalled 
-client_sw_pkgs:
+client_sw_pkg_state:
   vasclnt: check 
   vasclnts: check 
   vasgp: check 
@@ -37,27 +22,26 @@ client_sw_pkgs:
   vasdev: check 
 
 
-# Report generation variables
+# Facts settings
 # ------------------------------------------------------------------------------
 
-# Generate reports
-client_sw_reports_generate: true 
+client_sw_facts_generate: "{{ facts_generate }}"
+client_sw_facts_verbose: "{{ facts_verbose }}"
 
-# Soft fail masks normal Ansible fail which allows tasks to keep running for a 'failed'
-# host so that any and all of the failures will be shown in the reports.  
-# If disabled, a 'failed' host will not be shown in the report and no other tasks will 
-# be run for the 'failed' host. Only has an effect when client_sw_reports_generate is true.
-client_sw_reports_soft_fail: true
 
-# Hide NOP operations in report (no install package available and package not installed)
-client_sw_reports_hide_nops: true 
+# Reports settings
+# ------------------------------------------------------------------------------
 
-# Create backups of previous reports so that they are not overwritten?
-client_sw_reports_backup: false 
+client_sw_reports_generate: "{{ reports_generate }}"
+client_sw_reports_backup: "{{ reports_backup }}"
+
+# Format of details section in both HTML and CSV reports
+# Valid options are: 'yaml' or 'json'
+client_sw_reports_details_format: "{{ reports_details_format }}"
 
 # On which host should the reports be generated.
 # TODO: This has only been tested on the Ansible control node (127.0.0.1)
-client_sw_reports_host: '127.0.0.1'  
+client_sw_reports_host: "{{ reports_host }}"
 
 # List of reports to generate
 # src:  Is the report template file on the Ansible control node.

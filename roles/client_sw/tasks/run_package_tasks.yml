@@ -1,35 +1,34 @@
 ---
 
 # Read package versions before changes
-- include_tasks: utils/read_package_version.yml
+- include_tasks: read_package_version.yml
   vars:
     package: "{{ item.key }}"
     state: "{{ item.value }}"
     flag: beg
-  loop: "{{ client_sw_pkgs | oneidentity.authentication_services.pkgdict2items }}"
+  loop: "{{ client_sw_pkg_state | oneidentity.authentication_services.pkgdict2items }}"
 
 # Create temporary directory
-- include_tasks: utils/temp_dir_create.yml
+- include_tasks: temp_dir_create.yml
   when: 
-    - "'present' in client_sw_pkgs.values()"
+    - "'present' in client_sw_pkg_state.values()"
 
 # Perform package tasks  
 - include_tasks: run_package_task.yml
   vars:
     package: "{{ item.key }}"
     state: "{{ item.value }}"
-  loop: "{{ client_sw_pkgs | oneidentity.authentication_services.pkgdict2items }}"
+  loop: "{{ client_sw_pkg_state | oneidentity.authentication_services.pkgdict2items }}"
 
 # Remove temporary directory 
-- include_tasks: utils/temp_dir_delete.yml
+- include_tasks: temp_dir_delete.yml
   when: 
-    - "'present' in client_sw_pkgs.values()"
+    - "'present' in client_sw_pkg_state.values()"
 
 # Read package versions after changes
-- include_tasks: utils/read_package_version.yml
+- include_tasks: read_package_version.yml
   vars:
     package: "{{ item.key }}"
     state: "{{ item.value }}"
     flag: end
-  loop: "{{ client_sw_pkgs | oneidentity.authentication_services.pkgdict2items }}"
-  when: client_sw_reports_generate
+  loop: "{{ client_sw_pkg_state | oneidentity.authentication_services.pkgdict2items }}"

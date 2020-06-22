@@ -1,0 +1,9 @@
+---
+
+# Run preflight
+- include_tasks: preflight.yml
+
+# Fail if there was a message returned
+- fail:
+    msg: "{{ result.msg }}"
+  when: result.msg

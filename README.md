@@ -1,27 +1,37 @@
 **One Identity open source projects are supported through [One Identity GitHub issues](https://github.com/OneIdentity/ars-ps/issues) and the [One Identity Community](https://www.oneidentity.com/community/). This includes all scripts, plugins, SDKs, modules, code snippets or other solutions. For assistance with any One Identity GitHub project, please raise a new Issue on the [One Identity GitHub project](https://github.com/OneIdentity/ars-ps/issues) page. You may also visit the [One Identity Community](https://www.oneidentity.com/community/) to ask questions.  Requests for assistance made through official One Identity Support will be referred back to GitHub and the One Identity Community forums where those requests can benefit all users.**
 
-# Authentication Services Ansible Collection
+# Safeguard Authentication Services Ansible Collection
 
-The One Identity Authentication Services Ansible Collection, referred to as `ansible-authentication-services`, consists of roles, modules, plugins, report templates, and sample playbooks to automate software deployment, configuration, Active Directory joining, profiling, and report generation for [Authentication Services](https://www.oneidentity.com/products/authentication-services/). 
+The One Identity Safeguard Authentication Services Ansible Collection, referred to as `ansible-authentication-services`, consists of roles, modules, plugins, report templates, and sample playbooks to automate software deployment, configuration, Active Directory joining, profiling, and report generation for [Safeguard Authentication Services](https://www.oneidentity.com/products/authentication-services/). 
 
 ## Collection Contents
 
 ### Implemented
 
-* [`common role`](docs/COMMON.md): Common tasks and variables required by other roles
+* [`common role`](docs/COMMON.md): Common tasks and variables required by other roles.
+
 * [`client_sw role`](docs/CLIENT_SW.md): Client software install, upgrade, downgrade, uninstall, and version checking.
-    * [`client_sw_pkg_dir module`](docs/CLIENT_SW.md#Plugins) Client software install package directory checking 
-    * [`pkgdict2items filter`](docs/CLIENT_SW.md#Plugins) Client software package sorting by state and name
+    * [`client_sw_pkgs module`](docs/CLIENT_SW.md#Plugins) Client software install package directory checking. 
+    * [`pkgdict2items filter`](docs/CLIENT_SW.md#Plugins) Client software package sorting by state and name.
+
+* [`client_preflight role`](docs/CLIENT_PREFLIGHT.md): Check client readiness for software install and AD join.
+    * [`preflight module`](docs/CLIENT_PREFLIGHT.md#Plugins) Performs preflight tasks on host.
+
+* [`client_join role`](docs/CLIENT_JOIN.md): Client Active Directory joining/unjoining. 
+    * [`vastool_join module`](docs/CLIENT_JOIN.md#Plugins) Performs Active Directory join/unjoin tasks on host.
 
 ### In Development 
 
-* [`client_join role`](docs/CLIENT_JOIN.md): Client configuration and Active Directory joining. 
+* [`client_configure role`](docs/CLIENT_CONFIGURE.md): Client configuration. 
+
 * [`client_profile role`](docs/CLIENT_PROFILE.md): Client profiling. 
 
 ### Future
 
 * [`server_sw role`](docs/SERVER_SW.md): Active Directory Server software install, upgrade, downgrade, uninstall, and version checking. 
+
 * [`server_config role`](docs/SERVER_CONFIG.md): Active Directory Server configuration. 
+
 * [`server_profile role`](docs/SERVER_PROFILE.md): Active Directory Server profiling. 
 
 ## Installation
@@ -32,11 +42,11 @@ The One Identity Authentication Services Ansible Collection, referred to as `ans
 
     * `Collections are a new feature introduced in Ansible version 2.9.  Please use the latest 2.9+ release for the best user experience.`
 
-* One Identity [Authentication Services](https://www.oneidentity.com/products/authentication-services/) version 4.2.x or later
+* One Identity [Safeguard Authentication Services](https://www.oneidentity.com/products/authentication-services/) version 4.2.x or later
 
-    * `This collection expects the components and structure of Authentication Services 4.2.x or later.`
+    * `This collection expects the components and structure of Safeguard Authentication Services 4.2.x or later.`
     * See collection role [documentation](docs/) for specific, per-role  requirements and instructions.
-    * See One Identity [Authentication Services documentation](https://support.oneidentity.com/authentication-services/4.2.3/technical-documents) for Authentication Services requirements and instructions.
+    * See One Identity [Safeguard Authentication Services documentation](https://support.oneidentity.com/authentication-services/4.2.4/technical-documents) for requirements and instructions.
 
 ### From Ansible Galaxy 
 The collection will soon be available through [Ansible Galaxy](https://galaxy.ansible.com/) until then please use the [From GitHub](#FromGitHub) or [Local Build and Install](#LocalBuildandInstall) instructions. 
@@ -70,14 +80,14 @@ To install from [GitHub](https://github.com/OneIdentity/ansible-authentication-s
 
 Using `ansible-galaxy` command:
 ```bash
-ansible-galaxy collection install https://github.com/OneIdentity/ansible-authentication-services/releases/download/v0.0.1/oneidentity-authentication_services-0.0.1.tar.gz
+ansible-galaxy collection install https://github.com/OneIdentity/ansible-authentication-services/releases/download/v0.0.2/oneidentity-authentication_services-0.0.2.tar.gz
 ```
 
 The collection can also be added to a project's `requirements.yml` file
 ```yaml
 ---
 collections:
-  - name: https://github.com/OneIdentity/ansible-authentication-services/releases/download/v0.0.1/oneidentity-authentication_services-0.0.1.tar.gz
+  - name: https://github.com/OneIdentity/ansible-authentication-services/releases/download/v0.0.2/oneidentity-authentication_services-0.0.2.tar.gz
 ```
 
 and installed using the `ansible-galaxy` command.  This method allows all required collections for a project to be specified in one place and installed with one command.
@@ -107,7 +117,7 @@ For local build and installation, you can clone the Git repository, build the co
     The build command will generate an Ansible Galaxy collection artifact with a `tar.gz` file extension, sample output will look like the following:
 
     ```
-    Created collection for oneidentity.authentication_services at /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.1.tar.gz
+    Created collection for oneidentity.authentication_services at /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.2.tar.gz
     ```
 
     `Pleae note the path shown above is just an example, the path to your build artifact will be in the root directory of the cloned repository.`
@@ -117,14 +127,14 @@ For local build and installation, you can clone the Git repository, build the co
     Using `ansible-galaxy` command:
 
     ```bash
-    ansible-galaxy collection install /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.1.tar.gz
+    ansible-galaxy collection install /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.2.tar.gz
     ```
 
     The collection can also be added to a project's `requirements.yml` file
     ```yaml
     ---
     collections:
-    - name: /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.1.tar.gz
+    - name: /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.2.tar.gz
     ```
 
     and installed using the `ansible-galaxy` command.  This method allows all required collections for a project to be specified in one place and installed with one command.
@@ -140,7 +150,7 @@ The collection provides various sample playbooks in the [examples](examples/READ
 
 ## Supported Platforms
 
-All Authentication Services supported [platforms](https://support.oneidentity.com/technical-documents/authentication-services/4.2.3/release-notes/2#TOPIC-1376245) except IBM AIX.  Support for IBM AIX will be added soon.
+All [Safeguard Authentication Services supported platforms](https://support.oneidentity.com/technical-documents/authentication-services/4.2.4/release-notes/2#TOPIC-1376245).
 
 ## Notes
 
@@ -148,11 +158,10 @@ All Authentication Services supported [platforms](https://support.oneidentity.co
 
 * Check mode does not work as expected for the client_sw role.  No changes are made and it doesn't cause errors but the stated changes that would or would not be made if run normally are not accurate.
 * The directory of client software install packages has to be on the Ansible control node.  It would be nice to be able to point to this directory on another machine but this is not possible at this time.
-* The IPV4 address for HP-UX machines does not show up in the CSV and HTML reports, this is due to differences in how facts are reported for this OS.  No plan to fix at issue at this time.
+* The IPV4 address for HP-UX machines does not show up in the CSV and HTML reports, this is due to differences in how facts are reported for this OS.  No plan to fix this issue at this time.
 
 ### TODO's
 
-* Add support to client_sw role for IBM AIX.
-* Implement client_join role.
+* Implement client_configure role.
 * Implement client_profile role.
 * Other roles/features depending on interest may include roles to automate server software deployment, server configuration, and server profiling.

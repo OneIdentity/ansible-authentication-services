@@ -1,0 +1,13 @@
+---
+
+# Copy install package path to variable
+package_src: "{{ client_sw_pkgs['packages'][package]['path'] }}"
+
+# Copy install package file name variable
+package_file: "{{ client_sw_pkgs['packages'][package]['file'] }}"
+
+# Copy package destination directory to variable
+package_dest_dir: "{{ client_sw_tmp_dir }}/"
+
+# Copye package destination file path to variable
+package_dest: "{{ package_dest_dir }}{{ package_file }}"

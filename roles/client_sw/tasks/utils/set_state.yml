@@ -1,4 +1,6 @@
 ---
 
 # Set state 
-- set_fact: "{{ package }}_{{ flag }}={{ value }}"
+- set_fact: |
+    sas_client_sw_{{ package }}_{{ flag }}={{ value }}
+    | cacheable=true

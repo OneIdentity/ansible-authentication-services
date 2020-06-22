@@ -1,0 +1,16 @@
+---
+
+# Set success
+- set_fact:
+    cacheable: true
+    sas_client_preflight:  
+      unreachable: false
+      failed: false
+      changed: "{{ result.changed | default(False) }}"
+      msg: ''
+    sas_client: 
+      unreachable: false 
+      failed: false
+      changed: "{{ result.changed | default(False) }}"
+      msg: '' 
+  when: client_preflight_reports_generate or client_preflight_facts_generate

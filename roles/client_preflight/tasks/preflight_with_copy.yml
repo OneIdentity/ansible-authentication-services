@@ -1,0 +1,28 @@
+---
+
+# Copy, run, and then delete preflight
+- block:
+
+  # Check directory of client software install packages
+  - include_tasks: utils/check_package_directory.yml
+
+  # Create temporary directory
+  - include_tasks: utils/temp_dir_create.yml
+
+  # Copy preflight to host
+  - include_tasks: utils/package_copy.yml
+
+  # Run preflight
+  - include_tasks: preflight.yml
+
+  # Remove temporary directory
+  - include_tasks: utils/temp_dir_delete.yml
+
+  vars:
+    package: preflight
+    path: "{{ package_dest }}" 
+
+# Fail if there was a message returned
+- fail:
+    msg: "{{ result.msg }}"
+  when: result.msg

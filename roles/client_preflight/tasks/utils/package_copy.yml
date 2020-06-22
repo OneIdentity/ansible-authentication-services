@@ -1,0 +1,10 @@
+---
+
+# Copy install package to host
+- name: copy {{ package }} installer {{ package_file }} 
+  copy:
+    src: "{{ package_src }}"
+    dest: "{{ package_dest }}"
+    mode: 'u+rwx'
+  ignore_errors: true
+  changed_when: false

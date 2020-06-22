@@ -1,0 +1,14 @@
+---
+
+# ------------------------------------------------------------------------------
+# AIX - remove package
+# ------------------------------------------------------------------------------
+
+# Remove package
+- name: remove {{ package }}
+  command:
+    cmd: "{{ item }}" 
+  loop: 
+    - installp -C {{ package }}   # Cleanup failed installation before removal
+    - installp -u {{ package }}   # Remove package
+  register: pkg_remove

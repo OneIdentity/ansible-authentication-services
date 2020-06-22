@@ -1,8 +1,3 @@
 ---
- 
-  # Force gathering of facts.  Other roles need facts and will not work
-  # without them and since gather_facts can be overridend and would
-  # break our roles, we will explicitly gather facts instead to prevent
-  # this.
-- name: gather host information 
-  setup:
+
+# Nother here for now 

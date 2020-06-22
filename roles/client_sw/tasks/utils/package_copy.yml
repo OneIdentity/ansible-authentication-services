@@ -7,5 +7,5 @@
   copy:
     src: "{{ package_src }}"
     dest: "{{ package_dest }}"
-  ignore_errors: True
+  ignore_errors: true
   changed_when: false

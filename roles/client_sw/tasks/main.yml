@@ -42,14 +42,31 @@
 
 - block:
 
-  # Check directory of client software install packages
-  - include_tasks: check_package_directory.yml
+    # Gather facts
+    - include_tasks: gather_facts.yml
 
-  # Perform client software management tasks
-  - include_tasks: run_package_tasks.yml
+    # Check directory of client software install packages
+    - include_tasks: check_package_directory.yml
+
+    # Perform client software management tasks
+    - include_tasks: run_package_tasks.yml
+
+    # We get here on success
+    - include_tasks: utils/set_fact_success.yml
+   
+  ignore_unreachable: true
+
+  rescue:
+
+    # Set unreachable status and fail
+    - include_tasks: utils/set_fact_unreachable.yml
+      when: result.unreachable is defined and result.unreachable == true
+
+    # Set fail status and fail
+    - include_tasks: utils/set_fact_failed.yml
 
   always:
 
-  # Generate reports
-  - include_tasks: generate_reports.yml
-    when: client_sw_reports_generate
+    # Generate reports
+    - include_tasks: generate_reports.yml
+      when: client_sw_reports_generate

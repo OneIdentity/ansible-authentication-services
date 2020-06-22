@@ -1,0 +1,24 @@
+---
+
+# Set unreachable
+- set_fact:
+    cacheable: true
+    sas_client_join:
+      unreachable: true
+      failed: true
+      changed: "{{ result.changed | default(False) }}"
+      msg: |
+        client_join:
+        {{ result.msg | default('Unexpected error') }}
+    sas_client: 
+      unreachable: true
+      failed: true
+      changed: "{{ result.changed | default(False) }}"
+      msg: |
+        client_join:
+        {{ result.msg | default('Unexpected error') }}
+  when: client_join_reports_generate or client_join_facts_generate
+
+# Propogate fail
+- fail:
+    msg: "{{ result.msg | default('Unexpected error') }}"

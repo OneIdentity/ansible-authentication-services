@@ -1,0 +1,24 @@
+---
+
+# Set unreachable
+- set_fact:
+    cacheable: true
+    sas_client_preflight:
+      unreachable: true
+      failed: true
+      changed: "{{ result.changed | default(False) }}"
+      msg: |
+        client_preflight:
+        {{ result.msg | default('Unexpected error') }}
+    sas_client: 
+      unreachable: true
+      failed: true
+      changed: "{{ result.changed | default(False) }}"
+      msg: |
+        client_preflight:
+        {{ result.msg | default('Unexpected error') }}
+  when: client_preflight_reports_generate or client_preflight_facts_generate
+
+# Propogate fail
+- fail:
+    msg: "{{ result.msg | default('Unexpected error') }}"

@@ -1,0 +1,18 @@
+---
+
+# Preflight 
+- name: preflight
+  preflight:
+    domain: "{{ client_domain }}" 
+    username: "{{ client_username }}" 
+    password: "{{ client_password }}" 
+    servers: "{{ client_servers }}" 
+    timeout: "{{ client_preflight_timeout }}" 
+    timesync: "{{ client_preflight_timesync }}" 
+    extra_args: "{{ client_preflight_extra_args }}" 
+    facts: "{{ client_preflight_facts_generate or client_preflight_facts_generate }}"
+    facts_verbose: "{{ client_preflight_facts_verbose }}"
+    facts_key: sas_client_preflight_preflight
+    path: "{{ path | default() }}"
+  register: result
+  failed_when: false

@@ -1,35 +1,68 @@
-{# Configure output for missing and error values #}
-{% set missing_value = 'none' %}
-{% set error_value = 'error' %}
-{# Create CSV header line #}
-hostname, ip_address, os_distro, os_version, hw_arch, updated, package_name, package_file, package_version, state_request, state_action, version_begin, version_end
-{# Iterate over each host in alphabetical order #}
+{# Print CSV header #}
+hostname,group,ip_address,os_distro,os_version,hw_arch,time,changed,unreachable,failed,details
+{# Loop through all hosts #}
 {% for host in ansible_play_hosts_all | sort %}
-{# Iterate over each package of each host in alphabetical order to create line in CSV #}
-{% for pkg_key, pkg_val in client_sw_pkgs.items()|sort %}
-{% set pkg_file = hostvars[host]['ansible_facts']['qas']['packages'][pkg_key]['file'] | default(missing_value) %}
-{% set pkg_vers = hostvars[host]['ansible_facts']['qas']['packages'][pkg_key]['vers'] | default(missing_value) %}
-{% set pkg_req = hostvars[host][pkg_key + '_req'] | default(error_value) %}
-{% set pkg_act = hostvars[host][pkg_key + '_act'] | default(error_value) %}
-{% set pkg_vers_beg = hostvars[host][pkg_key + '_vers_beg'] | default(missing_value, true) %}
-{% set pkg_vers_end = hostvars[host][pkg_key + '_vers_end'] | default(missing_value, true) %}
-{# Hide NOP lines if the report_hide_nop flag is set #}
-{% if not client_sw_reports_hide_nops or pkg_file != 'none' or pkg_vers != 'none' or pkg_vers_beg != 'none' or pkg_vers_end != 'none' %}
-{{ '%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s' | format(
+{# System time #}
+{% if hostvars[host]['ansible_facts']['date_time'] is not defined %}
+{% set sys_time = '' %}
+{% else %}
+{% set sys_time = hostvars[host]['ansible_facts']['date_time']['date'] + ' ' + hostvars[host]['ansible_facts']['date_time']['time'] %}
+{% endif %}
+{# Package details #}
+{% set ns = namespace( details = [],  changed = false ) %}
+{% for pkg_name in client_sw_pkg_state %}
+{% set pkg_file = hostvars[host]['ansible_facts']['sas_client_sw_pkgs']['packages'][pkg_name]['file'] | default('none', true) %}
+{% set pkg_vers = hostvars[host]['ansible_facts']['sas_client_sw_pkgs']['packages'][pkg_name]['vers'] | default('none', true) %}
+{% set pkg_req = hostvars[host]['ansible_facts']['sas_client_sw_' + pkg_name + '_req'] | default('none', true) %}
+{% set pkg_act = hostvars[host]['ansible_facts']['sas_client_sw_' + pkg_name + '_act'] | default('none', true) %}
+{% set pkg_vers_beg = hostvars[host]['ansible_facts']['sas_client_sw_' + pkg_name + '_vers_beg'] | default('none', true) %}
+{% set pkg_vers_end = hostvars[host]['ansible_facts']['sas_client_sw_' + pkg_name + '_vers_end'] | default('none', true) %}
+{% set pkg_detail = {'key': pkg_name, 'value': {'installer_file': pkg_file, 'installer_version': pkg_vers, 'state_request': pkg_req, 'state_change': pkg_act, 'version_begin': pkg_vers_beg, 'version_end': pkg_vers_end}} %}
+{% if pkg_file != 'none' or pkg_act != 'none' %}
+{% set ns.details = ns.details + [pkg_detail] %}
+{% endif %}
+{% if pkg_act not in ['none', 'failed'] %}
+{% set ns.changed = true %}
+{% endif %}
+{% endfor %}
+{% set package_details = ns.details | items2dict %}
+{# Status #}
+{% set changed = ns.changed %}
+{% set unreachable = hostvars[host]['ansible_facts']['sas_client']['unreachable'] | default(False) %}
+{% set failed = hostvars[host]['ansible_facts']['sas_client']['failed'] | default(True) %}
+{% set msg = hostvars[host]['ansible_facts']['sas_client']['msg'] | default('Unexpected error occurred') %}
+{# Details #}
+{% set details = {
+    'hostname': host,
+    'msg': msg,
+    'unreachable': unreachable,
+    'failed': failed,
+    'changed': changed,
+    'packages': package_details
+    }
+%}
+{# Format details #}
+{% if details %}
+{% if client_sw_reports_details_format | lower == 'json' %}
+{% set details = details | to_nice_json(indent=2) | replace("\"", "\"\"") %}
+{% else %}
+{% set details = details | to_nice_yaml(indent=2, width=160) | replace("\"", "\"\"") %}
+{% endif %}
+{% else %}
+{% set details = '' %}
+{% endif %}
+{# Print CSV line #}
+{{ '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"%s"' | format(
 host,
+hostvars[host]['group_names'] | join(', '),
 hostvars[host]['ansible_facts']['default_ipv4']['address'] | default(),
 hostvars[host]['ansible_facts']['distribution'] | default(),
 hostvars[host]['ansible_facts']['distribution_version'] | default(),
 hostvars[host]['ansible_facts']['architecture'] | default(),
-now(),
-pkg_key,
-pkg_file,
-pkg_vers,
-pkg_req,
-pkg_act,
-pkg_vers_beg,
-pkg_vers_end,
+sys_time,
+changed,
+unreachable,
+failed,
+details
 )}}
-{% endif %}
-{% endfor %}
 {% endfor %}

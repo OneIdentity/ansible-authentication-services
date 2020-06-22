@@ -1,0 +1,24 @@
+---
+
+- hosts: all 
+  gather_facts: false
+
+  # The variables you would most likely want/need to override have been included
+  vars:
+
+    # Active Directory
+    client_join_state: joined
+    client_domain: sample.net
+    client_username: user
+    client_password: pass
+
+    # Facts
+    client_join_facts_generate: true
+    client_join_facts_verbose: true
+
+    # Reports
+    client_join_reports_generate: true 
+    client_join_reports_backup: false 
+
+  roles:
+    - name: oneidentity.authentication_services.client_join

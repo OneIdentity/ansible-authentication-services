@@ -1,0 +1,23 @@
+---
+
+# Vastool 
+- name: vastool {{ client_join_state }} 
+  vastool_join:
+    state: "{{ client_join_state }}" 
+    domain: "{{ client_domain }}" 
+    username: "{{ client_username }}" 
+    password: "{{ client_password }}" 
+    servers: "{{ client_servers }}" 
+    account_name: "{{ client_account_name }}" 
+    account_container: "{{ client_account_container }}" 
+    extra_args: "{{ client_join_extra_args }}" 
+    facts: "{{ client_join_facts_generate or client_join_reports_generate }}"
+    facts_verbose: "{{ client_join_facts_verbose }}"
+    facts_key: sas_client_join_vastool
+  register: result
+  failed_when: false
+
+# Fail if there was a message returned
+- fail:
+    msg: "{{ result.msg }}"
+  when: result.msg
