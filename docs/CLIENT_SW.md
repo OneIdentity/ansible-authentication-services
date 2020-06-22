@@ -154,6 +154,6 @@ Only the `client_sw_dir` and `client_sw_pkgs` variables are overriden in this pl
     - name: oneidentity.authentication_services.client_sw
 ```
 
-See sample [HTML](http://htmlpreview.github.io/?https://github.com/OneIdentity/ansible-authentication-services/blob/master/docs/client_sw_report.html) and [CSV](client_sw_report.csv) reports generated from a run of this sample playbook.
+See sample [HTML](client_sw_report.html) and [CSV](client_sw_report.csv) reports generated from a run of this sample playbook.
 
 For a copy of this and other sample playbooks see [examples](../examples/README.md)

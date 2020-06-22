@@ -141,6 +141,6 @@ Below is a sample playbook using the `client_join` role.
     - name: oneidentity.authentication_services.client_join
 ```
 
-See sample [HTML](http://htmlpreview.github.io/?https://github.com/OneIdentity/ansible-authentication-services/blob/master/docs/client_join_report.html) and [CSV](client_join_report.csv) reports generated from a run of this sample playbook.
+See sample [HTML](client_join_report.html) and [CSV](client_join_report.csv) reports generated from a run of this sample playbook.
 
 For a copy of this and other sample playbooks see [examples](../examples/README.md)

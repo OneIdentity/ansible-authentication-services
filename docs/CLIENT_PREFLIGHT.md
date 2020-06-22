@@ -152,6 +152,6 @@ Below is a sample playbook using the `client_preflight` role.
     - name: oneidentity.authentication_services.client_preflight
 ```
 
-See sample [HTML](http://htmlpreview.github.io/?https://github.com/OneIdentity/ansible-authentication-services/blob/master/docs/client_preflight_report.html) and [CSV](client_preflight_report.csv) reports generated from a run of this sample playbook.
+See sample [HTML](client_preflight_report.html) and [CSV](client_preflight_report.csv) reports generated from a run of this sample playbook.
 
 For a copy of this and other sample playbooks see [examples](../examples/README.md)
