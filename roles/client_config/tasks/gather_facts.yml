@@ -1,0 +1,12 @@
+---
+
+# Gather facts
+- name: gather host information 
+  setup:
+  register: result
+  ignore_unreachable: true
+
+# Fail when unreachable
+- fail:
+    msg: "{{ result.msg }}"
+  when: result.unreachable is defined and result.unreachable == true

@@ -1,0 +1,13 @@
+---
+
+# User override
+- include_tasks: config_files/simple_file.yml
+  vars:
+    file_name: user_override
+    file_path: "{{ client_config_user_override_path }}"
+    file_create: "{{ client_config_user_override_create }}"
+    file_mode: "{{ client_config_user_override_mode }}"
+    file_owner: "{{ client_config_user_override_owner }}"
+    file_group: "{{ client_config_user_override_group }}"
+    file_backup: "{{ client_config_user_override_backup }}"
+    file_values: "{{ client_config_user_override }}"

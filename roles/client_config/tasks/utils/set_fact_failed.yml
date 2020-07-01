@@ -1,0 +1,24 @@
+---
+
+# Set failed
+- set_fact:
+    cacheable: true
+    sas_client_config:
+      unreachable: false 
+      failed: true
+      changed: "{{ result.changed | default(False) }}"
+      msg: |
+        client_config:
+        {{ result.msg | default('Unexpected error') }}
+    sas_client: 
+      unreachable: false 
+      failed: true
+      changed: "{{ result.changed | default(False) }}"
+      msg: |
+        client_config:
+        {{ result.msg | default('Unexpected error') }}
+  when: client_config_reports_generate or client_config_facts_generate
+
+# Propogate fail
+- fail:
+    msg: "{{ result.msg | default('Unexpected error') }}"

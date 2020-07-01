@@ -1,0 +1,13 @@
+---
+
+# vas.conf
+- include_tasks: config_files/ini_file.yml
+  vars:
+    file_name: vas_conf
+    file_path: "{{ client_config_vas_conf_path }}"
+    file_create: "{{ client_config_vas_conf_create }}"
+    file_mode: "{{ client_config_vas_conf_mode }}"
+    file_owner: "{{ client_config_vas_conf_owner }}"
+    file_group: "{{ client_config_vas_conf_group }}"
+    file_backup: "{{ client_config_vas_conf_backup }}"
+    file_values: "{{ client_config_vas_conf }}"

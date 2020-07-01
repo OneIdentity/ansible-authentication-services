@@ -1,0 +1,56 @@
+{# Print CSV header #}
+hostname,group,ip_address,os_distro,os_version,hw_arch,time,changed,unreachable,failed,details
+{# Loop through all hosts #}
+{% for host in ansible_play_hosts_all | sort %}
+{# System time #}
+{% if hostvars[host]['ansible_facts']['date_time'] is not defined %}
+{% set sys_time = '' %}
+{% else %}
+{% set sys_time = hostvars[host]['ansible_facts']['date_time']['date'] + ' ' + hostvars[host]['ansible_facts']['date_time']['time'] %}
+{% endif %}
+{% set changed = hostvars[host]['ansible_facts']['sas_client']['changed'] | default(False) %}
+{% set unreachable = hostvars[host]['ansible_facts']['sas_client']['unreachable'] | default(False) %}
+{% set failed = hostvars[host]['ansible_facts']['sas_client']['failed'] | default(True) %}
+{% set msg = hostvars[host]['ansible_facts']['sas_client']['msg'] | default('Unexpected error occurred') %}
+{% if hostvars[host]['ansible_facts']['sas_client_join_vastool'] is defined %}
+{% set details_raw = hostvars[host]['ansible_facts']['sas_client_join_vastool'] | default() %}
+{% else %}
+{% set details_raw = hostvars[host]['ansible_facts']['sas_client'] | default() %}
+{% endif %}
+{# Details #}
+{% set details = {
+    'hostname': host,
+    'msg': details_raw['msg'] | default(''),
+    'unreachable': unreachable,
+    'failed': failed,
+    'changed': changed,
+    'params': details_raw['params'] | default({}),
+    'version': details_raw['version'] | default(''),
+    'steps': details_raw['steps'] | default([])
+    }
+%}
+{# Format details #}
+{% if details %}
+{% if client_config_reports_details_format | lower == 'json' %}
+{% set details = details | to_nice_json(indent=2) | replace("\"", "\"\"") %}
+{% else %}
+{% set details = details | to_nice_yaml(indent=2, width=160) | replace("\"", "\"\"") %}
+{% endif %}
+{% else %}
+{% set details = '' %}
+{% endif %}
+{# Print CSV line #}
+{{ '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"%s"' | format(
+host,
+hostvars[host]['group_names'] | join(', '),
+hostvars[host]['ansible_facts']['default_ipv4']['address'] | default(),
+hostvars[host]['ansible_facts']['distribution'] | default(),
+hostvars[host]['ansible_facts']['distribution_version'] | default(),
+hostvars[host]['ansible_facts']['architecture'] | default(),
+sys_time,
+changed,
+unreachable,
+failed,
+details
+)}}
+{% endfor %}

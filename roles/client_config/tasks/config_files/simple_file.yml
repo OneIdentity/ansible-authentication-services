@@ -1,0 +1,34 @@
+---
+
+# File handler
+- name: "{{ file_name }}"
+  lineinfile:
+    path: "{{ file_path }}"
+    create: "{{ file_create }}" 
+    backup: "{{ file_backup }}"
+    regex: "{{ item.regex | default(omit) }}"
+    insertafter: "{{ item.insertafter | default(omit) }}"
+    insertbefore: "{{ item.insertbefore | default(omit) }}"
+    line: "{{ item.line | default('') }}"
+    state: "{{ item.state }}"
+  loop: "{{ file_values }}"
+  register: result
+  ignore_errors: true
+
+# Set details
+- include_tasks: utils/set_details.yml
+  vars:
+    file: "{{ file_name }}"
+    changed: "{{ result.changed | default(false) }}"
+    failed: "{{ result.failed | default(false) }}"
+    msg: "{{ result.msg | default('') }}"
+    results: >
+      {{ result.results | oneidentity.authentication_services.dictlistselect(
+          ['changed', 'failed', 'msg', 'item'], 
+          include_conditions=client_config_facts_verbose | ternary({}, {'changed': True, 'failed': True})) 
+      }}
+
+# Fail if there was a message returned
+- fail:
+    msg: "{{ result.msg }}"
+  when: result.failed is defined and result.failed
