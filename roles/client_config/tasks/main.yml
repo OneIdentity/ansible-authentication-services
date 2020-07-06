@@ -12,9 +12,18 @@
     # vas.conf
     - include_tasks: config_files/vas_conf.yml
 
-    # user/group-override settings
+    # user/group-override
     - include_tasks: config_files/user_override.yml
-    #- include_tasks: config_files/group_override.yml
+    - include_tasks: config_files/group_override.yml
+
+    # users/groups.allow/deny
+    - include_tasks: config_files/users_allow.yml
+    - include_tasks: config_files/users_deny.yml
+    - include_tasks: config_files/groups_allow.yml
+    - include_tasks: config_files/groups_deny.yml
+
+    # users.starling
+    - include_tasks: config_files/users_starling.yml
 
     # We get here on success
     - include_tasks: utils/set_fact_success.yml

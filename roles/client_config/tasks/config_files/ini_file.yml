@@ -32,5 +32,10 @@
 
 # Fail if there was a message returned
 - fail:
-    msg: "{{ result.msg }}"
+    # msg: "{{ result.msg }}"
+    msg: >
+      {{ result.results | oneidentity.authentication_services.dictlistselect(
+          ['item'], 
+          include_conditions=client_config_facts_verbose | ternary({}, {'failed': True})) 
+      }}
   when: result.failed is defined and result.failed

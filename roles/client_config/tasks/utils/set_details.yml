@@ -8,6 +8,3 @@
         msg: "{{ msg }}" 
         results: "{{ results }}"
     cacheable: true
-
-- debug:
-    var: sas_client_config_{{ file }}

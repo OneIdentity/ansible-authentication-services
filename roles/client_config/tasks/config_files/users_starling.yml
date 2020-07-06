@@ -1,0 +1,13 @@
+---
+
+# Users starling
+- include_tasks: config_files/simple_file.yml
+  vars:
+    file_name: users_starling
+    file_path: "{{ client_config_users_starling_path }}"
+    file_create: "{{ client_config_users_starling_create }}"
+    file_mode: "{{ client_config_users_starling_mode }}"
+    file_owner: "{{ client_config_users_starling_owner }}"
+    file_group: "{{ client_config_users_starling_group }}"
+    file_backup: "{{ client_config_users_starling_backup }}"
+    file_values: "{{ client_config_users_starling }}"
