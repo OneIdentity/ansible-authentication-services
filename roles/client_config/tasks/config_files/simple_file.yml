@@ -12,8 +12,11 @@
     line: "{{ item.line | default('') }}"
     state: "{{ item.state }}"
   loop: "{{ file_values }}"
-  register: result
+  register: file_result
   ignore_errors: true
+
+# Format result
+- include_tasks: utils/format_result.yml
 
 # Set details
 - include_tasks: utils/set_details.yml

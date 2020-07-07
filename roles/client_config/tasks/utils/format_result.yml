@@ -1,0 +1,15 @@
+---
+
+- set_fact:
+    result:
+      unreachable: "{{ file_result.unreachable | default(false) }}"
+      changed: "{{ file_result.changed | default(false) }}"
+      failed: "{{ file_result.failed | default(false) }}"
+      results: "{{ file_result.results | default([]) }}"
+      msg: |-
+        {{ file_name + ' (' + file_path + ')' }}
+        {{ (file_result.failed is defined and file_result.failed) | ternary(
+            file_result.results | oneidentity.authentication_services.dictlistselect(['item', 'msg']) | to_yaml,
+            file_result.msg
+          )
+        }}

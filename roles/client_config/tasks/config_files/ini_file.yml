@@ -14,8 +14,11 @@
     value: "{{ item.value | default('') }}"
     state: "{{ item.state }}"
   loop: "{{ file_values }}"
-  register: result
+  register: file_result
   ignore_errors: true
+
+# Format result
+- include_tasks: utils/format_result.yml
 
 # Set details
 - include_tasks: utils/set_details.yml
@@ -32,10 +35,5 @@
 
 # Fail if there was a message returned
 - fail:
-    # msg: "{{ result.msg }}"
-    msg: >
-      {{ result.results | oneidentity.authentication_services.dictlistselect(
-          ['item'], 
-          include_conditions=client_config_facts_verbose | ternary({}, {'failed': True})) 
-      }}
+    msg: "{{ result.msg }}"
   when: result.failed is defined and result.failed
