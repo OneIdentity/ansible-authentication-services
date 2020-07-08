@@ -6,14 +6,14 @@
     sas_client_config:
       unreachable: true
       failed: true
-      changed: "{{ result.changed | default(False) }}"
+      changed: "{{ sas_client_config_changed | default(false) }}"
       msg: |
         client_config:
         {{ result.msg | default('Unexpected error') }}
     sas_client: 
       unreachable: true
       failed: true
-      changed: "{{ result.changed | default(False) }}"
+      changed: "{{ sas_client_config_changed | default(false) }}"
       msg: |
         client_config:
         {{ result.msg | default('Unexpected error') }}

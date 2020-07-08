@@ -6,11 +6,11 @@
     sas_client_config:  
       unreachable: false
       failed: false
-      changed: "{{ result.changed | default(False) }}"
+      changed: "{{ sas_client_config_changed | default(false) }}"
       msg: ''
     sas_client: 
       unreachable: false 
       failed: false
-      changed: "{{ result.changed | default(False) }}"
+      changed: "{{ sas_client_config_changed | default(false) }}"
       msg: ''
   when: client_config_reports_generate or client_config_facts_generate
