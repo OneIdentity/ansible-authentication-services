@@ -1,0 +1,641 @@
+hostname,group,ip_address,os_distro,os_version,hw_arch,time,changed,unreachable,failed,details
+centos8-1,esx_systems,10.5.37.154,CentOS,8.1,x86_64,2020-07-10 13:13:08,True,False,False,"changed: true
+failed: false
+files:
+  group-override:
+    changed: false
+    failed: false
+    msg: |-
+      group_override (/etc/opt/quest/vas/group-override)
+    results: []
+  groups.allow:
+    changed: false
+    failed: false
+    msg: |-
+      groups_allow (/etc/opt/quest/vas/groups.allow)
+    results: []
+  groups.deny:
+    changed: false
+    failed: false
+    msg: |-
+      groups_deny (/etc/opt/quest/vas/groups.deny)
+    results: []
+  user-override:
+    changed: false
+    failed: false
+    msg: |-
+      user_override (/etc/opt/quest/vas/user-override)
+    results: []
+  users.allow:
+    changed: false
+    failed: false
+    msg: |-
+      users_allow (/etc/opt/quest/vas/users.allow)
+    results: []
+  users.deny:
+    changed: false
+    failed: false
+    msg: |-
+      users_deny (/etc/opt/quest/vas/users.deny)
+    results: []
+  users.starling:
+    changed: false
+    failed: false
+    msg: |-
+      users_starling (/etc/opt/quest/vas/users.starling)
+    results: []
+  vas.conf:
+    changed: true
+    failed: false
+    msg: |-
+      vas_conf (/etc/opt/quest/vas/vas.conf)
+      All items completed
+    results:
+    - changed: true
+      failed: false
+      item:
+        option: ticket_lifetime
+        section: libdefaults
+        state: present
+        value: 10h
+      msg: option changed
+hostname: centos8-1
+msg: ''
+unreachable: false
+"
+debian10-1,esx_systems,10.5.37.189,Debian,10,x86_64,2020-07-10 13:13:07,True,False,False,"changed: true
+failed: false
+files:
+  group-override:
+    changed: false
+    failed: false
+    msg: |-
+      group_override (/etc/opt/quest/vas/group-override)
+    results: []
+  groups.allow:
+    changed: false
+    failed: false
+    msg: |-
+      groups_allow (/etc/opt/quest/vas/groups.allow)
+    results: []
+  groups.deny:
+    changed: false
+    failed: false
+    msg: |-
+      groups_deny (/etc/opt/quest/vas/groups.deny)
+    results: []
+  user-override:
+    changed: false
+    failed: false
+    msg: |-
+      user_override (/etc/opt/quest/vas/user-override)
+    results: []
+  users.allow:
+    changed: false
+    failed: false
+    msg: |-
+      users_allow (/etc/opt/quest/vas/users.allow)
+    results: []
+  users.deny:
+    changed: false
+    failed: false
+    msg: |-
+      users_deny (/etc/opt/quest/vas/users.deny)
+    results: []
+  users.starling:
+    changed: false
+    failed: false
+    msg: |-
+      users_starling (/etc/opt/quest/vas/users.starling)
+    results: []
+  vas.conf:
+    changed: true
+    failed: false
+    msg: |-
+      vas_conf (/etc/opt/quest/vas/vas.conf)
+      All items completed
+    results:
+    - changed: true
+      failed: false
+      item:
+        option: ticket_lifetime
+        section: libdefaults
+        state: present
+        value: 10h
+      msg: option changed
+hostname: debian10-1
+msg: ''
+unreachable: false
+"
+fedora31-1,esx_systems,10.5.37.125,Fedora,31,x86_64,2020-07-10 13:13:07,True,False,False,"changed: true
+failed: false
+files:
+  group-override:
+    changed: false
+    failed: false
+    msg: |-
+      group_override (/etc/opt/quest/vas/group-override)
+    results: []
+  groups.allow:
+    changed: false
+    failed: false
+    msg: |-
+      groups_allow (/etc/opt/quest/vas/groups.allow)
+    results: []
+  groups.deny:
+    changed: false
+    failed: false
+    msg: |-
+      groups_deny (/etc/opt/quest/vas/groups.deny)
+    results: []
+  user-override:
+    changed: false
+    failed: false
+    msg: |-
+      user_override (/etc/opt/quest/vas/user-override)
+    results: []
+  users.allow:
+    changed: false
+    failed: false
+    msg: |-
+      users_allow (/etc/opt/quest/vas/users.allow)
+    results: []
+  users.deny:
+    changed: false
+    failed: false
+    msg: |-
+      users_deny (/etc/opt/quest/vas/users.deny)
+    results: []
+  users.starling:
+    changed: false
+    failed: false
+    msg: |-
+      users_starling (/etc/opt/quest/vas/users.starling)
+    results: []
+  vas.conf:
+    changed: true
+    failed: false
+    msg: |-
+      vas_conf (/etc/opt/quest/vas/vas.conf)
+      All items completed
+    results:
+    - changed: true
+      failed: false
+      item:
+        option: ticket_lifetime
+        section: libdefaults
+        state: present
+        value: 10h
+      msg: option changed
+hostname: fedora31-1
+msg: ''
+unreachable: false
+"
+freebsd11-2,esx_systems,10.5.37.199,FreeBSD,11.3,amd64,2020-07-10 13:13:07,True,False,False,"changed: true
+failed: false
+files:
+  group-override:
+    changed: false
+    failed: false
+    msg: |-
+      group_override (/etc/opt/quest/vas/group-override)
+    results: []
+  groups.allow:
+    changed: false
+    failed: false
+    msg: |-
+      groups_allow (/etc/opt/quest/vas/groups.allow)
+    results: []
+  groups.deny:
+    changed: false
+    failed: false
+    msg: |-
+      groups_deny (/etc/opt/quest/vas/groups.deny)
+    results: []
+  user-override:
+    changed: false
+    failed: false
+    msg: |-
+      user_override (/etc/opt/quest/vas/user-override)
+    results: []
+  users.allow:
+    changed: false
+    failed: false
+    msg: |-
+      users_allow (/etc/opt/quest/vas/users.allow)
+    results: []
+  users.deny:
+    changed: false
+    failed: false
+    msg: |-
+      users_deny (/etc/opt/quest/vas/users.deny)
+    results: []
+  users.starling:
+    changed: false
+    failed: false
+    msg: |-
+      users_starling (/etc/opt/quest/vas/users.starling)
+    results: []
+  vas.conf:
+    changed: true
+    failed: false
+    msg: |-
+      vas_conf (/etc/opt/quest/vas/vas.conf)
+      All items completed
+    results:
+    - changed: true
+      failed: false
+      item:
+        option: ticket_lifetime
+        section: libdefaults
+        state: present
+        value: 10h
+      msg: option changed
+hostname: freebsd11-2
+msg: ''
+unreachable: false
+"
+oel8-1,esx_systems,10.5.37.85,OracleLinux,8.0,x86_64,2020-07-10 13:13:08,True,False,False,"changed: true
+failed: false
+files:
+  group-override:
+    changed: false
+    failed: false
+    msg: |-
+      group_override (/etc/opt/quest/vas/group-override)
+    results: []
+  groups.allow:
+    changed: false
+    failed: false
+    msg: |-
+      groups_allow (/etc/opt/quest/vas/groups.allow)
+    results: []
+  groups.deny:
+    changed: false
+    failed: false
+    msg: |-
+      groups_deny (/etc/opt/quest/vas/groups.deny)
+    results: []
+  user-override:
+    changed: false
+    failed: false
+    msg: |-
+      user_override (/etc/opt/quest/vas/user-override)
+    results: []
+  users.allow:
+    changed: false
+    failed: false
+    msg: |-
+      users_allow (/etc/opt/quest/vas/users.allow)
+    results: []
+  users.deny:
+    changed: false
+    failed: false
+    msg: |-
+      users_deny (/etc/opt/quest/vas/users.deny)
+    results: []
+  users.starling:
+    changed: false
+    failed: false
+    msg: |-
+      users_starling (/etc/opt/quest/vas/users.starling)
+    results: []
+  vas.conf:
+    changed: true
+    failed: false
+    msg: |-
+      vas_conf (/etc/opt/quest/vas/vas.conf)
+      All items completed
+    results:
+    - changed: true
+      failed: false
+      item:
+        option: ticket_lifetime
+        section: libdefaults
+        state: present
+        value: 10h
+      msg: option changed
+hostname: oel8-1
+msg: ''
+unreachable: false
+"
+opensuse15-1,esx_systems,10.5.37.212,openSUSE Leap,15.1,x86_64,2020-07-10 13:13:07,True,False,False,"changed: true
+failed: false
+files:
+  group-override:
+    changed: false
+    failed: false
+    msg: |-
+      group_override (/etc/opt/quest/vas/group-override)
+    results: []
+  groups.allow:
+    changed: false
+    failed: false
+    msg: |-
+      groups_allow (/etc/opt/quest/vas/groups.allow)
+    results: []
+  groups.deny:
+    changed: false
+    failed: false
+    msg: |-
+      groups_deny (/etc/opt/quest/vas/groups.deny)
+    results: []
+  user-override:
+    changed: false
+    failed: false
+    msg: |-
+      user_override (/etc/opt/quest/vas/user-override)
+    results: []
+  users.allow:
+    changed: false
+    failed: false
+    msg: |-
+      users_allow (/etc/opt/quest/vas/users.allow)
+    results: []
+  users.deny:
+    changed: false
+    failed: false
+    msg: |-
+      users_deny (/etc/opt/quest/vas/users.deny)
+    results: []
+  users.starling:
+    changed: false
+    failed: false
+    msg: |-
+      users_starling (/etc/opt/quest/vas/users.starling)
+    results: []
+  vas.conf:
+    changed: true
+    failed: false
+    msg: |-
+      vas_conf (/etc/opt/quest/vas/vas.conf)
+      All items completed
+    results:
+    - changed: true
+      failed: false
+      item:
+        option: ticket_lifetime
+        section: libdefaults
+        state: present
+        value: 10h
+      msg: option changed
+hostname: opensuse15-1
+msg: ''
+unreachable: false
+"
+rhel8-1,esx_systems,10.5.37.12,RedHat,8.1,x86_64,2020-07-10 15:13:09,True,False,False,"changed: true
+failed: false
+files:
+  group-override:
+    changed: false
+    failed: false
+    msg: |-
+      group_override (/etc/opt/quest/vas/group-override)
+    results: []
+  groups.allow:
+    changed: false
+    failed: false
+    msg: |-
+      groups_allow (/etc/opt/quest/vas/groups.allow)
+    results: []
+  groups.deny:
+    changed: false
+    failed: false
+    msg: |-
+      groups_deny (/etc/opt/quest/vas/groups.deny)
+    results: []
+  user-override:
+    changed: false
+    failed: false
+    msg: |-
+      user_override (/etc/opt/quest/vas/user-override)
+    results: []
+  users.allow:
+    changed: false
+    failed: false
+    msg: |-
+      users_allow (/etc/opt/quest/vas/users.allow)
+    results: []
+  users.deny:
+    changed: false
+    failed: false
+    msg: |-
+      users_deny (/etc/opt/quest/vas/users.deny)
+    results: []
+  users.starling:
+    changed: false
+    failed: false
+    msg: |-
+      users_starling (/etc/opt/quest/vas/users.starling)
+    results: []
+  vas.conf:
+    changed: true
+    failed: false
+    msg: |-
+      vas_conf (/etc/opt/quest/vas/vas.conf)
+      All items completed
+    results:
+    - changed: true
+      failed: false
+      item:
+        option: ticket_lifetime
+        section: libdefaults
+        state: present
+        value: 10h
+      msg: option changed
+hostname: rhel8-1
+msg: ''
+unreachable: false
+"
+sles15-1,esx_systems,10.5.37.191,SLES,15,x86_64,2020-07-10 13:13:07,True,False,False,"changed: true
+failed: false
+files:
+  group-override:
+    changed: false
+    failed: false
+    msg: |-
+      group_override (/etc/opt/quest/vas/group-override)
+    results: []
+  groups.allow:
+    changed: false
+    failed: false
+    msg: |-
+      groups_allow (/etc/opt/quest/vas/groups.allow)
+    results: []
+  groups.deny:
+    changed: false
+    failed: false
+    msg: |-
+      groups_deny (/etc/opt/quest/vas/groups.deny)
+    results: []
+  user-override:
+    changed: false
+    failed: false
+    msg: |-
+      user_override (/etc/opt/quest/vas/user-override)
+    results: []
+  users.allow:
+    changed: false
+    failed: false
+    msg: |-
+      users_allow (/etc/opt/quest/vas/users.allow)
+    results: []
+  users.deny:
+    changed: false
+    failed: false
+    msg: |-
+      users_deny (/etc/opt/quest/vas/users.deny)
+    results: []
+  users.starling:
+    changed: false
+    failed: false
+    msg: |-
+      users_starling (/etc/opt/quest/vas/users.starling)
+    results: []
+  vas.conf:
+    changed: true
+    failed: false
+    msg: |-
+      vas_conf (/etc/opt/quest/vas/vas.conf)
+      All items completed
+    results:
+    - changed: true
+      failed: false
+      item:
+        option: ticket_lifetime
+        section: libdefaults
+        state: present
+        value: 10h
+      msg: option changed
+hostname: sles15-1
+msg: ''
+unreachable: false
+"
+solaris11-1,esx_systems,10.5.37.87,Solaris,11.4,i386,2020-07-10 13:39:11,True,False,False,"changed: true
+failed: false
+files:
+  group-override:
+    changed: false
+    failed: false
+    msg: |-
+      group_override (/etc/opt/quest/vas/group-override)
+    results: []
+  groups.allow:
+    changed: false
+    failed: false
+    msg: |-
+      groups_allow (/etc/opt/quest/vas/groups.allow)
+    results: []
+  groups.deny:
+    changed: false
+    failed: false
+    msg: |-
+      groups_deny (/etc/opt/quest/vas/groups.deny)
+    results: []
+  user-override:
+    changed: false
+    failed: false
+    msg: |-
+      user_override (/etc/opt/quest/vas/user-override)
+    results: []
+  users.allow:
+    changed: false
+    failed: false
+    msg: |-
+      users_allow (/etc/opt/quest/vas/users.allow)
+    results: []
+  users.deny:
+    changed: false
+    failed: false
+    msg: |-
+      users_deny (/etc/opt/quest/vas/users.deny)
+    results: []
+  users.starling:
+    changed: false
+    failed: false
+    msg: |-
+      users_starling (/etc/opt/quest/vas/users.starling)
+    results: []
+  vas.conf:
+    changed: true
+    failed: false
+    msg: |-
+      vas_conf (/etc/opt/quest/vas/vas.conf)
+      All items completed
+    results:
+    - changed: true
+      failed: false
+      item:
+        option: ticket_lifetime
+        section: libdefaults
+        state: present
+        value: 10h
+      msg: option changed
+hostname: solaris11-1
+msg: ''
+unreachable: false
+"
+ubuntu18-8,esx_systems,10.5.37.73,Ubuntu,20.04,x86_64,2020-07-10 19:13:07,True,False,False,"changed: true
+failed: false
+files:
+  group-override:
+    changed: false
+    failed: false
+    msg: |-
+      group_override (/etc/opt/quest/vas/group-override)
+    results: []
+  groups.allow:
+    changed: false
+    failed: false
+    msg: |-
+      groups_allow (/etc/opt/quest/vas/groups.allow)
+    results: []
+  groups.deny:
+    changed: false
+    failed: false
+    msg: |-
+      groups_deny (/etc/opt/quest/vas/groups.deny)
+    results: []
+  user-override:
+    changed: false
+    failed: false
+    msg: |-
+      user_override (/etc/opt/quest/vas/user-override)
+    results: []
+  users.allow:
+    changed: false
+    failed: false
+    msg: |-
+      users_allow (/etc/opt/quest/vas/users.allow)
+    results: []
+  users.deny:
+    changed: false
+    failed: false
+    msg: |-
+      users_deny (/etc/opt/quest/vas/users.deny)
+    results: []
+  users.starling:
+    changed: false
+    failed: false
+    msg: |-
+      users_starling (/etc/opt/quest/vas/users.starling)
+    results: []
+  vas.conf:
+    changed: true
+    failed: false
+    msg: |-
+      vas_conf (/etc/opt/quest/vas/vas.conf)
+      All items completed
+    results:
+    - changed: true
+      failed: false
+      item:
+        option: ticket_lifetime
+        section: libdefaults
+        state: present
+        value: 10h
+      msg: option changed
+hostname: ubuntu18-8
+msg: ''
+unreachable: false
+"

@@ -142,7 +142,7 @@ Below is a sample playbook using the `client_preflight` role.
 
     # Facts
     client_preflight_facts_generate: true
-    client_preflight_facts_verbose: true
+    client_preflight_facts_verbose: false
 
     # Reports
     client_preflight_reports_generate: true

@@ -20,9 +20,11 @@ The One Identity Safeguard Authentication Services Ansible Collection, referred 
 * [`client_join role`](docs/CLIENT_JOIN.md): Client Active Directory joining/unjoining. 
     * [`vastool_join module`](docs/CLIENT_JOIN.md#Plugins) Performs Active Directory join/unjoin tasks on host.
 
+* [`client_config role`](docs/CLIENT_CONFIG.md): Client configuration.
+    * [`dictlistselect filter`](docs/CLIENT_CONFIG.md#Plugins) Filter list of dicts to only include specified keys.
+
 ### In Development 
 
-* [`client_configure role`](docs/CLIENT_CONFIGURE.md): Client configuration. 
 
 * [`client_profile role`](docs/CLIENT_PROFILE.md): Client profiling. 
 
@@ -162,6 +164,5 @@ All [Safeguard Authentication Services supported platforms](https://support.onei
 
 ### TODO's
 
-* Implement client_configure role.
 * Implement client_profile role.
 * Other roles/features depending on interest may include roles to automate server software deployment, server configuration, and server profiling.

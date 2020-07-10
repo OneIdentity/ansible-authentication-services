@@ -44,7 +44,7 @@ def dict_list_select(dict_list, keys, default_value='', include_conditions={}, e
     if not isinstance(include_conditions, Mapping):
         raise AnsibleFilterError("dictlistfilter requires include_conditions to be a mapping, got %s instead." % type(include_conditions))
         
-    # Make sure include_conditions is a mapping
+    # Make sure exclude_conditions is a mapping
     if not isinstance(exclude_conditions, Mapping):
         raise AnsibleFilterError("dictlistfilter requires exclude_conditions to be a mapping, got %s instead." % type(exclude_conditions))
 
@@ -52,7 +52,7 @@ def dict_list_select(dict_list, keys, default_value='', include_conditions={}, e
     if not isinstance(keys, list):
         keys = list(keys)
 
-    # Build package items list
+    # Build filtered dict_list
     dict_list_s = []
     for d in dict_list:
 

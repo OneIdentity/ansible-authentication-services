@@ -10,6 +10,6 @@
         {{ file_name + ' (' + file_path + ')' }}
         {{ (file_result.failed is defined and file_result.failed) | ternary(
             file_result.results | oneidentity.authentication_services.dictlistselect(['item', 'msg']) | to_yaml,
-            file_result.msg
+            file_result.msg | default('')
           )
         }}

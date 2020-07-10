@@ -1,0 +1,38 @@
+---
+
+- hosts: all 
+  gather_facts: false
+
+  vars:
+
+    # vas.conf settings
+    client_config_vas_conf:
+      - section: libdefaults
+        option: ticket_lifetime
+        value: 20h
+        state: present
+
+    # users.allow settings
+    client_config_user_allow:
+      - line: 'SAMPLE\user'
+        state: present
+      - line: 'SAMPLE\guest'
+        state: absent
+
+    # users.deny settings
+    client_config_user_allow:
+      - line: 'SAMPLE\user'
+        state: absent
+       - line: 'SAMPLE\guest'
+        state: present
+
+    # Facts
+    client_config_facts_generate: true
+    client_config_facts_verbose: false
+
+    # Reports
+    client_config_reports_generate: true 
+    client_config_reports_backup: false 
+
+  roles:
+    - name: oneidentity.authentication_services.client_config
