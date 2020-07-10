@@ -1,0 +1,120 @@
+---
+
+# General
+# ------------------------------------------------------------------------------
+
+client_config_create: yes
+client_config_mode:
+client_config_owner:
+client_config_group:
+client_config_backup: yes
+
+
+# vas.conf settings
+# ------------------------------------------------------------------------------
+
+client_config_vas_conf: []
+client_config_vas_conf_create: "{{ client_config_create }}" 
+client_config_vas_conf_mode: "{{ client_config_mode }}"
+client_config_vas_conf_owner: "{{ client_config_owner }}"
+client_config_vas_conf_group: "{{ client_config_group }}"
+client_config_vas_conf_backup: "{{ client_config_backup }}"
+
+
+# user/group-override settings
+# ------------------------------------------------------------------------------
+
+client_config_user_override: []
+client_config_user_override_create: "{{ client_config_create }}"
+client_config_user_override_mode: "{{ client_config_mode }}"
+client_config_user_override_owner: "{{ client_config_owner }}"
+client_config_user_override_group: "{{ client_config_group }}"
+client_config_user_override_backup: "{{ client_config_backup }}"
+
+client_config_group_override: []
+client_config_group_override_create: "{{ client_config_create }}"
+client_config_group_override_mode: "{{ client_config_mode }}"
+client_config_group_override_owner: "{{ client_config_owner }}"
+client_config_group_override_group: "{{ client_config_group }}"
+client_config_group_override_backup: "{{ client_config_backup }}"
+
+
+# users/groups.allow/deny settings
+# ------------------------------------------------------------------------------
+
+client_config_users_allow: []
+client_config_users_allow_create: "{{ client_config_create }}"
+client_config_users_allow_mode: "{{ client_config_mode }}"
+client_config_users_allow_owner: "{{ client_config_owner }}"
+client_config_users_allow_group: "{{ client_config_group }}"
+client_config_users_allow_backup: "{{ client_config_backup }}"
+
+client_config_users_deny: []
+client_config_users_deny_create: "{{ client_config_create }}"
+client_config_users_deny_mode: "{{ client_config_mode }}"
+client_config_users_deny_owner: "{{ client_config_owner }}"
+client_config_users_deny_group: "{{ client_config_group }}"
+client_config_users_deny_backup: "{{ client_config_backup }}"
+
+client_config_groups_allow: []
+client_config_groups_allow_create: "{{ client_config_create }}"
+client_config_groups_allow_mode: "{{ client_config_mode }}"
+client_config_groups_allow_owner: "{{ client_config_owner }}"
+client_config_groups_allow_group: "{{ client_config_group }}"
+client_config_groups_allow_backup: "{{ client_config_backup }}"
+
+client_config_groups_deny: []
+client_config_groups_deny_create: "{{ client_config_create }}"
+client_config_groups_deny_mode: "{{ client_config_mode }}"
+client_config_groups_deny_owner: "{{ client_config_owner }}"
+client_config_groups_deny_group: "{{ client_config_group }}"
+client_config_groups_deny_backup: "{{ client_config_backup }}"
+
+
+# users.starling settings
+# ------------------------------------------------------------------------------
+
+client_config_users_starling: []
+client_config_users_starling_create: "{{ client_config_create }}"
+client_config_users_starling_mode: "{{ client_config_mode }}"
+client_config_users_starling_owner: "{{ client_config_owner }}"
+client_config_users_starling_group: "{{ client_config_group }}"
+client_config_users_starling_backup: "{{ client_config_backup }}"
+
+
+# Facts settings
+# ------------------------------------------------------------------------------
+
+client_config_facts_generate: "{{ facts_generate }}"
+client_config_facts_verbose: "{{ facts_verbose }}"
+
+
+# Report settings
+# ------------------------------------------------------------------------------
+
+client_config_reports_generate: "{{ reports_generate }}"
+client_config_reports_backup: "{{ reports_backup }}"
+client_config_reports_details_format: "{{ reports_details_format }}"
+
+# Format of details section in both HTML and CSV reports
+# Valid options are: 'yaml' or 'json'
+client_config_reports_details_format: "{{ reports_details_format }}"
+
+# On which host should the reports be generated.
+# TODO: This has only been tested on the Ansible control node (127.0.0.1)
+client_config_reports_host: "{{ reports_host }}"
+
+# List of reports to generate
+# src:  Is the report template file on the Ansible control node.
+#       With no or relative path Ansible will look in the client_sw role template directory.  
+#       Full path to find the template files elsewhere on the Ansible control node. 
+# dest: Is the destination file on the host (client_sw_reports_host.) 
+#       With no or relative path when the destination is the Ansible control node.
+#       (client_sw_reports_host = 127.0.0.1) relative to the playbook directory.
+#       Full path for other locations or on other hosts.  
+#       In either case the directory must already exist.
+client_config_reports: 
+  - src:  client_config_report.csv.j2   
+    dest: client_config_report.csv
+  - src:  client_config_report.html.j2
+    dest: client_config_report.html

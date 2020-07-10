@@ -1,0 +1,16 @@
+---
+
+# Set details
+- set_fact:
+    sas_client_config_{{ file }}:
+        changed: "{{ changed }}"
+        failed: "{{ failed }}"
+        msg: "{{ msg }}" 
+        results: "{{ results }}"
+    cacheable: true
+
+# Set changed
+- set_fact:
+    sas_client_config_changed: true
+  when: changed
+ 

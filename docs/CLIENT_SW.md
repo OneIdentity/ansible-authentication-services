@@ -142,13 +142,23 @@ Only the `client_sw_dir` and `client_sw_pkgs` variables are overriden in this pl
 
   vars:
 
+    # Directories
     client_sw_dir: "./files/QAS-4.2.3.25456/client"
 
+    # Packages
     client_sw_pkgs:
       vasclnt: present
       vasgp: present
       vassc: present
       pamdefender: present
+
+    # Facts
+    client_sw_facts_generate: true
+    client_sw_facts_verbose: false
+
+    # Reports
+    client_sw_reports_generate: true 
+    client_sw_reports_backup: false 
 
   roles:
     - name: oneidentity.authentication_services.client_sw

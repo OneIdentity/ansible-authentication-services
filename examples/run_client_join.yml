@@ -14,7 +14,7 @@
 
     # Facts
     client_join_facts_generate: true
-    client_join_facts_verbose: true
+    client_join_facts_verbose: false
 
     # Reports
     client_join_reports_generate: true 

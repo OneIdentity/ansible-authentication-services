@@ -1,0 +1,67 @@
+{# Print CSV header #}
+hostname,group,ip_address,os_distro,os_version,hw_arch,time,changed,unreachable,failed,details
+{# Loop through all hosts #}
+{% for host in ansible_play_hosts_all | sort %}
+{# System time #}
+{% if hostvars[host]['ansible_facts']['date_time'] is not defined %}
+{% set sys_time = '' %}
+{% else %}
+{% set sys_time = hostvars[host]['ansible_facts']['date_time']['date'] + ' ' + hostvars[host]['ansible_facts']['date_time']['time'] %}
+{% endif %}
+{# Ansible facts #}
+{% set changed = hostvars[host]['ansible_facts']['sas_client']['changed'] | default(False) %}
+{% set unreachable = hostvars[host]['ansible_facts']['sas_client']['unreachable'] | default(False) %}
+{% set failed = hostvars[host]['ansible_facts']['sas_client']['failed'] | default(True) %}
+{% set msg = hostvars[host]['ansible_facts']['sas_client']['msg'] | default('Unexpected error occurred') %}
+{% set vas_conf_raw = hostvars[host]['ansible_facts']['sas_client_config_vas_conf'] | default('') %}
+{% set user_override_raw = hostvars[host]['ansible_facts']['sas_client_config_user_override'] | default('') %}
+{% set group_override_raw = hostvars[host]['ansible_facts']['sas_client_config_group_override'] | default('') %}
+{% set users_allow_raw = hostvars[host]['ansible_facts']['sas_client_config_users_allow'] | default('') %}
+{% set users_deny_raw = hostvars[host]['ansible_facts']['sas_client_config_users_deny'] | default('') %}
+{% set groups_allow_raw = hostvars[host]['ansible_facts']['sas_client_config_groups_allow'] | default('') %}
+{% set groups_deny_raw = hostvars[host]['ansible_facts']['sas_client_config_groups_deny'] | default('') %}
+{% set users_starling_raw = hostvars[host]['ansible_facts']['sas_client_config_users_starling'] | default('') %}
+{# Details #}
+{% set details = {
+    'hostname': host,
+    'msg': details_raw['msg'] | default(''),
+    'unreachable': unreachable,
+    'failed': failed,
+    'changed': changed,
+    'files': {
+        'vas.conf': vas_conf_raw,
+        'user-override': user_override_raw,
+        'group-override': group_override_raw,
+        'users.allow': users_allow_raw,
+        'users.deny': users_deny_raw,
+        'groups.allow': groups_allow_raw,
+        'groups.deny': groups_deny_raw,
+        'users.starling': users_starling_raw,
+        }
+    }
+%}
+{# Format details #}
+{% if details %}
+{% if client_config_reports_details_format | lower == 'json' %}
+{% set details = details | to_nice_json(indent=2) | replace("\"", "\"\"") %}
+{% else %}
+{% set details = details | to_nice_yaml(indent=2, width=160) | replace("\"", "\"\"") %}
+{% endif %}
+{% else %}
+{% set details = '' %}
+{% endif %}
+{# Print CSV line #}
+{{ '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"%s"' | format(
+host,
+hostvars[host]['group_names'] | join(', '),
+hostvars[host]['ansible_facts']['default_ipv4']['address'] | default(),
+hostvars[host]['ansible_facts']['distribution'] | default(),
+hostvars[host]['ansible_facts']['distribution_version'] | default(),
+hostvars[host]['ansible_facts']['architecture'] | default(),
+sys_time,
+changed,
+unreachable,
+failed,
+details
+)}}
+{% endfor %}

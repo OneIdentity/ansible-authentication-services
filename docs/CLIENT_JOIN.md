@@ -55,14 +55,14 @@ Facts generation variable defaults for all roles are set by variables in the `co
 
 Report generation variable defaults for all roles are set by variables in the `common role` and can be overriden for all roles by setting the appropriate `common role` variable.  See [common role reports generation variables](./COMMON.md##ReportsGeneration) in `common role`.
 
-* `client_sww_reports_generate` enables report generation.  Reports are generated at the end of a `client_sw` run for all hosts.
+* `client_join_reports_generate` enables report generation.  Reports are generated at the end of a `client_join` run for all hosts.
 
     Default value is: 
     ```yaml
     client_join_reports_generate: "{{ reports_generate }}"
     ```
 
-  Disabling report generation if not needed will increase the speed of the `client_sw` role.
+  Disabling report generation if not needed will increase the speed of the `client_join` role.
 
 * `client_join_reports_backup` enables backup of prior reports by renaming them with the date and time they were generated so that the latest reports do not override the previous reports.
 
@@ -89,7 +89,7 @@ Report generation variable defaults for all roles are set by variables in the `c
     client_join_reports_host: "{{ reports_host }}"
     ```
 
-* `client_join_reports` is a list of dictionaries that define the reports to be generated.  The default value creates a CSV and HTML report using the templates included with the `client_sw` role.
+* `client_join_reports` is a list of dictionaries that define the reports to be generated.  The default value creates a CSV and HTML report using the templates included with the `client_join` role.
 
   Default value is:
     ```yaml
@@ -100,7 +100,7 @@ Report generation variable defaults for all roles are set by variables in the `c
         dest: client_join_report.html
     ```
   
-  The `src` key for each list entry is the report template file on the Ansible control node.  With a relative path Ansible will look in the `client_sw` role `template` directory.  Use a absolute path to speciy templates located elsewhere on the Ansible control node.
+  The `src` key for each list entry is the report template file on the Ansible control node.  With a relative path Ansible will look in the `client_join` role `template` directory.  Use a absolute path to speciy templates located elsewhere on the Ansible control node.
 
   The `dest` key for each list entry is the report file on the machine specified in `client_join_reports_host`.  If `client_join_reports_host` is set to the Ansible control node a relative path can be used and it will be relative to the directory from which the playbook is run.  For other hosts, an absolute path must be used.  In either case the containing directory must exist.
 
@@ -130,8 +130,8 @@ Below is a sample playbook using the `client_join` role.
     client_password: pass
 
     # Facts
-    client_join_facts_generate: false
-    client_join_facts_verbose: true
+    client_join_facts_generate: true
+    client_join_facts_verbose: false
 
     # Reports
     client_join_reports_generate: true 

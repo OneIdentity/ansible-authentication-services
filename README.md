@@ -20,9 +20,11 @@ The One Identity Safeguard Authentication Services Ansible Collection, referred 
 * [`client_join role`](docs/CLIENT_JOIN.md): Client Active Directory joining/unjoining. 
     * [`vastool_join module`](docs/CLIENT_JOIN.md#Plugins) Performs Active Directory join/unjoin tasks on host.
 
+* [`client_config role`](docs/CLIENT_CONFIG.md): Client configuration.
+    * [`dictlistselect filter`](docs/CLIENT_CONFIG.md#Plugins) Filter list of dicts to only include specified keys.
+
 ### In Development 
 
-* [`client_configure role`](docs/CLIENT_CONFIGURE.md): Client configuration. 
 
 * [`client_profile role`](docs/CLIENT_PROFILE.md): Client profiling. 
 
@@ -80,14 +82,14 @@ To install from [GitHub](https://github.com/OneIdentity/ansible-authentication-s
 
 Using `ansible-galaxy` command:
 ```bash
-ansible-galaxy collection install https://github.com/OneIdentity/ansible-authentication-services/releases/download/v0.0.2/oneidentity-authentication_services-0.0.2.tar.gz
+ansible-galaxy collection install https://github.com/OneIdentity/ansible-authentication-services/releases/download/v0.0.3/oneidentity-authentication_services-0.0.3.tar.gz
 ```
 
 The collection can also be added to a project's `requirements.yml` file
 ```yaml
 ---
 collections:
-  - name: https://github.com/OneIdentity/ansible-authentication-services/releases/download/v0.0.2/oneidentity-authentication_services-0.0.2.tar.gz
+  - name: https://github.com/OneIdentity/ansible-authentication-services/releases/download/v0.0.3/oneidentity-authentication_services-0.0.3.tar.gz
 ```
 
 and installed using the `ansible-galaxy` command.  This method allows all required collections for a project to be specified in one place and installed with one command.
@@ -117,7 +119,7 @@ For local build and installation, you can clone the Git repository, build the co
     The build command will generate an Ansible Galaxy collection artifact with a `tar.gz` file extension, sample output will look like the following:
 
     ```
-    Created collection for oneidentity.authentication_services at /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.2.tar.gz
+    Created collection for oneidentity.authentication_services at /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.3.tar.gz
     ```
 
     `Pleae note the path shown above is just an example, the path to your build artifact will be in the root directory of the cloned repository.`
@@ -127,14 +129,14 @@ For local build and installation, you can clone the Git repository, build the co
     Using `ansible-galaxy` command:
 
     ```bash
-    ansible-galaxy collection install /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.2.tar.gz
+    ansible-galaxy collection install /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.3.tar.gz
     ```
 
     The collection can also be added to a project's `requirements.yml` file
     ```yaml
     ---
     collections:
-    - name: /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.2.tar.gz
+    - name: /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.3.tar.gz
     ```
 
     and installed using the `ansible-galaxy` command.  This method allows all required collections for a project to be specified in one place and installed with one command.
@@ -162,6 +164,5 @@ All [Safeguard Authentication Services supported platforms](https://support.onei
 
 ### TODO's
 
-* Implement client_configure role.
 * Implement client_profile role.
 * Other roles/features depending on interest may include roles to automate server software deployment, server configuration, and server profiling.

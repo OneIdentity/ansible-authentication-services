@@ -1,0 +1,39 @@
+---
+
+# File handler
+- name: "{{ file_name }}"
+  ini_file:
+    path: "{{ file_path }}"
+    create: "{{ file_create }}"
+    mode: "{{ file_mode | default(omit, true) }}"
+    owner: "{{ file_owner | default(omit, true) }}"
+    group: "{{ file_group | default(omit, true) }}"
+    backup: "{{ file_backup }}"
+    section: "{{ item.section }}"
+    option: "{{ item.option | default(omit, true) }}"
+    value: "{{ item.value | default('') }}"
+    state: "{{ item.state }}"
+  loop: "{{ file_values }}"
+  register: file_result
+  ignore_errors: true
+
+# Format result
+- include_tasks: utils/format_result.yml
+
+# Set details
+- include_tasks: utils/set_details.yml
+  vars:
+    file: "{{ file_name }}"
+    changed: "{{ result.changed | default(false) }}"
+    failed: "{{ result.failed | default(false) }}"
+    msg: "{{ result.msg | default('') }}"
+    results: >
+      {{ result.results | oneidentity.authentication_services.dictlistselect(
+          ['changed', 'failed', 'msg', 'item'], 
+          include_conditions=client_config_facts_verbose | ternary({}, {'changed': True, 'failed': True})) 
+      }}
+
+# Fail if there was a message returned
+- fail:
+    msg: "{{ result.msg }}"
+  when: result.failed is defined and result.failed

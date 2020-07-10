@@ -1,0 +1,13 @@
+---
+
+# Users deny
+- include_tasks: config_files/simple_file.yml
+  vars:
+    file_name: users_deny
+    file_path: "{{ client_config_users_deny_path }}"
+    file_create: "{{ client_config_users_deny_create }}"
+    file_mode: "{{ client_config_users_deny_mode }}"
+    file_owner: "{{ client_config_users_deny_owner }}"
+    file_group: "{{ client_config_users_deny_group }}"
+    file_backup: "{{ client_config_users_deny_backup }}"
+    file_values: "{{ client_config_users_deny }}"
