@@ -22,28 +22,28 @@ All of the variables shown below have a default value but can be overridden to s
     client_config_create: yes
     ```
 
-* `client_config_mode` sets the default setting for configuration file permissions.  Possible values are either blank which uses the default mode per the umask set for the user account used by Ansible on the host, or a string with the desired mode in octal (like '644') or as a symolic mode (like 'u=rw,g=r,o=r')
+* `client_config_mode` sets the default setting for configuration file permissions.  Possible values are either blank which uses the default mode per the umask set for the user account used by Ansible on the host, or a string with the desired mode in octal (like '644') or in symolic mode (like 'u=rw,g=r,o=r')
 
     Default value is:
     ```yaml
     client_config_mode:
     ```
 
-* `client_config_owner` sets the default setting for configuration file owner.  Possible values are either blank which uses the owner of the account Ansible is using on the host for file creation or does not modify the owner when the file is modified, or a string containing the desired owner.
+* `client_config_owner` sets the default setting for configuration file owner.  Possible values are either blank which uses the owner of the account Ansible is using on the host for file creation and does not modify the owner when the file is modified, or a string containing the desired owner.
 
     Default value is:
     ```yaml
     client_config_owner:
     ```
 
-* `client_config_group` sets the default setting for configuration file group.  Possible values are either blank which uses the group of the account Ansible is using on the host for file creation or does not modify the group when the file is modified, or a string containing the desired group.
+* `client_config_group` sets the default setting for configuration file group.  Possible values are either blank which uses the group of the account Ansible is using on the host for file creation and does not modify the group when the file is modified, or a string containing the desired group.
 
     Default value is:
     ```yaml
     client_config_group:
     ```
 
-* `client_config_backup` sets the default setting for configuration file backup.  This creates a backup of the file every time it is modified by Ansible.  Each backup file has the name and time of the backup as part of the file name.  Possible values are:
+* `client_config_backup` sets the default setting for configuration file backup.  This creates a backup of the file every time it is modified by Ansible.  Each backup file has the name and time of the backup as part of the file name.  Backup files are not automatically removed so their removal needs to be managed when this option is enabled.  Possible values are:
 
     * `yes` create backup of file before modifications
     * `no` do not create backup of file
@@ -55,9 +55,9 @@ All of the variables shown below have a default value but can be overridden to s
 
 ### Configuration Files
 
-The contents of each configuration files are specified by a set of variables for each configuration file.  All configuration files have the same seven variables.  The variables are named as shown below with FILE_NAME being replaced by the name of the configuration file with the `.` being replace with a `_`.  For instance, for the vas.conf file, FILE_NAME would be replaced in the variable names below with vas_conf.
+The contents, creation, backup, and permissions of each configuration file are specified by a set of variables for each configuration file.  All configuration files have the same seven variables.  The variables are named as shown below with `FILE_NAME` being replaced by the name of the configuration file with any `.`'s in the file name nbeing replace with an `_`.  For instance, for the `vas.conf` file, `FILE_NAME` would be replaced in the variable names below with `vas_conf`.
 
-* `client_config_FILE_NAME` is a list of items to set or clear in the file.  The format of the items will vary by configuration file and will be specified in the section for each file.
+* `client_config_FILE_NAME` is a list of items to set or clear in the file.  The format of the items will vary by configuration file and will be specified in the section for each file found below.
 
     Default values is:
     ```yaml
@@ -71,28 +71,28 @@ The contents of each configuration files are specified by a set of variables for
     client_config_FILE_NAME_create: "{{ client_config_create }}
     ```
 
-* `client_config_FILE_NAME_mode` sets the file permissions for the file when it is created or modified.  Leave unchanged to create the file with default permissions per the umask set on the host system or to not modify permissions when the file is modified.
+* `client_config_FILE_NAME_mode` sets the file permissions for the file when it is created or modified.  Leave unchanged to create the file with default permissions per the umask set on the host system and to not modify permissions when the file is modified.
 
     Default value is:
     ```yaml
     client_config_FILE_NAME_mode: "{{ client_config_mode }}
     ```
 
-* `client_config_FILE_NAME_owner` sets the file owner for the file when it is created or modified.  Leave unchanged to create the file with the owner set to the account Ansible is using on the host or to not modify the owner when the file is modified.
+* `client_config_FILE_NAME_owner` sets the file owner for the file when it is created or modified.  Leave unchanged to create the file with the owner set to the account Ansible is using on the host and to not modify the owner when the file is modified.
 
     Default value is:
     ```yaml
     client_config_FILE_NAME_owner: "{{ client_config_owner }}
     ```
 
-* `client_config_FILE_NAME_group` sets the file group for the file when it is created or modified.  Leave unchanged to create the file with the group set to the account Ansible is using on the host or to not modify the group when the file is modified.
+* `client_config_FILE_NAME_group` sets the file group for the file when it is created or modified.  Leave unchanged to create the file with the group set to the account Ansible is using on the host and to not modify the group when the file is modified.
 
     Default value is:
     ```yaml
     client_config_FILE_NAME_group: "{{ client_config_group }}
     ```
 
-* `client_config_FILE_NAME_backup` sets creating a backup copy of the file every time it is modified by Ansible.  Each backup file has the name and time of the backup as part of the file name.
+* `client_config_FILE_NAME_backup` sets creating a backup copy of the file every time it is modified by Ansible.  Each backup file has the name and time of the backup as part of the file name.  Removal of these backups is not automatically handled and would need to be managed separately.
 
     Default value is:
     ```yaml
@@ -105,7 +105,7 @@ The `vas.conf` configuration file is formatted per standard [INI file](https://e
 
 The Ansible `ini_file` module is used for formatting this file.  See [Ansible ini_file module docs](https://docs.ansible.com/ansible/latest/modules/ini_file_module.html#ini-file-module) for details on this module.
 
-Please see top of the [Configuration Files section](###ConfigurationFiles) above for the other variables that control creation, backup, permissions, etc. of this file but not its content.  The variable that controls its content is shown below.
+Please see top of the [Configuration Files section](###ConfigurationFiles) above for the other variables that control creation, backup, and permissions of this file but not its content.  The variable that controls its content is shown below.
 
 * `client_config_vas_conf` is a list of items to set or clear in `vas.conf`
 
@@ -120,18 +120,18 @@ Please see top of the [Configuration Files section](###ConfigurationFiles) above
         * Required
     * `option`
         * Optional
-        * Omitted if not set.  Caution, please note that if `state` is set to `absent` and `option` is not set then the entire specified `section` will be removed.
+        * Omitted if not set.  Caution, please note that if `state` is set to `absent` and `option` is not set then the entire specified `section` will be removed
     * `value`
         * Optional
         * Default value is empty string
 
 #### user-override and group-override
 
-The `user-override` and `group-override` configuration files allow per-host, local mapping between Active Directory and local users and groups.  See [Safeguard Authentication Services user-override docs](https://support.oneidentity.com/technical-documents/authentication-services/4.2.4/administration-guide/36#TOPIC-1468088) for further information on the format of these files.
+The `user-override` and `group-override` configuration files allow per-host, local mapping between Active Directory and local users and groups.  See [Safeguard Authentication Services docs](https://support.oneidentity.com/technical-documents/authentication-services/4.2.4/administration-guide/36#TOPIC-1468088) for further information on the format of these files.
 
 The Ansible `lineinfile` module is used for formatting these files.  See [Ansible lineinfile module docs](https://docs.ansible.com/ansible/latest/modules/lineinfile_module.html#lineinfile-module) for details on this module.
 
-Please see top of the [Configuration Files section](###ConfigurationFiles) above for the other variables that control creation, backup, permissions, etc. of these files but not their content.  The variables that control their content are shown below.
+Please see top of the [Configuration Files section](###ConfigurationFiles) above for the other variables that control creation, backup and permissions of these files but not their content.  The variables that control their content are shown below.
 
 * `client_config_user_override` and `client_config_group_override` are a list of items to set or clear in `user-override` and `user-override`
 
@@ -144,7 +144,7 @@ Please see top of the [Configuration Files section](###ConfigurationFiles) above
             * `absent`
     * `line`
         * Optional
-        * Default value is empty string.  Line to be set or cleared from file depending on `state`.  If `regex` is not set this line has to EXACTLY match an existing line.  Most uses cases should use `regex`.
+        * Default value is empty string.  Line to be set or cleared from file depending on `state`.  If `regex` is not set this line has to EXACTLY match an existing line for it to be removed when `state` is `absent` 
     * `regex`
         * Optional
         * Omitted if not set.  Used to match an existing line so that it can be cleared or modified.  If `regex` is found and `insertafter` or `insertbefore` are not specified then the matched line will be removed or replaced depending on `state`.  If `regex` is not found and `state` is present then `line` will be added to the end of the file.
@@ -161,7 +161,7 @@ The `users.allow`, `users.deny`, `groups.allows` and `groups.deny` configuration
 
 The Ansible `lineinfile` module is used for formatting these files.  See [Ansible lineinfile module docs](https://docs.ansible.com/ansible/latest/modules/lineinfile_module.html#lineinfile-module) for details on this module.
 
-Please see top of the [Configuration Files section](###ConfigurationFiles) above for the other variables that control creation, backup, permissions, etc. of these files but not their content.  The variables that control their content are shown below.
+Please see top of the [Configuration Files section](###ConfigurationFiles) above for the other variables that control creation, backup and permissions of these files but not their content.  The variables that control their content are shown below.
 
 * `client_config_users_allow`, `client_config_users_deny`, `client_config_groups_allow` and `client_config_groups_deny` are a list of items to set or clear in `users.allow`, `users.deny`, `groups.allow` and `groups.deny`
 
@@ -174,7 +174,7 @@ Please see top of the [Configuration Files section](###ConfigurationFiles) above
             * `absent`
     * `line`
         * Optional
-        * Default value is empty string.  Line to be set or cleared from file depending on `state`.  If `regex` is not set this line has to EXACTLY match an existing line.  Most uses cases should use `regex`.
+        * Default value is empty string.  Line to be set or cleared from file depending on `state`.  If `regex` is not set this line has to EXACTLY match an existing line for it to be removed when `state` is `absent`.  Most use cases for these files would likely use the `regex` field
     * `regex`
         * Optional
         * Omitted if not set.  Used to match an existing line so that it can be cleared or modified.  If `regex` is found and `insertafter` or `insertbefore` are not specified then the matched line will be removed or replaced depending on `state`.  If `regex` is not found and `state` is present then `line` will be added to the end of the file.
@@ -191,7 +191,7 @@ The `users.starling` configuration file is for per-host, local configuration of 
 
 The Ansible `lineinfile` module is used for formatting this file.  See [Ansible lineinfile module docs](https://docs.ansible.com/ansible/latest/modules/lineinfile_module.html#lineinfile-module) for details on this module.
 
-Please see top of the [Configuration Files section](###ConfigurationFiles) above for the other variables that control creation, backup, permissions, etc. of this file but not its content.  The variable that control its content is shown below.
+Please see top of the [Configuration Files section](###ConfigurationFiles) above for the other variables that control creation, backup and permissions of this file but not its content.  The variable that control its content is shown below.
 
 * `client_config_users_starling` is a list of items to set or clear in `users.starling`
 
@@ -204,7 +204,7 @@ Please see top of the [Configuration Files section](###ConfigurationFiles) above
             * `absent`
     * `line`
         * Optional
-        * Default value is empty string.  Line to be set or cleared from file depending on `state`.  If `regex` is not set this line has to EXACTLY match an existing line.  Most uses cases should use `regex`.
+        * Default value is empty string.  Line to be set or cleared from file depending on `state`.  If `regex` is not set this line has to EXACTLY match an existing line for it to be removed when `state` is `absent`.  Most use cases for this file would likely use the `regex` field
     * `regex`
         * Optional
         * Omitted if not set.  Used to match an existing line so that it can be cleared or modified.  If `regex` is found and `insertafter` or `insertbefore` are not specified then the matched line will be removed or replaced depending on `state`.  If `regex` is not found and `state` is present then `line` will be added to the end of the file.
