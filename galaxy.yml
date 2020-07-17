@@ -10,7 +10,7 @@ namespace: oneidentity
 name: authentication_services  
 
 # Semantic versioning compliant version designation
-version: "0.0.3"
+version: "0.0.4"
 
 # The path do the Markdown(.md) readme file
 readme: README.md
@@ -36,25 +36,23 @@ license: Apache-2.0
 # List of keywords to associate with collection for indexing/searching systems
 tags:
 - oneidentity
-- one_identity
 - quest
-- quest_software
-- authenticationservices
-- authentication_services
+- safeguard
+- authentication
+- services
 - activedirectory
-- active_directory
 - ad
 - iam
 - identity
 - access
-- authentication
+- management
 - sso
 - unix
 - linux
 - macos
+- solaris
 - aix
 - hpux
-- hp_ux
 
 
 # URL keys
