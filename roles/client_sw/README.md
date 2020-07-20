@@ -4,7 +4,7 @@ The `client_sw` role manages the deployment of [Safeguard Authentication Service
 
 ## Requirements
 
-The role requires the [Safeguard Authentication Services](https://www.oneidentity.com/products/authentication-services/) client software install packages be available on Ansible control node.  See [variables](##Variables) section for more detail.
+The role requires the [Safeguard Authentication Services](https://www.oneidentity.com/products/authentication-services/) client software install packages be available on Ansible control node.  See [variables](#variables) section for more detail.
 
 ## Variables
 
@@ -12,7 +12,7 @@ All of the variables shown below have a default value but can be overridden to s
 
 ### Client Software Directories
 
-See [client software directories variables](./COMMON.md##ClientSoftwareDirectories) in `common role`.
+See [client software directories variables](../common/README.md#client-software-directories) in the [`common`](../common/README.md) role.
 
 ### Client software state
 
@@ -52,7 +52,7 @@ See [client software directories variables](./COMMON.md##ClientSoftwareDirectori
 
 ### Facts generation
 
-Facts generation variable defaults for all roles are set by variables in the `common role` and can be overriden for all roles by setting the appropriate `common role` variable.  See [common role facts generation variables](./COMMON.md##FactsGeneration) in `common role`.
+Facts generation variable defaults for all roles are set by variables in the [`common`](../common/README.md) role and can be overriden for all roles by setting the appropriate [`common`](../common/README.md) role variable.  See [common role facts generation variables](../common/README.md#facts-generation) in the [`common`](../common/README.md) role.
 
 * `client_sw_facts_generate` enables facts generation.  Implicitely enabled if `client_sw_reports_generate` is set.
 
@@ -70,7 +70,7 @@ Facts generation variable defaults for all roles are set by variables in the `co
 
 ### Report generation
 
-Report generation variable defaults for all roles are set by variables in the `common role` and can be overriden for all roles by setting the appropriate `common role` variable.  See [common role reports generation variables](./COMMON.md##ReportsGeneration) in `common role`.
+Report generation variable defaults for all roles are set by variables in the [`common`](../common/README.md) role and can be overriden for all roles by setting the appropriate [`common`](../common/README.md) role variable.  See [common role report generation variables](../common/README.md#report-generation) in the [`common`](../common/README.md) role.
 
 * `client_sw_reports_generate` enables report generation.  Reports are generated at the end of a `client_sw` run for all hosts.
 
@@ -164,6 +164,4 @@ Only the `client_sw_dir` and `client_sw_pkgs` variables are overriden in this pl
     - name: oneidentity.authentication_services.client_sw
 ```
 
-See sample [HTML](client_sw_report.html) and [CSV](client_sw_report.csv) reports generated from a run of this sample playbook.
-
-For a copy of this and other sample playbooks see [examples](../examples/README.md)
+For a copy of this and other sample playbooks see [examples](../../examples/README.md)

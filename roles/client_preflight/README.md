@@ -4,7 +4,7 @@ The `client_preflight` role checks client readiness for [Safeguard Authenticatio
 
 ## Requirements
 
-The role requires the [Safeguard Authentication Services](https://www.oneidentity.com/products/authentication-services/) client software install packages be available on Ansible control node.  See [variables](##Variables) section for more detail.
+The role requires the [Safeguard Authentication Services](https://www.oneidentity.com/products/authentication-services/) client software install packages be available on Ansible control node.  See [variables](#variables) section for more detail.
 
 ## Variables
 
@@ -12,11 +12,11 @@ All of the variables shown below have a default value but can be overridden to s
 
 ### Client Software Directories
 
-See [client software directories variables](./COMMON.md##ClientSoftwareDirectories) in `common role`.
+See [client software directories variables](../common/README.md#client-software-directories) in the[`common`](../common/README.md) role.
 
 ### Active Directory
 
-See [Active Directory variables](./COMMON.md##ActiveDirectory) in `common role`.
+See [Active Directory variables](../common/README.md#active-directory) in the [`common`](../common/README.md) role.
 
 ### Preflight Binary
 
@@ -43,7 +43,7 @@ See [Active Directory variables](./COMMON.md##ActiveDirectory) in `common role`.
 
 ### Facts generation
 
-Facts generation variable defaults for all roles are set by variables in the `common role` and can be overriden for all roles by setting the appropriate `common role` variable.  See [common role facts generation variables](./COMMON.md##FactsGeneration) in `common role`.
+Facts generation variable defaults for all roles are set by variables in the [`common`](../common/README.md) role and can be overriden for all roles by setting the appropriate [`common`](../common/README.md) role variable.  See [common role facts generation variables](../common/README.md#facts-generation) in the [`common`](../common/README.md) role.
 
 * `client_preflight_facts_generate` enables facts generation.  Implicitely enabled if `client_preflight_reports_generate` is set.
 
@@ -61,7 +61,7 @@ Facts generation variable defaults for all roles are set by variables in the `co
 
 ### Report generation
 
-Report generation variable defaults for all roles are set by variables in the `common role` and can be overriden for all roles by setting the appropriate `common role` variable.  See [common role reports generation variables](./COMMON.md##ReportsGeneration) in `common role`.
+Report generation variable defaults for all roles are set by variables in the [`common`](../common/README.md) role and can be overriden for all roles by setting the appropriate [`common`](../common/README.md) role variable.  See [common role report generation variables](../common/README.md#report-generation) in the [`common`](../common/README.md) role.
 
 * `client_preflight_reports_generate` enables report generation.  Reports are generated at the end of a `client_preflight` run for all hosts.
 
@@ -152,6 +152,4 @@ Below is a sample playbook using the `client_preflight` role.
     - name: oneidentity.authentication_services.client_preflight
 ```
 
-See sample [HTML](client_preflight_report.html) and [CSV](client_preflight_report.csv) reports generated from a run of this sample playbook.
-
-For a copy of this and other sample playbooks see [examples](../examples/README.md)
+For a copy of this and other sample playbooks see [examples](../../examples/README.md)

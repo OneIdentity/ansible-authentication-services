@@ -4,7 +4,7 @@ The `client_join` role performs [Safeguard Authentication Services](https://www.
 
 ## Requirements
 
-The role requires the [Safeguard Authentication Services](https://www.oneidentity.com/products/authentication-services/) client software be installed on the client.  See [`client_sw role`](docs/CLIENT_SW.md) for how to peform client software installation using Ansible.
+The role requires the [Safeguard Authentication Services](https://www.oneidentity.com/products/authentication-services/) client software be installed on the client.  See [`client_sw`](../client_sw/README.md) role for how to peform client software installation using Ansible.
 
 ## Variables
 
@@ -12,7 +12,7 @@ All of the variables shown below have a default value but can be overridden to s
 
 ### Active Directory
 
-See [Active Directory variables](./COMMON.md##ActiveDirectory) in `common role`.
+See [Active Directory variables](../common/README.md#active-directory) in the [`common`](../common/README.md) role.
 
 * `client_join_state` sets the desired join state.  Possible state values:
 
@@ -35,7 +35,7 @@ See [Active Directory variables](./COMMON.md##ActiveDirectory) in `common role`.
 
 ### Facts generation
 
-Facts generation variable defaults for all roles are set by variables in the `common role` and can be overriden for all roles by setting the appropriate `common role` variable.  See [common role facts generation variables](./COMMON.md##FactsGeneration) in `common role`.
+Facts generation variable defaults for all roles are set by variables in the [`common`](../common/README.md) role and can be overriden for all roles by setting the appropriate [`common`](../common/README.md) role variable.  See [common role facts generation variables](../common/README.md#facts-generation) in the [`common`](../common/README.md) role.
 
 * `client_join_facts_generate` enables facts generation.  Implicitely enabled if `client_join_reports_generate` is set.
 
@@ -53,7 +53,7 @@ Facts generation variable defaults for all roles are set by variables in the `co
 
 ### Report generation
 
-Report generation variable defaults for all roles are set by variables in the `common role` and can be overriden for all roles by setting the appropriate `common role` variable.  See [common role reports generation variables](./COMMON.md##ReportsGeneration) in `common role`.
+Report generation variable defaults for all roles are set by variables in the [`common`](../common/README.md) role and can be overriden for all roles by setting the appropriate [`common`](../common/README.md) role variable.  See [common role report generation variables](../common/README.md#report-generation) in the [`common`](../common/README.md) role.
 
 * `client_join_reports_generate` enables report generation.  Reports are generated at the end of a `client_join` run for all hosts.
 
@@ -141,6 +141,4 @@ Below is a sample playbook using the `client_join` role.
     - name: oneidentity.authentication_services.client_join
 ```
 
-See sample [HTML](client_join_report.html) and [CSV](client_join_report.csv) reports generated from a run of this sample playbook.
-
-For a copy of this and other sample playbooks see [examples](../examples/README.md)
+For a copy of this and other sample playbooks see [examples](../../examples/README.md)

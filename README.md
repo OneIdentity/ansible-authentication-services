@@ -8,23 +8,22 @@ The One Identity Safeguard Authentication Services Ansible Collection, referred 
 
 ### Implemented
 
-* [`common role`](docs/COMMON.md): Common tasks and variables required by other roles.
+* [`common role`](roles/common/README.md): Common tasks and variables required by other roles.
 
-* [`client_sw role`](docs/CLIENT_SW.md): Client software install, upgrade, downgrade, uninstall, and version checking.
-    * [`client_sw_pkgs module`](docs/CLIENT_SW.md#Plugins) Client software install package directory checking. 
-    * [`pkgdict2items filter`](docs/CLIENT_SW.md#Plugins) Client software package sorting by state and name.
+* [`client_sw role`](roles/client_sw/README.md): Client software install, upgrade, downgrade, uninstall, and version checking.
+    * [`client_sw_pkgs module`](roles/client_sw/README.md#plugins) Client software install package directory checking. 
+    * [`pkgdict2items filter`](roles/client_sw/README.md#plugins) Client software package sorting by state and name.
 
-* [`client_preflight role`](docs/CLIENT_PREFLIGHT.md): Check client readiness for software install and AD join.
-    * [`preflight module`](docs/CLIENT_PREFLIGHT.md#Plugins) Performs preflight tasks on host.
+* [`client_preflight role`](roles/client_preflight/README.md): Check client readiness for software install and AD join.
+    * [`preflight module`](roles/client_preflight/README.md#plugins) Performs preflight tasks on host.
 
-* [`client_join role`](docs/CLIENT_JOIN.md): Client Active Directory joining/unjoining. 
-    * [`vastool_join module`](docs/CLIENT_JOIN.md#Plugins) Performs Active Directory join/unjoin tasks on host.
+* [`client_join role`](roles/client_join/README.md): Client Active Directory joining/unjoining. 
+    * [`vastool_join module`](roles/client_join/README.md#plugins) Performs Active Directory join/unjoin tasks on host.
 
-* [`client_config role`](docs/CLIENT_CONFIG.md): Client configuration.
-    * [`dictlistselect filter`](docs/CLIENT_CONFIG.md#Plugins) Filter list of dicts to only include specified keys.
+* [`client_config role`](roles/client_config/README.md): Client configuration.
+    * [`dictlistselect filter`](roles/client_config/README.md#plugins) Filter list of dicts to only include specified keys.
 
 ### In Development 
-
 
 * [`client_profile role`](docs/CLIENT_PROFILE.md): Client profiling. 
 
@@ -51,7 +50,7 @@ The One Identity Safeguard Authentication Services Ansible Collection, referred 
     * See One Identity [Safeguard Authentication Services documentation](https://support.oneidentity.com/authentication-services/4.2.4/technical-documents) for requirements and instructions.
 
 ### From Ansible Galaxy 
-The collection will soon be available through [Ansible Galaxy](https://galaxy.ansible.com/) until then please use the [From GitHub](#FromGitHub) or [Local Build and Install](#LocalBuildandInstall) instructions. 
+The collection will soon be available through [Ansible Galaxy](https://galaxy.ansible.com/) until then please use the [From GitHub](#from-gitHub) or [Local Build and Install](#local-build-and-install) instructions. 
 
 To install from [Ansible Galaxy](https://galaxy.ansible.com/) you can use the [ansible-galaxy](https://docs.ansible.com/ansible/latest/cli/ansible-galaxy.html) command to install the collection on your control node.  See [Ansible documentation](https://docs.ansible.com/ansible/devel/user_guide/collections_using.html#installing-collections) for futher information.
 

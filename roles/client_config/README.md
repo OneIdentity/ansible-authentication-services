@@ -4,7 +4,7 @@ The `client_config` role performs [Safeguard Authentication Services](https://ww
 
 ## Requirements
 
-The role requires the [Safeguard Authentication Services](https://www.oneidentity.com/products/authentication-services/) client software be installed on the client.  See [`client_sw role`](docs/CLIENT_SW.md) for how to peform client software installation using Ansible.
+The role requires the [Safeguard Authentication Services](https://www.oneidentity.com/products/authentication-services/) client software be installed on the client.  See the [`client_sw`](../client_sw/README.md) role for how to peform client software installation using Ansible.
 
 ## Variables
 
@@ -105,7 +105,7 @@ The `vas.conf` configuration file is formatted per standard [INI file](https://e
 
 The Ansible `ini_file` module is used for formatting this file.  See [Ansible ini_file module docs](https://docs.ansible.com/ansible/latest/modules/ini_file_module.html#ini-file-module) for details on this module.
 
-Please see top of the [Configuration Files section](###ConfigurationFiles) above for the other variables that control creation, backup, and permissions of this file but not its content.  The variable that controls its content is shown below.
+Please see top of the [Configuration Files](#configuration-files) section for the variables that control creation, backup, and permissions of this file but not its content.  The variable that controls its content is shown below.
 
 * `client_config_vas_conf` is a list of items to set or clear in `vas.conf`
 
@@ -131,7 +131,7 @@ The `user-override` and `group-override` configuration files allow per-host, loc
 
 The Ansible `lineinfile` module is used for formatting these files.  See [Ansible lineinfile module docs](https://docs.ansible.com/ansible/latest/modules/lineinfile_module.html#lineinfile-module) for details on this module.
 
-Please see top of the [Configuration Files section](###ConfigurationFiles) above for the other variables that control creation, backup and permissions of these files but not their content.  The variables that control their content are shown below.
+Please see top of the [Configuration Files](#configuration-files) section for the variables that control creation, backup and permissions of these files but not their content.  The variables that control their content are shown below.
 
 * `client_config_user_override` and `client_config_group_override` are a list of items to set or clear in `user-override` and `user-override`
 
@@ -161,7 +161,7 @@ The `users.allow`, `users.deny`, `groups.allows` and `groups.deny` configuration
 
 The Ansible `lineinfile` module is used for formatting these files.  See [Ansible lineinfile module docs](https://docs.ansible.com/ansible/latest/modules/lineinfile_module.html#lineinfile-module) for details on this module.
 
-Please see top of the [Configuration Files section](###ConfigurationFiles) above for the other variables that control creation, backup and permissions of these files but not their content.  The variables that control their content are shown below.
+Please see top of the [Configuration Files](#configuration-files) section for the variables that control creation, backup and permissions of these files but not their content.  The variables that control their content are shown below.
 
 * `client_config_users_allow`, `client_config_users_deny`, `client_config_groups_allow` and `client_config_groups_deny` are a list of items to set or clear in `users.allow`, `users.deny`, `groups.allow` and `groups.deny`
 
@@ -191,7 +191,7 @@ The `users.starling` configuration file is for per-host, local configuration of 
 
 The Ansible `lineinfile` module is used for formatting this file.  See [Ansible lineinfile module docs](https://docs.ansible.com/ansible/latest/modules/lineinfile_module.html#lineinfile-module) for details on this module.
 
-Please see top of the [Configuration Files section](###ConfigurationFiles) above for the other variables that control creation, backup and permissions of this file but not its content.  The variable that control its content is shown below.
+Please see top of the [Configuration Files](#configuration-files) section for the variables that control creation, backup and permissions of this file but not its content.  The variable that control its content is shown below.
 
 * `client_config_users_starling` is a list of items to set or clear in `users.starling`
 
@@ -217,7 +217,7 @@ Please see top of the [Configuration Files section](###ConfigurationFiles) above
 
 ### Facts generation
 
-Facts generation variable defaults for all roles are set by variables in the `common role` and can be overriden for all roles by setting the appropriate `common role` variable.  See [common role facts generation variables](./COMMON.md##FactsGeneration) in `common role`.
+Facts generation variable defaults for all roles are set by variables in the [`common`](../common/README.md) role and can be overriden for all roles by setting the appropriate [`common`](../common/README.md) role variable.  See [common role facts generation variables](../common/README.md#facts-generation) in the [`common`](../common/README.md) role.
 
 * `client_config_facts_generate` enables facts generation.  Implicitely enabled if `client_config_reports_generate` is set.
 
@@ -235,7 +235,7 @@ Facts generation variable defaults for all roles are set by variables in the `co
 
 ### Report generation
 
-Report generation variable defaults for all roles are set by variables in the `common role` and can be overriden for all roles by setting the appropriate `common role` variable.  See [common role reports generation variables](./COMMON.md##ReportsGeneration) in `common role`.
+Report generation variable defaults for all roles are set by variables in the [`common`](../common/README.md) role and can be overriden for all roles by setting the appropriate [`common`](../common/README.md) variable.  See [common role reports generation variables](../common/README.md#report-generation) in the [`common`](../common/README.md) role.
 
 * `client_config_reports_generate` enables report generation.  Reports are generated at the end of a `client_config` run for all hosts.
 
@@ -337,6 +337,4 @@ Below is a sample playbook using the `client_config` role.
     - name: oneidentity.authentication_services.client_config
 ```
 
-See sample [HTML](client_config_report.html) and [CSV](client_config_report.csv) reports generated from a run of this sample playbook.
-
-For a copy of this and other sample playbooks see [examples](../examples/README.md)
+For a copy of this and other sample playbooks see [examples](../../examples/README.md)

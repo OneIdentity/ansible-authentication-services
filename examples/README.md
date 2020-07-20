@@ -17,3 +17,7 @@ The [`client_sw`](run_client_sw.yml) role example shows use of the `client_sw` r
 ## `client_join` Role Example
 
 The [`client_join`](run_client_join.yml) role example shows use of the `client_join` role in an Ansbile playbook.  The variables most likely to be overriden have been included in this playbook for your convenience even though many are still set to their default values.
+
+## `client_config` Role Example
+
+The [`client_config`](run_client_config.yml) role example shows use of the `client_config` role in an Ansbile playbook.  The variables most likely to be overriden have been included in this playbook for your convenience even though many are still set to their default values.
