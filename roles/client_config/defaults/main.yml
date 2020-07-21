@@ -94,7 +94,6 @@ client_config_facts_verbose: "{{ facts_verbose }}"
 
 client_config_reports_generate: "{{ reports_generate }}"
 client_config_reports_backup: "{{ reports_backup }}"
-client_config_reports_details_format: "{{ reports_details_format }}"
 
 # Format of details section in both HTML and CSV reports
 # Valid options are: 'yaml' or 'json'

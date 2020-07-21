@@ -10,7 +10,7 @@ namespace: oneidentity
 name: authentication_services  
 
 # Semantic versioning compliant version designation
-version: "0.0.4"
+version: "0.0.5"
 
 # The path do the Markdown(.md) readme file
 readme: README.md

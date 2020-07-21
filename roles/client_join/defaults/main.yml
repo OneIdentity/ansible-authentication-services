@@ -3,7 +3,7 @@
 # Vastool join settings
 # ------------------------------------------------------------------------------
 
-client_join_state: 'joined' 
+client_join_state: joined 
 client_join_extra_args:
 
 
@@ -19,7 +19,6 @@ client_join_facts_verbose: "{{ facts_verbose }}"
 
 client_join_reports_generate: "{{ reports_generate }}"
 client_join_reports_backup: "{{ reports_backup }}"
-client_join_reports_details_format: "{{ reports_details_format }}"
 
 # Format of details section in both HTML and CSV reports
 # Valid options are: 'yaml' or 'json'

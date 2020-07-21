@@ -50,7 +50,6 @@ The One Identity Safeguard Authentication Services Ansible Collection, referred 
     * See One Identity [Safeguard Authentication Services documentation](https://support.oneidentity.com/authentication-services/4.2.4/technical-documents) for requirements and instructions.
 
 ### From Ansible Galaxy 
-The collection will soon be available through [Ansible Galaxy](https://galaxy.ansible.com/) until then please use the [From GitHub](#from-gitHub) or [Local Build and Install](#local-build-and-install) instructions. 
 
 To install from [Ansible Galaxy](https://galaxy.ansible.com/) you can use the [ansible-galaxy](https://docs.ansible.com/ansible/latest/cli/ansible-galaxy.html) command to install the collection on your control node.  See [Ansible documentation](https://docs.ansible.com/ansible/devel/user_guide/collections_using.html#installing-collections) for futher information.
 
@@ -81,14 +80,14 @@ To install from [GitHub](https://github.com/OneIdentity/ansible-authentication-s
 
 Using `ansible-galaxy` command:
 ```bash
-ansible-galaxy collection install https://github.com/OneIdentity/ansible-authentication-services/releases/download/v0.0.4/oneidentity-authentication_services-0.0.4.tar.gz
+ansible-galaxy collection install https://github.com/OneIdentity/ansible-authentication-services/releases/download/v0.0.5/oneidentity-authentication_services-0.0.5.tar.gz
 ```
 
 The collection can also be added to a project's `requirements.yml` file
 ```yaml
 ---
 collections:
-  - name: https://github.com/OneIdentity/ansible-authentication-services/releases/download/v0.0.4/oneidentity-authentication_services-0.0.4.tar.gz
+  - name: https://github.com/OneIdentity/ansible-authentication-services/releases/download/v0.0.5/oneidentity-authentication_services-0.0.5.tar.gz
 ```
 
 and installed using the `ansible-galaxy` command.  This method allows all required collections for a project to be specified in one place and installed with one command.
@@ -118,7 +117,7 @@ For local build and installation, you can clone the Git repository, build the co
     The build command will generate an Ansible Galaxy collection artifact with a `tar.gz` file extension, sample output will look like the following:
 
     ```
-    Created collection for oneidentity.authentication_services at /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.4.tar.gz
+    Created collection for oneidentity.authentication_services at /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.5.tar.gz
     ```
 
     `Pleae note the path shown above is just an example, the path to your build artifact will be in the root directory of the cloned repository.`
@@ -128,14 +127,14 @@ For local build and installation, you can clone the Git repository, build the co
     Using `ansible-galaxy` command:
 
     ```bash
-    ansible-galaxy collection install /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.4.tar.gz
+    ansible-galaxy collection install /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.5.tar.gz
     ```
 
     The collection can also be added to a project's `requirements.yml` file
     ```yaml
     ---
     collections:
-    - name: /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.4.tar.gz
+    - name: /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.5.tar.gz
     ```
 
     and installed using the `ansible-galaxy` command.  This method allows all required collections for a project to be specified in one place and installed with one command.
