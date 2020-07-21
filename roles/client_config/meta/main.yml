@@ -7,7 +7,8 @@ galaxy_info:
   company: One Identity
 
   description: >
-    Performs Safeguard Authentication Services client configuration by adding, modifying, and removing entries from the Safeguard Authentication Services configuration files on the client.
+    Performs Safeguard Authentication Services client configuration by adding, modifying, and
+    removing entries from the Safeguard Authentication Services configuration files on the client.
 
   issue_tracker_url: https://github.com/OneIdentity/ansible-authentication-services/issues
 
@@ -35,7 +36,7 @@ galaxy_info:
   - name: Debian
     versions:
     - all
-  - name: Fedora 
+  - name: Fedora
     versions:
     - all
   - name: FreeBSD

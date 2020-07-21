@@ -6,7 +6,7 @@
 # File: vastool.py
 # Desc: Shared code for the various vastool_* modules
 # Auth: Mark Stillings
-# Note: 
+# Note:
 # ------------------------------------------------------------------------------
 
 
@@ -15,13 +15,12 @@
 # ------------------------------------------------------------------------------
 
 import sys
-import os
 import subprocess
 import re
 
 
 # ------------------------------------------------------------------------------
-# Constants 
+# Constants
 # ------------------------------------------------------------------------------
 
 # Vastool
@@ -65,18 +64,19 @@ def vastool_status():
     # Return
     return domain
 
+
 # ------------------------------------------------------------------------------
 def vastool_status_parse(rval_str):
 
     # Return values
     domain = None
 
-    # Find domain 
-    domain_re_str = r'^Domain: <(\S+)>$' 
+    # Find domain
+    domain_re_str = r'^Domain: <(\S+)>$'
     domain_re = re.compile(domain_re_str, re.MULTILINE)
     domain_re_match = domain_re.split(rval_str)
     if len(domain_re_match) > 1 and domain_re_match[1] != 'N/A':
-        domain = domain_re_match[1] 
+        domain = domain_re_match[1]
 
     # Return
     return domain

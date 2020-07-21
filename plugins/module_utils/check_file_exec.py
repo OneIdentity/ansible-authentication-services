@@ -7,7 +7,7 @@
 # Desc: Ansible utils module to check executable file permissions and get
 #       its version.
 # Auth: Mark Stillings
-# Note: 
+# Note:
 # ------------------------------------------------------------------------------
 
 
@@ -32,13 +32,13 @@ def check_file_exec(file_path, version_cmd):
     """
 
     # Return values
-    err = None 
+    err = None
     version = ''
 
     # Check if file is present
     exists = os.path.isfile(file_path)
     if not exists:
-        err = file_path + ' was not found' 
+        err = file_path + ' was not found'
 
     # Check if we have permission to execute file
     if not err:
@@ -51,7 +51,8 @@ def check_file_exec(file_path, version_cmd):
         err, version = get_file_version(file_path, version_cmd)
 
     # Return
-    return err, version 
+    return err, version
+
 
 # ------------------------------------------------------------------------------
 def get_file_version(file_path, version_cmd):
@@ -60,8 +61,8 @@ def get_file_version(file_path, version_cmd):
     """
 
     # Return values
-    err = None 
-    version = None 
+    err = None
+    version = None
 
     # Build vastool command
     cmd = []
@@ -76,10 +77,10 @@ def get_file_version(file_path, version_cmd):
     rval_str = rval_bytes.decode(sys.stdout.encoding)
 
     # Compile regex
-    vers_re_str = '(?=.*)[\d]+\.[\d]+\.[\d]+[\.-][\d]+'
+    vers_re_str = r'(?=.*)[\d]+\.[\d]+\.[\d]+[\.-][\d]+'
     vers_re = re.compile(vers_re_str)
 
-    # Parse version from response    
+    # Parse version from response
     version_match = vers_re.search(rval_str)
     if version_match:
         version_str = version_match.group()

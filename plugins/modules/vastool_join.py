@@ -6,7 +6,7 @@
 # File: vastool_join.py
 # Desc: Ansible module that wraps vastool join/unjoin commands.
 # Auth: Mark Stillings
-# Note: 
+# Note:
 # ------------------------------------------------------------------------------
 
 
@@ -20,11 +20,11 @@ ANSIBLE_METADATA = {
     'supported_by': 'community'
 }
 
-DOCUMENTATION = """ 
+DOCUMENTATION = """
 ---
-module: vastool_join 
+module: vastool_join
 
-short_description: Active Directory join 
+short_description: Active Directory join
 
 version_added: '2.9'
 
@@ -37,7 +37,7 @@ options:
             - Active Directory join state
         type: str
         required: false
-        default: joined 
+        default: joined
         choices: ['joined', 'unjoined']
     domain:
         description:
@@ -48,12 +48,12 @@ options:
         description:
             - Active Directory user or principal to perform join
         type: str
-        required: true 
+        required: true
     password:
         description:
             - Active Directory password to authenticate
         type: str
-        required: true 
+        required: true
     servers:
         description:
             - Servers to use for join
@@ -67,15 +67,15 @@ options:
         type: str
         required: false
         default: fully-qualified DNS name of host
-    account_container: 
+    account_container:
         description:
             - Name of container for host computer account
         type: str
         required: false
-        default: default computers container 
+        default: default computers container
     extra_args:
         description:
-            - Other arguments to be passed on to vastool 
+            - Other arguments to be passed on to vastool
         type: str
         required: false
         default: ''
@@ -96,7 +96,7 @@ options:
             - Ansible facts key
         type: str
         required: false
-        default: 'vastool_join' 
+        default: 'vastool_join'
 
 author:
     - Mark Stillings (mark.stillings@oneidentity.com)
@@ -119,11 +119,11 @@ EXAMPLES = """
   register: vastool_join_result
 """
 
-RETURN = """ 
+RETURN = """
 ansible_facts:
     description: All non-standard return values are placed in Ansible facts
     type: dict
-    returned: when facts parameter is true 
+    returned: when facts parameter is true
     keys:
         changed:
             description: Did the state of the host change?
@@ -147,7 +147,7 @@ ansible_facts:
             returned: always
         steps:
             description: Vastool join/unjoin steps and results of those steps
-            type: list of dicts 
+            type: list of dicts
             returned: when facts_verbose true
 """
 
@@ -160,12 +160,12 @@ from ansible.module_utils.basic import AnsibleModule
 import sys
 import subprocess
 import re
-from ansible_collections.oneidentity.authentication_services.plugins.module_utils.vastool import *
-from ansible_collections.oneidentity.authentication_services.plugins.module_utils.check_file_exec import *
+import ansible_collections.oneidentity.authentication_services.plugins.module_utils.vastool as vt
+import ansible_collections.oneidentity.authentication_services.plugins.module_utils.check_file_exec as cfe
 
 
 # ------------------------------------------------------------------------------
-# Constants 
+# Constants
 # ------------------------------------------------------------------------------
 
 # Arg choices and defaults
@@ -174,7 +174,7 @@ STATE_CHOICES = ['joined', 'unjoined']
 SERVERS_DEFAULT = []
 ACCOUNT_NAME_DEFAULT = None
 ACCOUNT_CONTAINER_DEFAULT = None
-EXTRA_ARGS_DEFAULT = '' 
+EXTRA_ARGS_DEFAULT = ''
 FACTS_DEFAULT = True
 FACTS_VERBOSE_DEFAULT = True
 FACTS_KEY_DEFAULT = 'vastool_join'
@@ -191,89 +191,76 @@ def run_module():
     """
 
     # Module argument info
-    module_args = \
-    {
-        'state': \
-        {
-            'type': 'str',
-            'required': False,
-            'choices': STATE_CHOICES,
-            'default': STATE_DEFAULT 
-        },
-        'domain': \
-        {
-            'type': 'str',
-            'required': True
-        },
-        'username': \
-        {
-            'type': 'str',
-            'required': True,
-            'no_log': True
-        },
-        'password': \
-        {
-            'type': 'str',
-            'required': True,
-            'no_log': True 
-        }, 
-        'servers': \
-        {
-            'type': 'list',
-            'elements': 'str',
-            'required': False,
-            'default': SERVERS_DEFAULT 
-        },
-        'account_name': \
-        {
-            'type': 'str',
-            'required': False,
-            'default': ACCOUNT_NAME_DEFAULT
-        },
-        'account_container': \
-        {
-            'type': 'str',
-            'required': False,
-            'default': ACCOUNT_CONTAINER_DEFAULT
-        },
-        'extra_args': \
-        {
-            'type': 'str',
-            'required': False,
-            'default': EXTRA_ARGS_DEFAULT
-        },
-        'facts': \
-        {
-            'type': 'bool',
-            'required': False,
-            'default': FACTS_DEFAULT
-        },
-        'facts_verbose': \
-        {
-            'type': 'bool',
-            'required': False,
-            'default': FACTS_VERBOSE_DEFAULT
-        },
-        'facts_key': \
-        {
-            'type': 'str',
-            'required': False,
-            'default': FACTS_KEY_DEFAULT
-        } 
-    }
+    module_args = {
+            'state': {
+                'type': 'str',
+                'required': False,
+                'choices': STATE_CHOICES,
+                'default': STATE_DEFAULT
+            },
+            'domain': {
+                'type': 'str',
+                'required': True
+            },
+            'username': {
+                'type': 'str',
+                'required': True,
+                'no_log': True
+            },
+            'password': {
+                'type': 'str',
+                'required': True,
+                'no_log': True
+            },
+            'servers': {
+                'type': 'list',
+                'elements': 'str',
+                'required': False,
+                'default': SERVERS_DEFAULT
+            },
+            'account_name': {
+                'type': 'str',
+                'required': False,
+                'default': ACCOUNT_NAME_DEFAULT
+            },
+            'account_container': {
+                'type': 'str',
+                'required': False,
+                'default': ACCOUNT_CONTAINER_DEFAULT
+            },
+            'extra_args': {
+                'type': 'str',
+                'required': False,
+                'default': EXTRA_ARGS_DEFAULT
+            },
+            'facts': {
+                'type': 'bool',
+                'required': False,
+                'default': FACTS_DEFAULT
+            },
+            'facts_verbose': {
+                'type': 'bool',
+                'required': False,
+                'default': FACTS_VERBOSE_DEFAULT
+            },
+            'facts_key': {
+                'type': 'str',
+                'required': False,
+                'default': FACTS_KEY_DEFAULT
+            }
+        }
 
-    # Seed result value 
-    result = \
-    {
-        'changed': False,
-        'failed': False,
-        'msg': '' 
-    }
+    # Seed result value
+    result = {
+            'changed': False,
+            'failed': False,
+            'msg': ''
+        }
 
     # Lean on boilerplate code in AnsibleModule class
     module = AnsibleModule(
-        argument_spec = module_args,
-        supports_check_mode = False 
+        argument_spec=module_args,
+        supports_check_mode=False
     )
 
     # Run logic
@@ -283,6 +270,7 @@ def run_module():
     # Exit
     module.exit_json(**result)
 
+
 # ------------------------------------------------------------------------------
 def run_normal(params, result):
     """
@@ -290,18 +278,18 @@ def run_normal(params, result):
 
     params contains input parameters.
 
-    result contains run results skeleton, will modify/add to and then return 
-    this value along with an err value that contains None if no error or a string 
+    result contains run results skeleton, will modify/add to and then return
+    this value along with an err value that contains None if no error or a string
     describing the error.
     """
 
-    # Return data 
-    err = None 
+    # Return data
+    err = None
     version = ''
     changed = False
     steps = []
 
-    # Parameters 
+    # Parameters
     state = params['state']
     domain = params['domain']
     username = params['username']
@@ -315,21 +303,21 @@ def run_normal(params, result):
     facts_key = params['facts_key'] if params['facts_key'] else FACTS_KEY_DEFAULT
 
     # Check vastool
-    err, version = check_file_exec(VASTOOL_PATH, '-v')
+    err, version = cfe.check_file_exec(vt.VASTOOL_PATH, '-v')
 
-    # Run vastool 
+    # Run vastool
     if err is None:
         err, changed, steps = run_vastool(
             state,
-            domain, 
-            username, 
-            password, 
-            servers, 
-            account_name, 
-            account_container, 
+            domain,
+            username,
+            password,
+            servers,
+            account_name,
+            account_container,
             extra_args)
 
-    # Build result 
+    # Build result
     result['changed'] = changed
     result['failed'] = err is not None
     result['msg'] = err if err is not None else ''
@@ -341,32 +329,33 @@ def run_normal(params, result):
         result_facts['version'] = version
         if facts_verbose:
             result_facts['steps'] = steps
-        result['ansible_facts'] = {facts_key: result_facts} 
+        result['ansible_facts'] = {facts_key: result_facts}
 
     # Return
     return err, result
 
+
 # ------------------------------------------------------------------------------
 def run_vastool(
-    state,
-    domain, 
-    username, 
-    password,
-    servers,
-    account_name,
-    account_container,
-    extra_args):
+        state,
+        domain,
+        username,
+        password,
+        servers,
+        account_name,
+        account_container,
+        extra_args):
     """
     Run vastool
     """
 
     # Return values
-    err = None 
+    err = None
     changed = False
     steps = []
 
     # Check status to decide what to do
-    status_domain = vastool_status()
+    status_domain = vt.vastool_status()
 
     # Joined
     if state == 'joined':
@@ -389,7 +378,7 @@ def run_vastool(
 
         # If joined to a different domain then we need to complain
         else:
-            err = 'Cannot join domain ' + domain + ' because already joined to domain ' + status_domain 
+            err = 'Cannot join domain ' + domain + ' because already joined to domain ' + status_domain
 
     # Unjoined
     elif state == 'unjoined':
@@ -401,8 +390,8 @@ def run_vastool(
                 password,
                 account_name,
                 extra_args
-            ) 
-        
+            )
+
         # If already unjoined then do nothing
         else:
             pass
@@ -414,24 +403,25 @@ def run_vastool(
     # Return
     return err, changed, steps
 
+
 # ------------------------------------------------------------------------------
 def run_vastool_join(
-    domain, 
-    username, 
-    password,
-    servers,
-    account_name,
-    account_container,
-    extra_args):
+        domain,
+        username,
+        password,
+        servers,
+        account_name,
+        account_container,
+        extra_args):
 
     # Return values
-    err = None 
+    err = None
     changed = False
     steps = []
 
     # Build vastool command
     cmd = []
-    cmd += [VASTOOL_PATH]
+    cmd += [vt.VASTOOL_PATH]
     cmd += ['-u ' + username]
     cmd += ['-w ' + password]
     cmd += ['join']
@@ -458,21 +448,22 @@ def run_vastool_join(
     # Return
     return err, changed, steps
 
+
 # ------------------------------------------------------------------------------
 def run_vastool_unjoin(
-    username, 
-    password,
-    account_name,
-    extra_args):
+        username,
+        password,
+        account_name,
+        extra_args):
 
     # Return values
-    err = None 
+    err = None
     changed = False
     steps = []
 
     # Build vastool command
     cmd = []
-    cmd += [VASTOOL_PATH]
+    cmd += [vt.VASTOOL_PATH]
     cmd += ['-u ' + username]
     cmd += ['-w ' + password]
     cmd += ['unjoin']
@@ -496,16 +487,17 @@ def run_vastool_unjoin(
     # Return
     return err, changed, steps
 
+
 # ------------------------------------------------------------------------------
 def parse_vastool_steps(domain, steps_str):
 
     # Return values
     err = None
-    changed = False 
-    steps = [] 
+    changed = False
+    steps = []
 
     # Find steps
-    steps_re_str = r'^(.+)\s\.\.\.\s(.+)' 
+    steps_re_str = r'^(.+)\s\.\.\.\s(.+)'
     steps_re = re.compile(steps_re_str, re.MULTILINE)
     steps_re_match = steps_re.findall(steps_str)
 
@@ -515,9 +507,9 @@ def parse_vastool_steps(domain, steps_str):
             steps += [
                 {
                     'message': steps_match[0],
-                    'result': steps_match[1].capitalize() 
-                }    
-            ] 
+                    'result': steps_match[1].capitalize()
+                }
+            ]
 
     # Find errors
     error_re_str = r'^(error): (.*)$'
@@ -531,8 +523,8 @@ def parse_vastool_steps(domain, steps_str):
                 {
                     'message': error_match[1],
                     'result': error_match[0].capitalize()
-                }    
-            ] 
+                }
+            ]
 
     # Build list of errors
     err_list = []
@@ -542,7 +534,7 @@ def parse_vastool_steps(domain, steps_str):
     for step in steps:
         if step['result'] in error_results:
             err_list += [step['result'] + ': ' + step['message']]
-    
+
     # If no errors then we succeeded, mark changed
     if not err_list:
         changed = True
@@ -552,7 +544,8 @@ def parse_vastool_steps(domain, steps_str):
         err = '\n'.join(err_list)
 
     # Return
-    return err, changed, steps 
+    return err, changed, steps
+
 
 # ------------------------------------------------------------------------------
 def main():
@@ -561,6 +554,7 @@ def main():
     """
 
     run_module()
+
 
 # When run from command line
 # ------------------------------------------------------------------------------

@@ -1,15 +1,16 @@
 ---
 
 # Set success
-- set_fact:
+- name: set success
+  set_fact:
     cacheable: true
-    sas_client_config:  
+    sas_client_config:
       unreachable: false
       failed: false
       changed: "{{ sas_client_config_changed | default(false) }}"
       msg: ''
-    sas_client: 
-      unreachable: false 
+    sas_client:
+      unreachable: false
       failed: false
       changed: "{{ sas_client_config_changed | default(false) }}"
       msg: ''
