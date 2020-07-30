@@ -1,0 +1,7 @@
+---
+
+- name: create choices XML
+  template:
+    src: choices.xml.j2
+    dest: "{{ client_sw_tmp_dir }}/choices.xml"
+  changed_when: false

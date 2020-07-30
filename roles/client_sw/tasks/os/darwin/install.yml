@@ -7,16 +7,38 @@
 # Package install, copy installer
 - include_tasks: utils/package_copy.yml
 
-# Unmount any Authentication Sercives installer dmg's
+# Unmount any Authentication Services installer dmg's
 - include_tasks: dmg_unmount.yml
 
 # Mount Authentication Services installer dmg
 - include_tasks: dmg_mount.yml
 
-# Run installer
-- name: install {{ package }} 
-  command: /usr/sbin/installer -pkg {{ pkg_name.stdout | default() }}/Contents/Packages/{{ package }}.pkg -target /
-  register: pkg_install 
+# New-style package (SAS 5.0+)
+- name: install pkg
+  block:
+
+    # Create choices xml
+    - include_tasks: create_choices_xml.yml
+
+    # Run installer
+    - name: install {{ package }} 
+      command: /usr/sbin/installer -applyChoiceChangesXML {{ client_sw_tmp_dir }}/choices.xml -pkg {{ pkg_name.stdout | default() }} -target /
+      register: pkg_install 
+
+  when:
+    - pkg_name.stdout | regex_search('(\.pkg)') 
+
+# Old-style package
+- name: install mpkg
+  block:
+
+    # Run installer
+    - name: install {{ package }} 
+      command: /usr/sbin/installer -pkg {{ pkg_name.stdout | default() }}/Contents/Packages/{{ package }}.pkg -target /
+      register: pkg_install 
+
+  when:
+    - pkg_name.stdout | regex_search('(\.mpkg)') 
 
 # Unmount any Authentication Sercives installer dmg's
 - include_tasks: dmg_unmount.yml

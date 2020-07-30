@@ -158,7 +158,7 @@ PKG_PATHS = {
         'sparc64': 'solaris10-sparc'
     },
     'darwin': {
-        'x86_64': 'macos-1012'
+        'x86_64': 'macos'
     },
     'hp-ux': {
         '9000/800': 'hpux-pa-11v3',
@@ -424,7 +424,7 @@ def parse_packages(path, ext):
     pkg_vers_re = re.compile(pkg_vers_re_str)
 
     # Glob the package directory to find packages with correct file extension
-    pkgs_str = path + '/*.' + ext
+    pkgs_str = path + '*/*.' + ext
     pkgs = glob.glob(pkgs_str)
 
     # Parse each package
@@ -514,13 +514,33 @@ def process_dmg_package(dmg_pkgs, dmg_pkg, pkg_names):
 
     if dmg_name:
         for pkg_name in pkg_names:
-            packages[pkg_name] = {
-                    'path': dmg_data['path'],
-                    'file': dmg_data['file'],
-                    'vers': dmg_data['vers']
-                }
+
+            # vascert has a version different from the other software packages
+            if pkg_name == 'vascert':
+                packages[pkg_name] = {
+                        'path': dmg_data['path'],
+                        'file': dmg_data['file'],
+                        'vers': get_vascert_version(dmg_data['vers'])
+                    }
+
+            # All other packages share the same version as the installer
+            else:
+                packages[pkg_name] = {
+                        'path': dmg_data['path'],
+                        'file': dmg_data['file'],
+                        'vers': dmg_data['vers']
+                    }
 
     return packages
+
+
+# ------------------------------------------------------------------------------
+def get_vascert_version(dmg_version):
+
+    # For now, there is only one version of vascert in the wild in SAS 4.2.0 and later
+    # so we can return a constant.  Later we may need to add a lookup table to map
+    # vascert version to major/minor SAS version.
+    return '1.1.0.750'
 
 
 # ------------------------------------------------------------------------------
