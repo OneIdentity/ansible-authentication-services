@@ -3,7 +3,8 @@
 # Vastool join settings
 # ------------------------------------------------------------------------------
 
-client_join_state: joined 
+# Valid options are: 'joined' or 'unjoined'
+client_join_state: joined
 client_join_extra_args:
 
 

@@ -417,7 +417,7 @@ def parse_packages(path, ext):
 
     # regex strings
     pkg_name_re_str = r'^[a-z]+'
-    pkg_vers_re_str = r'(?=.*)[\d]+\.[\d]+\.[\d]+[\.-][\d]+'
+    pkg_vers_re_str = r'(?=.*)[\d]+\.[\d]+\.[\d]+[\.-][\d]+(?=\D\D)'
 
     # Compile regex's
     pkg_name_re = re.compile(pkg_name_re_str, re.I)
