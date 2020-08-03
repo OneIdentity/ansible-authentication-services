@@ -1,6 +1,7 @@
 ---
 
-- set_fact:
+- name: format result
+  set_fact:
     result:
       unreachable: "{{ file_result.unreachable | default(false) }}"
       changed: "{{ file_result.changed | default(false) }}"

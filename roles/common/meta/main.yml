@@ -35,7 +35,7 @@ galaxy_info:
   - name: Debian
     versions:
     - all
-  - name: Fedora 
+  - name: Fedora
     versions:
     - all
   - name: FreeBSD

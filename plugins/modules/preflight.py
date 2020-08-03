@@ -8,7 +8,7 @@
 #       pre-join checking by using the Authentication Services preflight
 #       binary.
 # Auth: Mark Stillings
-# Note: 
+# Note:
 # ------------------------------------------------------------------------------
 
 
@@ -22,9 +22,9 @@ ANSIBLE_METADATA = {
     'supported_by': 'community'
 }
 
-DOCUMENTATION = """ 
+DOCUMENTATION = """
 ---
-module: preflight 
+module: preflight
 
 short_description: Active Directory pre-join checking
 
@@ -43,12 +43,12 @@ options:
         description:
             - Active Directory user or principal to perform checks
         type: str
-        required: true 
+        required: true
     password:
         description:
             - Active Directory password to authenticate
         type: str
-        required: true 
+        required: true
     servers:
         description:
             - Domain controllers to run checks against
@@ -61,7 +61,7 @@ options:
             - Timeout for port checks in seconds
         type: int
         required: false
-        default: 5 
+        default: 5
     timesync:
         description:
             - Perform timesync if needed
@@ -91,7 +91,7 @@ options:
             - Ansible facts key
         type: str
         required: false
-        default: 'preflight' 
+        default: 'preflight'
     path:
         description:
             - Path to preflight binary
@@ -112,11 +112,11 @@ EXAMPLES = """
   register: preflight_result
 """
 
-RETURN = """ 
+RETURN = """
 ansible_facts:
     description: All non-standard return values are placed in Ansible facts
     type: dict
-    returned: when facts parameter is true 
+    returned: when facts parameter is true
     keys:
         changed:
             description: Did the state of the host change?
@@ -140,7 +140,7 @@ ansible_facts:
             returned: always
         steps:
             description: The preflight checks and results of those checks
-            type: list of dicts 
+            type: list of dicts
             returned: when facts_verbose true
 """
 
@@ -152,19 +152,18 @@ ansible_facts:
 from ansible.module_utils.basic import AnsibleModule
 import sys
 import subprocess
-import re
-from ansible_collections.oneidentity.authentication_services.plugins.module_utils.check_file_exec import *
+import ansible_collections.oneidentity.authentication_services.plugins.module_utils.check_file_exec as cfe
 
 
 # ------------------------------------------------------------------------------
-# Constants 
+# Constants
 # ------------------------------------------------------------------------------
 
 # Arg defaults
 SERVERS_DEFAULT = []
 TIMEOUT_DEFAULT = 5
-TIMESYNC_DEFAULT = False 
-EXTRA_ARGS_DEFAULT = '' 
+TIMESYNC_DEFAULT = False
+EXTRA_ARGS_DEFAULT = ''
 PATH_DEFAULT = '/opt/quest/bin/preflight'
 FACTS_DEFAULT = True
 FACTS_VERBOSE_DEFAULT = True
@@ -182,97 +181,85 @@ def run_module():
     """
 
     # Module argument info
-    module_args = \
-    {
-        'domain': \
-        {
-            'type': 'str',
-            'required': True
-        },
-        'username': \
-        {
-            'type': 'str',
-            'required': True,
-            'no_log': True
-        },
-        'password': \
-        {
-            'type': 'str',
-            'required': True,
-            'no_log': True 
-        }, 
-        'servers': \
-        {
-            'type': 'list',
-            'elements': 'str',
-            'required': False,
-            'default': SERVERS_DEFAULT 
-        },
-        'timeout': \
-        {
-            'type': 'int',
-            'required': False,
-            'default': TIMEOUT_DEFAULT
-        },
-        'timesync': \
-        {
-            'type': 'bool',
-            'required': False,
-            'default': TIMESYNC_DEFAULT 
-        },
-        'extra_args': \
-        {
-            'type': 'str',
-            'required': False,
-            'default': EXTRA_ARGS_DEFAULT
-        }, 
-        'facts': \
-        {
-            'type': 'bool',
-            'required': False,
-            'default': FACTS_DEFAULT
-        },
-        'facts_verbose': \
-        {
-            'type': 'bool',
-            'required': False,
-            'default': FACTS_VERBOSE_DEFAULT
-        },
-        'facts_key': \
-        {
-            'type': 'str',
-            'required': False,
-            'default': FACTS_KEY_DEFAULT
-        },
-        'path': \
-        {
-            'type': 'str',
-            'required': False,
-            'default': PATH_DEFAULT
-        } 
-    }
+    module_args = {
+            'domain': {
+                'type': 'str',
+                'required': True
+            },
+            'username': {
+                'type': 'str',
+                'required': True,
+                'no_log': True
+            },
+            'password': {
+                'type': 'str',
+                'required': True,
+                'no_log': True
+            },
+            'servers': {
+                'type': 'list',
+                'elements': 'str',
+                'required': False,
+                'default': SERVERS_DEFAULT
+            },
+            'timeout': {
+                'type': 'int',
+                'required': False,
+                'default': TIMEOUT_DEFAULT
+            },
+            'timesync': {
+                'type': 'bool',
+                'required': False,
+                'default': TIMESYNC_DEFAULT
+            },
+            'extra_args': {
+                'type': 'str',
+                'required': False,
+                'default': EXTRA_ARGS_DEFAULT
+            },
+            'facts': {
+                'type': 'bool',
+                'required': False,
+                'default': FACTS_DEFAULT
+            },
+            'facts_verbose': {
+                'type': 'bool',
+                'required': False,
+                'default': FACTS_VERBOSE_DEFAULT
+            },
+            'facts_key': {
+                'type': 'str',
+                'required': False,
+                'default': FACTS_KEY_DEFAULT
+            },
+            'path': {
+                'type': 'str',
+                'required': False,
+                'default': PATH_DEFAULT
+            }
+        }
 
-    # Seed result value 
-    result = \
-    {
-        'changed': False,
-        'failed': False,
-        'msg': '' 
-    }
+    # Seed result value
+    result = {
+            'changed': False,
+            'failed': False,
+            'msg': ''
+        }
 
     # Lean on boilerplate code in AnsibleModule class
     module = AnsibleModule(
-        argument_spec = module_args,
-        supports_check_mode = True
+        argument_spec=module_args,
+        supports_check_mode=True
     )
 
     # Run logic
     # NOTE: This module makes no changes so check mode doesn't need to be handled
-    #       specially 
+    #       specially
     err, result = run_normal(module.params, result)
 
     # Exit
     module.exit_json(**result)
+
 
 # ------------------------------------------------------------------------------
 def run_normal(params, result):
@@ -281,17 +268,17 @@ def run_normal(params, result):
 
     params contains input parameters.
 
-    result contains run results skeleton, will modify/add to and then return 
-    this value along with an err value that contains None if no error or a string 
+    result contains run results skeleton, will modify/add to and then return
+    this value along with an err value that contains None if no error or a string
     describing the error.
     """
 
-    # Return data 
-    err = None 
+    # Return data
+    err = None
     version = ''
     steps = []
 
-    # Parameters 
+    # Parameters
     domain = params['domain']
     username = params['username']
     password = params['password']
@@ -305,21 +292,21 @@ def run_normal(params, result):
     path = params['path'] if params['path'] else PATH_DEFAULT
 
     # Check preflight
-    err, version = check_file_exec(path, '-v')
+    err, version = cfe.check_file_exec(path, '-v')
 
     # Run preflight
     if err is None:
         err, steps = run_preflight(
-            domain, 
-            username, 
-            password, 
-            servers, 
-            timeout, 
-            timesync, 
+            domain,
+            username,
+            password,
+            servers,
+            timeout,
+            timesync,
             extra_args,
             path)
 
-    # Build result 
+    # Build result
     result['changed'] = False   # preflight never makes any changes to the host
     result['failed'] = err is not None
     result['msg'] = err if err is not None else ''
@@ -331,27 +318,28 @@ def run_normal(params, result):
         result_facts['version'] = version
         if facts_verbose:
             result_facts['steps'] = steps
-        result['ansible_facts'] = {facts_key: result_facts} 
+        result['ansible_facts'] = {facts_key: result_facts}
 
     # Return
     return err, result
 
+
 # ------------------------------------------------------------------------------
 def run_preflight(
-    domain, 
-    username, 
-    password,
-    servers,
-    timeout,
-    timesync,
-    extra_args,
-    path):
+        domain,
+        username,
+        password,
+        servers,
+        timeout,
+        timesync,
+        extra_args,
+        path):
     """
     Run preflight
     """
 
     # Return values
-    err = None 
+    err = None
     steps = []
 
     # Build preflight command
@@ -382,12 +370,13 @@ def run_preflight(
     # Return
     return err, steps
 
+
 # ------------------------------------------------------------------------------
 def parse_preflight_steps(steps_str):
 
     # Return values
-    err = None 
-    steps = [] 
+    err = None
+    steps = []
 
     results = ['Success', 'Information', 'Skipped', 'Advisory', 'Failure', 'Unknown']
     for step_line in steps_str.splitlines():
@@ -398,14 +387,14 @@ def parse_preflight_steps(steps_str):
                     'description': step_items[3].strip(),
                     'message': ', '.join(step_item.strip().replace("\"", "") for step_item in step_items[4:] if step_item.strip()),
                     'result': results[int(step_items[0])]
-                }    
+                }
             ]
 
     # Build list of errors
     err_list = []
     for step in steps:
         if step['result'] == 'Failure':
-            err_list +=  [step['result'] + ': ' + step['message']]
+            err_list += [step['result'] + ': ' + step['message']]
 
     # Check for error
     if err_list:
@@ -414,6 +403,7 @@ def parse_preflight_steps(steps_str):
     # Return
     return err, steps
 
+
 # ------------------------------------------------------------------------------
 def main():
     """
@@ -421,6 +411,7 @@ def main():
     """
 
     run_module()
+
 
 # When run from command line
 # ------------------------------------------------------------------------------

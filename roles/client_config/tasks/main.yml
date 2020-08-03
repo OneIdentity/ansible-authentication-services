@@ -27,14 +27,14 @@
 
     # We get here on success
     - include_tasks: utils/set_fact_success.yml
-   
+
   ignore_unreachable: true
 
   rescue:
 
     # Set unreachable status and fail
     - include_tasks: utils/set_fact_unreachable.yml
-      when: result.unreachable is defined and result.unreachable == true
+      when: result.unreachable is defined and result.unreachable
 
     # Set fail status and fail
     - include_tasks: utils/set_fact_failed.yml

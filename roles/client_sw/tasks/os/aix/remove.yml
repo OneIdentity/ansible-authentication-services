@@ -4,11 +4,14 @@
 # AIX - remove package
 # ------------------------------------------------------------------------------
 
+# Cleanup any failed installation before removal
+- name: cleanup before removal of {{ package }}
+  command:
+    cmd: installp -C {{ package }}
+  register: pkg_remove
+
 # Remove package
 - name: remove {{ package }}
   command:
-    cmd: "{{ item }}" 
-  loop: 
-    - installp -C {{ package }}   # Cleanup failed installation before removal
-    - installp -u {{ package }}   # Remove package
+    cmd: installp -u {{ package }}
   register: pkg_remove

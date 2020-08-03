@@ -7,6 +7,6 @@
     dest: "{{ item.dest }}"
     backup: "{{ client_config_reports_backup }}"
   with_items: "{{ client_config_reports }}"
-  delegate_to: "{{ client_config_reports_host }}"    
+  delegate_to: "{{ client_config_reports_host }}"
   run_once: true
   changed_when: false

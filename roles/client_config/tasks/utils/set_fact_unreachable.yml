@@ -1,7 +1,8 @@
 ---
 
 # Set unreachable
-- set_fact:
+- name: set unreachable
+  set_fact:
     cacheable: true
     sas_client_config:
       unreachable: true
@@ -10,7 +11,7 @@
       msg: |
         client_config:
         {{ result.msg | default('Unexpected error') }}
-    sas_client: 
+    sas_client:
       unreachable: true
       failed: true
       changed: "{{ sas_client_config_changed | default(false) }}"
@@ -20,5 +21,6 @@
   when: client_config_reports_generate or client_config_facts_generate
 
 # Propogate fail
-- fail:
+- name: fail
+  fail:
     msg: "{{ result.msg | default('Unexpected error') }}"

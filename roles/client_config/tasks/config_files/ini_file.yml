@@ -29,11 +29,12 @@
     msg: "{{ result.msg | default('') }}"
     results: >
       {{ result.results | oneidentity.authentication_services.dictlistselect(
-          ['changed', 'failed', 'msg', 'item'], 
-          include_conditions=client_config_facts_verbose | ternary({}, {'changed': True, 'failed': True})) 
+          ['changed', 'failed', 'msg', 'item'],
+          include_conditions=client_config_facts_verbose | ternary({}, {'changed': True, 'failed': True}))
       }}
 
 # Fail if there was a message returned
-- fail:
+- name: fail
+  fail:
     msg: "{{ result.msg }}"
   when: result.failed is defined and result.failed
