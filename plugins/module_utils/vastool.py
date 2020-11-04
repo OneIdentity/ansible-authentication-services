@@ -50,12 +50,14 @@ def vastool_status():
 
     # Call vastool
     try:
-        rval_bytes = subprocess.check_output(' '.join(cmd), stderr=subprocess.STDOUT, shell=True)
+        p = subprocess.Popen(' '.join(cmd), stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        rval_bytes, rval_err = p.communicate()
+        rval_bytes += rval_err
     # This exception happens when the process exits with a non-zero return code
     except subprocess.CalledProcessError as e:
         # Just grab output bytes likes a normal exit, we'll parse it for errors anyway
         rval_bytes = e.output
-    # check_output returns list of bytes so we have to decode to get a string
+    # Popen returns list of bytes so we have to decode to get a string
     rval_str = rval_bytes.decode(sys.stdout.encoding)
 
     # Parse vastool return

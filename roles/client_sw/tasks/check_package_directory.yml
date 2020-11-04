@@ -17,4 +17,4 @@
 - fail:
     msg: "{{ client_sw_pkgs.msg }}"
   register: result
-  when: client_sw_pkgs.msg
+  when: client_sw_pkgs.msg is defined and client_sw_pkgs.msg
