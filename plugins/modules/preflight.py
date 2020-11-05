@@ -308,7 +308,7 @@ def run_normal(params, result):
                 timesync,
                 extra_args,
                 path)
-            
+
     except Exception:
         tb = traceback.format_exc()
         err = str(tb)
