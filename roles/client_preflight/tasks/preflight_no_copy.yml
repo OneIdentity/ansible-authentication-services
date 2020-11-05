@@ -6,4 +6,4 @@
 # Fail if there was a message returned
 - fail:
     msg: "{{ result.msg }}"
-  when: result.msg
+  when: result.msg is defined and result.msg

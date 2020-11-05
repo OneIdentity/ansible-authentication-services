@@ -8,3 +8,8 @@
     mode: 'u+rwx'
   ignore_errors: true
   changed_when: false
+  register: rval
+
+- fail:
+    msg: "{{ rval.msg }}"
+  when: rval.msg is defined and rval.msg

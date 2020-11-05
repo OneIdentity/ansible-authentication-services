@@ -71,9 +71,12 @@ def get_file_version(file_path, version_cmd):
 
     # Exec file to get version
     try:
-        rval_bytes = subprocess.check_output(' '.join(cmd), stderr=subprocess.STDOUT, shell=True)
+        p = subprocess.Popen(' '.join(cmd), stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        rval_bytes, rval_err = p.communicate()
+        rval_bytes += rval_err
     except subprocess.CalledProcessError as e:
         rval_bytes = e.output
+    # Popen returns list of bytes so we have to decode to get a string
     rval_str = rval_bytes.decode(sys.stdout.encoding)
 
     # Compile regex

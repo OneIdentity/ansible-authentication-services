@@ -151,6 +151,7 @@ ansible_facts:
 
 from ansible.module_utils.basic import AnsibleModule
 import sys
+import traceback
 import subprocess
 import ansible_collections.oneidentity.authentication_services.plugins.module_utils.check_file_exec as cfe
 
@@ -291,20 +292,26 @@ def run_normal(params, result):
     facts_key = params['facts_key'] if params['facts_key'] else FACTS_KEY_DEFAULT
     path = params['path'] if params['path'] else PATH_DEFAULT
 
-    # Check preflight
-    err, version = cfe.check_file_exec(path, '-v')
+    try:
 
-    # Run preflight
-    if err is None:
-        err, steps = run_preflight(
-            domain,
-            username,
-            password,
-            servers,
-            timeout,
-            timesync,
-            extra_args,
-            path)
+        # Check preflight
+        err, version = cfe.check_file_exec(path, '-v')
+
+        # Run preflight
+        if err is None:
+            err, steps = run_preflight(
+                domain,
+                username,
+                password,
+                servers,
+                timeout,
+                timesync,
+                extra_args,
+                path)
+
+    except Exception:
+        tb = traceback.format_exc()
+        err = str(tb)
 
     # Build result
     result['changed'] = False   # preflight never makes any changes to the host
@@ -356,12 +363,14 @@ def run_preflight(
 
     # Call preflight
     try:
-        rval_bytes = subprocess.check_output(' '.join(cmd), stderr=subprocess.STDOUT, shell=True)
+        p = subprocess.Popen(' '.join(cmd), stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        rval_bytes, rval_err = p.communicate()
+        rval_bytes += rval_err
     # This exception happens when the process exits with a non-zero return code
     except subprocess.CalledProcessError as e:
         # Just grab output bytes likes a normal exit, we'll parse it for errors anyway
         rval_bytes = e.output
-    # check_output returns list of bytes so we have to decode to get a string
+    # Popen returns list of bytes so we have to decode to get a string
     rval_str = rval_bytes.decode(sys.stdout.encoding)
 
     # Parse preflight return
@@ -378,15 +387,21 @@ def parse_preflight_steps(steps_str):
     err = None
     steps = []
 
-    results = ['Success', 'Information', 'Skipped', 'Advisory', 'Failure', 'Unknown']
+    results = {
+            '0': 'Success',
+            '1': 'Information',
+            '2': 'Skipped',
+            '3': 'Advisory',
+            '4': 'Failure'
+    }
     for step_line in steps_str.splitlines():
         step_items = step_line.split(',')
         if len(step_items) > 4:
             steps += [
                 {
                     'description': step_items[3].strip(),
-                    'message': ', '.join(step_item.strip().replace("\"", "") for step_item in step_items[4:] if step_item.strip()),
-                    'result': results[int(step_items[0])]
+                    'message': ', '.join(filter(None, (step_item.strip().replace("\"", "") for step_item in step_items[4:] if step_item.strip()))),
+                    'result': results[step_items[0]] if step_items[0] in results else 'Unknown'
                 }
             ]
 
