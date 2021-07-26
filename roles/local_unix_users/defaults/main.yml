@@ -1,0 +1,43 @@
+---
+
+# Report parameters
+# ------------------------------------------------------------------------------
+
+local_unix_users_user_name: ''
+local_unix_users_uid_number: ''
+local_unix_users_primary_gid_number: ''
+local_unix_users_comment: ''
+local_unix_users_home_directory: ''
+local_unix_users_login_shell: ''
+
+
+# Facts settings
+# ------------------------------------------------------------------------------
+
+local_unix_users_facts_generate: "{{ facts_generate }}"
+
+
+# Reports settings
+# ------------------------------------------------------------------------------
+
+local_unix_users_reports_generate: "{{ reports_generate }}"
+local_unix_users_reports_backup: "{{ reports_backup }}"
+
+# On which host should the reports be generated.
+# TODO: This has only been tested on the Ansible control node (127.0.0.1)
+local_unix_users_reports_host: "{{ reports_host }}"
+
+# List of reports to generate
+# src:  Is the report template file on the Ansible control node.
+#       With no or relative path Ansible will look in the local_unix_users role template directory.
+#       Full path to find the template files elsewhere on the Ansible control node.
+# dest: Is the destination file on the host (local_unix_users_reports_host.)
+#       With no or relative path when the destination is the Ansible control node.
+#       (local_unix_users_reports_host = 127.0.0.1) relative to the playbook directory.
+#       Full path for other locations or on other hosts.
+#       In either case the directory must already exist.
+local_unix_users_reports:
+  - src:  local_unix_users_report.csv.j2
+    dest: local_unix_users_report.csv
+  - src:  local_unix_users_report.html.j2
+    dest: local_unix_users_report.html

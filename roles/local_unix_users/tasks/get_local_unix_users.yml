@@ -1,0 +1,19 @@
+---
+
+- name: Get local unix users
+  get_local_unix_users:
+    user_name: "{{ local_unix_users_user_name }}"
+    uid_number: "{{ local_unix_users_uid_number }}"
+    gid_number: "{{ local_unix_users_primary_gid_number }}"
+    comment: "{{ local_unix_users_comment }}"
+    home_directory: "{{ local_unix_users_home_directory }}"
+    login_shell: "{{ local_unix_users_login_shell }}"
+    facts: "{{ local_unix_users_facts_generate or local_unix_users_reports_generate }}"
+    facts_key: sas_local_unix_users_key
+  register: result
+  failed_when: false
+
+# Fail if there was a message returned
+- fail:
+    msg: "{{ result.msg }}"
+  when: result.msg

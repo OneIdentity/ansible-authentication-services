@@ -1,0 +1,14 @@
+---
+
+# Set unreachable
+- set_fact:
+    cacheable: true
+    sas_local_unix_users:
+      unreachable: true
+      failed: true
+      changed: false
+  when: local_unix_users_reports_generate or local_unix_users_facts_generate
+
+# Propogate fail
+- fail:
+    msg: "{{ result.msg | default('Unexpected error') }}"
