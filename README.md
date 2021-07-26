@@ -23,6 +23,9 @@ The One Identity Safeguard Authentication Services Ansible Collection, referred 
 * [`client_config role`](roles/client_config/README.md): Client configuration.
     * [`dictlistselect filter`](roles/client_config/README.md#plugins) Filter list of dicts to only include specified keys.
 
+* [`local_unix_groups role`](roles/local_unix_groups/README.md): Lists all groups on all hosts or lists the hosts where a specific group exists in /etc/group.
+    * [`get_local_unix_groups module`](roles/local_unix_groups/README.md#plugins) Reads, filters and returns data from /etc/group.
+
 ### In Development 
 
 * [`client_profile role`](docs/CLIENT_PROFILE.md): Client profiling. 
