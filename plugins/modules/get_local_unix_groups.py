@@ -120,6 +120,8 @@ ansible_facts:
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_text
+import platform
+import subprocess
 import sys
 import traceback
 import ansible_collections.oneidentity.authentication_services.plugins.module_utils.check_file_exec as cfe
@@ -227,33 +229,44 @@ def run_normal(params, result):
     facts_key = params['facts_key'] if params['facts_key'] else FACTS_KEY_DEFAULT
 
     try:
-        with open('/etc/group', 'rb') as group_file:
-            group_bytes = group_file.read()
-            group_str = to_text(group_bytes, errors='surrogate_or_strict')
+        if platform.system() == 'Darwin':
+            rc, rval_str = run_dscl('. -list /Groups')
+            if rc == 0:
+                list_of_groups = rval_str.splitlines()
+                for group in list_of_groups:
+                    gid = get_group_property(group, 'PrimaryGroupID')
+                    members = get_group_property(group, 'GroupMembership')
+                    local_unix_groups.append([group, '*', gid, members])
+            else:
+                err = 'Failed to get list of groups. ' + rval_str
+        else :
+            with open('/etc/group', 'rb') as group_file:
+                group_bytes = group_file.read()
+                group_str = to_text(group_bytes, errors='surrogate_or_strict')
 
-            local_unix_groups = group_str.split('\n')
-            local_unix_groups = [group.strip() for group in local_unix_groups]
-            local_unix_groups = [group for group in local_unix_groups if len(group) > 0]
-            local_unix_groups = [group for group in local_unix_groups if group[0] != '#']
-            local_unix_groups = [group.split(':') for group in local_unix_groups]
-            local_unix_groups = [group for group in local_unix_groups if len(group) == 4]
+                local_unix_groups = group_str.split('\n')
+                local_unix_groups = [group.strip() for group in local_unix_groups]
+                local_unix_groups = [group for group in local_unix_groups if len(group) > 0]
+                local_unix_groups = [group for group in local_unix_groups if group[0] != '#']
+                local_unix_groups = [group.split(':') for group in local_unix_groups]
+                local_unix_groups = [group for group in local_unix_groups if len(group) == 4]
 
-            if group_name:
-                local_unix_groups = [group for group in local_unix_groups if group_name in group[0]]
-            if gid_number:
-                local_unix_groups = [group for group in local_unix_groups if gid_number == group[2]]
-            if member:
-                local_unix_group_having_member_users = []
-                member_users = member.split(',')
-                for group in local_unix_groups:
-                    for member_user in member_users:
-                        if member_user in group[3]:
-                            local_unix_group_having_member_users.append(group)
-                            break
-                local_unix_groups = local_unix_group_having_member_users
+        if group_name:
+            local_unix_groups = [group for group in local_unix_groups if group_name in group[0]]
+        if gid_number:
+            local_unix_groups = [group for group in local_unix_groups if gid_number == group[2]]
+        if member:
+            local_unix_group_having_member_users = []
+            member_users = member.split(',')
+            for group in local_unix_groups:
+                for member_user in member_users:
+                    if member_user in group[3]:
+                        local_unix_group_having_member_users.append(group)
+                        break
+            local_unix_groups = local_unix_group_having_member_users
 
-            if not include_all_group_members:
-                local_unix_groups = [group[ : -1] for group in local_unix_groups]
+        if not include_all_group_members:
+            local_unix_groups = [group[ : -1] for group in local_unix_groups]
 
     except Exception:
         tb = traceback.format_exc()
@@ -273,6 +286,49 @@ def run_normal(params, result):
 
     # Return
     return err, result
+
+
+# ------------------------------------------------------------------------------
+def run_dscl(args):
+    """
+    macOS manages users and groups by directory services instead of /etc/passwd
+    and /etc/group.
+    macOS uses the dscl command to interact with directory services.
+    """
+
+    try:
+        p = subprocess.Popen('dscl ' + args, stdin = None, stdout = subprocess.PIPE,
+            stderr = subprocess.PIPE, shell = True)
+        rval_bytes, rval_err = p.communicate()
+        rval_bytes += rval_err
+    # This exception happens when the process exits with a non-zero return code
+    except subprocess.CalledProcessError as e:
+        # Just grab output bytes likes a normal exit, we'll parse it for errors anyway
+        rval_bytes = e.output
+
+    # Popen returns list of bytes so we have to decode to get a string
+    rval_str = rval_bytes.decode(sys.stdout.encoding)
+
+    return p.returncode, rval_str
+
+
+# ------------------------------------------------------------------------------
+def get_group_property(group, prop):
+
+    rc, rval_str = run_dscl('. -read /Groups/' + group + ' ' + prop)
+    if rc == 0:
+        # -read: Prints a directory. The property key is followed by colon, then a
+        # space-separated list of the values for that property. If any value contains
+        # embedded spaces, the list will instead be displayed one entry per line,
+        # starting on the line after the key.
+        lines = rval_str.splitlines()
+        if len(lines) == 1:
+            if lines[0].startswith(prop):
+                return lines[0].split(': ')[1]
+        elif len(lines) == 2:
+            return lines[1].strip()
+
+    return ''
 
 
 # ------------------------------------------------------------------------------
