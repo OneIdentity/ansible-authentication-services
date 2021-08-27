@@ -134,6 +134,8 @@ ansible_facts:
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_text
+import platform
+import subprocess
 import sys
 import traceback
 import ansible_collections.oneidentity.authentication_services.plugins.module_utils.check_file_exec as cfe
@@ -252,29 +254,43 @@ def run_normal(params, result):
     facts_key = params['facts_key'] if params['facts_key'] else FACTS_KEY_DEFAULT
 
     try:
-        with open('/etc/passwd', 'rb') as passwd_file:
-            passwd_bytes = passwd_file.read()
-            passwd_str = to_text(passwd_bytes, errors='surrogate_or_strict')
+        if platform.system() == 'Darwin':
+            rc, rval_str = run_dscl('. -list /Users')
+            if rc == 0:
+                list_of_users = rval_str.splitlines()
+                for user in list_of_users:
+                    uid = get_user_property(user, 'UniqueID')
+                    gid = get_user_property(user, 'PrimaryGroupID')
+                    gecos = get_user_property(user, 'RealName')
+                    home_dir = get_user_property(user, 'NFSHomeDirectory')
+                    shell = get_user_property(user, 'UserShell')
+                    local_unix_users.append([user, '*', uid, gid, gecos, home_dir, shell])
+            else:
+                err = 'Failed to get list of users. ' + rval_str
+        else:
+            with open('/etc/passwd', 'rb') as passwd_file:
+                passwd_bytes = passwd_file.read()
+                passwd_str = to_text(passwd_bytes, errors='surrogate_or_strict')
 
-            local_unix_users = passwd_str.split('\n')
-            local_unix_users = [user.strip() for user in local_unix_users]
-            local_unix_users = [user for user in local_unix_users if len(user) > 0]
-            local_unix_users = [user for user in local_unix_users if user[0] != '#']
-            local_unix_users = [user.split(':') for user in local_unix_users]
-            local_unix_users = [user for user in local_unix_users if len(user) == 7]
+                local_unix_users = passwd_str.split('\n')
+                local_unix_users = [user.strip() for user in local_unix_users]
+                local_unix_users = [user for user in local_unix_users if len(user) > 0]
+                local_unix_users = [user for user in local_unix_users if user[0] != '#']
+                local_unix_users = [user.split(':') for user in local_unix_users]
+                local_unix_users = [user for user in local_unix_users if len(user) == 7]
 
-            if user_name:
-                local_unix_users = [user for user in local_unix_users if user_name in user[0]]
-            if uid_number:
-                local_unix_users = [user for user in local_unix_users if uid_number == user[2]]
-            if gid_number:
-                local_unix_users = [user for user in local_unix_users if gid_number == user[3]]
-            if comment:
-                local_unix_users = [user for user in local_unix_users if comment in user[4]]
-            if home_directory:
-                local_unix_users = [user for user in local_unix_users if home_directory in user[5]]
-            if login_shell:
-                local_unix_users = [user for user in local_unix_users if login_shell in user[6]]
+        if user_name:
+            local_unix_users = [user for user in local_unix_users if user_name in user[0]]
+        if uid_number:
+            local_unix_users = [user for user in local_unix_users if uid_number == user[2]]
+        if gid_number:
+            local_unix_users = [user for user in local_unix_users if gid_number == user[3]]
+        if comment:
+            local_unix_users = [user for user in local_unix_users if comment in user[4]]
+        if home_directory:
+            local_unix_users = [user for user in local_unix_users if home_directory in user[5]]
+        if login_shell:
+            local_unix_users = [user for user in local_unix_users if login_shell in user[6]]
 
     except Exception:
         tb = traceback.format_exc()
@@ -294,6 +310,49 @@ def run_normal(params, result):
 
     # Return
     return err, result
+
+
+# ------------------------------------------------------------------------------
+def run_dscl(args):
+    """
+    macOS manages users and groups by directory services instead of /etc/passwd
+    and /etc/group.
+    macOS uses the dscl command to interact with directory services.
+    """
+
+    try:
+        p = subprocess.Popen('dscl ' + args, stdin = None, stdout = subprocess.PIPE,
+            stderr = subprocess.PIPE, shell = True)
+        rval_bytes, rval_err = p.communicate()
+        rval_bytes += rval_err
+    # This exception happens when the process exits with a non-zero return code
+    except subprocess.CalledProcessError as e:
+        # Just grab output bytes likes a normal exit, we'll parse it for errors anyway
+        rval_bytes = e.output
+
+    # Popen returns list of bytes so we have to decode to get a string
+    rval_str = rval_bytes.decode(sys.stdout.encoding)
+
+    return p.returncode, rval_str
+
+
+# ------------------------------------------------------------------------------
+def get_user_property(user, prop):
+
+    rc, rval_str = run_dscl('. -read /Users/' + user + ' ' + prop)
+    if rc == 0:
+        # -read: Prints a directory. The property key is followed by colon, then a
+        # space-separated list of the values for that property. If any value contains
+        # embedded spaces, the list will instead be displayed one entry per line,
+        # starting on the line after the key.
+        lines = rval_str.splitlines()
+        if len(lines) == 1:
+            if lines[0].startswith(prop):
+                return lines[0].split(': ')[1]
+        elif len(lines) == 2:
+            return lines[1].strip()
+
+    return ''
 
 
 # ------------------------------------------------------------------------------
