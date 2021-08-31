@@ -1,0 +1,15 @@
+---
+
+# Vastool
+- name: vastool status
+  vastool_status:
+    facts: "{{ client_agent_status_facts_generate or client_agent_status_reports_generate }}"
+    facts_verbose: "{{ client_agent_status_facts_verbose }}"
+    facts_key: sas_client_agent_status_vastool
+  register: result
+  failed_when: false
+
+# Fail if there was a message returned
+- fail:
+    msg: "{{ result.msg }}"
+  when: result.msg
