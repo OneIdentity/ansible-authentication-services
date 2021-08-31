@@ -29,3 +29,7 @@ The [`client_agent_status`](run_client_agent_status.yml) role example shows use 
 ## `host_access_control` Role Example
 
 The [`host_access_control`](run_host_access_control.yml) role example shows use of the `host_access_control` role in an Ansbile playbook.  The variables most likely to be overriden have been included in this playbook for your convenience even though many are still set to their default values.
+
+## `local_unix_users` Role Example
+
+The [`local_unix_users`](run_local_unix_users.yml) role example shows use of the `local_unix_users` role in an Ansbile playbook.  The variables most likely to be overriden have been included in this playbook for your convenience even though many are still set to their default values.

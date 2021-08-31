@@ -1,0 +1,26 @@
+---
+
+- hosts: all
+  gather_facts: false
+
+  # The variables you would most likely want/need to override have been included
+  vars:
+
+    # Report parameters
+    local_unix_users_user_name: ''
+    local_unix_users_uid_number: ''
+    local_unix_users_primary_gid_number: ''
+    local_unix_users_comment: ''
+    local_unix_users_home_directory: ''
+    local_unix_users_login_shell: ''
+
+    # Facts
+    local_unix_users_facts_generate: true
+
+    # Reports
+    local_unix_users_reports_generate: true
+    local_unix_users_reports_backup: false
+
+  roles:
+    - name: oneidentity.authentication_services.local_unix_users
+

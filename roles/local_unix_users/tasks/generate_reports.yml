@@ -1,0 +1,11 @@
+---
+
+- name: generate reports
+  template:
+    src:  "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    backup: "{{ local_unix_users_reports_backup }}"
+  with_items: "{{ local_unix_users_reports }}"
+  delegate_to: "{{ local_unix_users_reports_host }}"
+  run_once: true
+  changed_when: false

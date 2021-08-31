@@ -26,6 +26,9 @@ The One Identity Safeguard Authentication Services Ansible Collection, referred 
 * [`client_agent_status role`](roles/client_agent_status/README.md): Checks the health status of client agents.
     * [`vastool_status module`](roles/client_agent_status/README.md#plugins) Tests the machine's join against Active Directory and local configuration for various issues.
 
+* [`local_unix_users role`](roles/local_unix_users/README.md): Lists all users on all hosts or lists the hosts where a specific user account exists in /etc/passwd.
+    * [`get_local_unix_users module`](roles/local_unix_users/README.md#plugins) Reads, filters and returns data from /etc/passwd.
+
 ### In Development 
 
 * [`client_profile role`](docs/CLIENT_PROFILE.md): Client profiling. 
