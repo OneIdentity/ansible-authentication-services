@@ -1,0 +1,13 @@
+---
+
+- name: Get host access control
+  get_host_access_control:
+    facts: "{{ host_access_control_facts_generate or host_access_control_reports_generate }}"
+    facts_key: sas_host_access_control_key
+  register: result
+  failed_when: false
+
+# Fail if there was a message returned
+- fail:
+    msg: "{{ result.msg }}"
+  when: result.msg

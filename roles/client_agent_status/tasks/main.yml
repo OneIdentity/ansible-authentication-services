@@ -1,0 +1,33 @@
+---
+
+# ------------------------------------------------------------------------------
+# Main
+# ------------------------------------------------------------------------------
+
+- block:
+
+    # Gather facts
+    - include_tasks: gather_facts.yml
+
+    # Run vastool status
+    - include_tasks: vastool_status.yml
+
+    # We get here on success
+    - include_tasks: utils/set_fact_success.yml
+
+  ignore_unreachable: true
+
+  rescue:
+
+    # Set unreachable status and fail
+    - include_tasks: utils/set_fact_unreachable.yml
+      when: result.unreachable is defined and result.unreachable == true
+
+    # Set fail status and fail
+    - include_tasks: utils/set_fact_failed.yml
+
+  always:
+
+    # Generate reports
+    - include_tasks: generate_reports.yml
+      when: client_agent_status_reports_generate

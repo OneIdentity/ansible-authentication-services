@@ -1,0 +1,11 @@
+---
+
+- name: generate reports
+  template:
+    src:  "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    backup: "{{ host_access_control_reports_backup }}"
+  with_items: "{{ host_access_control_reports }}"
+  delegate_to: "{{ host_access_control_reports_host }}"
+  run_once: true
+  changed_when: false
