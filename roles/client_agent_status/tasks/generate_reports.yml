@@ -1,0 +1,12 @@
+---
+
+# Generate reports (this runs once after all hosts are done)
+- name: generate reports
+  template:
+    src:  "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    backup: "{{ client_agent_status_reports_backup }}"
+  with_items: "{{ client_agent_status_reports }}"
+  delegate_to: "{{ client_agent_status_reports_host }}"
+  run_once: true
+  changed_when: false

@@ -1,0 +1,14 @@
+---
+
+# Set unreachable
+- set_fact:
+    cacheable: true
+    sas_host_access_control:
+      unreachable: true
+      failed: true
+      changed: false
+  when: host_access_control_reports_generate or host_access_control_facts_generate
+
+# Propogate fail
+- fail:
+    msg: "{{ result.msg | default('Unexpected error') }}"

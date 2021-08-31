@@ -1,0 +1,20 @@
+---
+
+- hosts: all
+  gather_facts: false
+
+  # The variables you would most likely want/need to override have been included
+  vars:
+
+    # Facts
+    host_access_control_facts_generate: true
+
+    # Reports
+    host_access_control_reports_generate: true
+    host_access_control_reports_backup: false
+
+    host_access_control_reports_details_format: json
+
+  roles:
+    - name: oneidentity.authentication_services.host_access_control
+

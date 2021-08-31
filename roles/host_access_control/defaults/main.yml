@@ -1,0 +1,36 @@
+---
+
+# Facts settings
+# ------------------------------------------------------------------------------
+
+host_access_control_facts_generate: "{{ facts_generate }}"
+
+
+# Reports settings
+# ------------------------------------------------------------------------------
+
+host_access_control_reports_generate: "{{ reports_generate }}"
+host_access_control_reports_backup: "{{ reports_backup }}"
+
+# Format of details section in both HTML and CSV reports
+# Valid options are: 'yaml' or 'json'
+host_access_control_reports_details_format: "{{ reports_details_format }}"
+
+# On which host should the reports be generated.
+# TODO: This has only been tested on the Ansible control node (127.0.0.1)
+host_access_control_reports_host: "{{ reports_host }}"
+
+# List of reports to generate
+# src:  Is the report template file on the Ansible control node.
+#       With no or relative path Ansible will look in the host_access_control role template directory.
+#       Full path to find the template files elsewhere on the Ansible control node.
+# dest: Is the destination file on the host (host_access_control_reports_host.)
+#       With no or relative path when the destination is the Ansible control node.
+#       (host_access_control_reports_host = 127.0.0.1) relative to the playbook directory.
+#       Full path for other locations or on other hosts.
+#       In either case the directory must already exist.
+host_access_control_reports:
+  - src:  host_access_control_report.csv.j2
+    dest: host_access_control_report.csv
+  - src:  host_access_control_report.html.j2
+    dest: host_access_control_report.html
