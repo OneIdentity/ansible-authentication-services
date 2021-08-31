@@ -25,3 +25,7 @@ The [`client_config`](run_client_config.yml) role example shows use of the `clie
 ## `client_agent_status` Role Example
 
 The [`client_agent_status`](run_client_agent_status.yml) role example shows use of the `client_agent_status` role in an Ansbile playbook.  The variables most likely to be overriden have been included in this playbook for your convenience even though many are still set to their default values.
+
+## `host_access_control` Role Example
+
+The [`host_access_control`](run_host_access_control.yml) role example shows use of the `host_access_control` role in an Ansbile playbook.  The variables most likely to be overriden have been included in this playbook for your convenience even though many are still set to their default values.
