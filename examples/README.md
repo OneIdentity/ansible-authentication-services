@@ -33,3 +33,7 @@ The [`host_access_control`](run_host_access_control.yml) role example shows use 
 ## `local_unix_users` Role Example
 
 The [`local_unix_users`](run_local_unix_users.yml) role example shows use of the `local_unix_users` role in an Ansbile playbook.  The variables most likely to be overriden have been included in this playbook for your convenience even though many are still set to their default values.
+
+## `local_unix_groups` Role Example
+
+The [`local_unix_groups`](run_local_unix_groups.yml) role example shows use of the `local_unix_groups` role in an Ansbile playbook.  The variables most likely to be overriden have been included in this playbook for your convenience even though many are still set to their default values.

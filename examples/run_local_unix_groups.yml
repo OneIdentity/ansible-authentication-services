@@ -1,0 +1,24 @@
+---
+
+- hosts: all
+  gather_facts: false
+
+  # The variables you would most likely want/need to override have been included
+  vars:
+
+    # Report parameters
+    local_unix_groups_group_name: ''
+    local_unix_groups_gid_number: ''
+    local_unix_groups_member: ''
+    local_unix_groups_include_all_group_members: true
+
+    # Facts
+    local_unix_groups_facts_generate: true
+
+    # Reports
+    local_unix_groups_reports_generate: true
+    local_unix_groups_reports_backup: false
+
+  roles:
+    - name: oneidentity.authentication_services.local_unix_groups
+

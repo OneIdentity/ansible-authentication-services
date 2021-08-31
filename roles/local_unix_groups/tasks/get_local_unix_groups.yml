@@ -1,0 +1,17 @@
+---
+
+- name: Get local unix groups
+  get_local_unix_groups:
+    group_name: "{{ local_unix_groups_group_name }}"
+    gid_number: "{{ local_unix_groups_gid_number }}"
+    member: "{{ local_unix_groups_member }}"
+    include_all_group_members: "{{ local_unix_groups_include_all_group_members }}"
+    facts: "{{ local_unix_groups_facts_generate or local_unix_groups_reports_generate }}"
+    facts_key: sas_local_unix_groups_key
+  register: result
+  failed_when: false
+
+# Fail if there was a message returned
+- fail:
+    msg: "{{ result.msg }}"
+  when: result.msg
