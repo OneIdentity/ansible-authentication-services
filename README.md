@@ -35,6 +35,8 @@ The One Identity Safeguard Authentication Services Ansible Collection, referred 
 * [`local_unix_groups role`](roles/local_unix_groups/README.md): Lists all groups on all hosts or lists the hosts where a specific group exists in /etc/group.
     * [`get_local_unix_groups module`](roles/local_unix_groups/README.md#plugins) Reads, filters and returns data from /etc/group.
 
+* [`unix_computers_in_ad role`](roles/unix_computers_in_ad/README.md): Lists all Unix computers in Active Directory in the requested scope.
+
 ## Installation
 
 ### Prerequisites

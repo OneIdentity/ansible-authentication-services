@@ -1,0 +1,42 @@
+---
+
+- name: Get default search base
+  community.windows.win_domain_object_info:
+    domain_server: "{{ client_domain }}"
+    domain_username: "{{ client_username }}"
+    domain_password: "{{ client_password }}"
+    ldap_filter: (objectClass=*)
+    search_scope: base
+  register: result
+  when: unix_computers_in_ad_base_container == ''
+  failed_when: false
+
+# Fail if there was a message returned
+- fail:
+    msg: "{{ result.msg }}"
+  when: result.msg is defined
+
+- set_fact:
+    unix_computers_in_ad_base_container: "{{ result.objects[0].DistinguishedName | default('') }}"
+  when: unix_computers_in_ad_base_container == ''
+
+
+- name: Search all unix computer accounts
+  community.windows.win_domain_object_info:
+    domain_server: "{{ client_domain }}"
+    domain_username: "{{ client_username }}"
+    domain_password: "{{ client_password }}"
+    ldap_filter: (&(objectClass=computer)(!(operatingSystem=Windows*)))
+    properties:
+    - DistinguishedName
+    - operatingSystem
+    - sAMAccountName
+    search_scope: subtree
+    search_base: "{{ ( unix_computers_in_ad_base_container | length > 0 ) | ternary( unix_computers_in_ad_base_container, omit) }}"
+  register: result
+  failed_when: false
+
+# Fail if there was a message returned
+- fail:
+    msg: "{{ result.msg }}"
+  when: result.msg is defined

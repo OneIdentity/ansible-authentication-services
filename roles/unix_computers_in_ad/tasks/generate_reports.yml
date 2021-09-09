@@ -1,0 +1,11 @@
+---
+
+- name: generate reports
+  template:
+    src:  "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    backup: "{{ unix_computers_in_ad_reports_backup }}"
+  with_items: "{{ unix_computers_in_ad_reports }}"
+  delegate_to: "{{ unix_computers_in_ad_reports_host }}"
+  run_once: true
+  changed_when: false
