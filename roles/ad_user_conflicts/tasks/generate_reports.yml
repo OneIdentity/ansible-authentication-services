@@ -1,0 +1,11 @@
+---
+
+- name: generate reports
+  template:
+    src:  "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    backup: "{{ ad_user_conflicts_reports_backup }}"
+  with_items: "{{ ad_user_conflicts_reports }}"
+  delegate_to: "{{ ad_user_conflicts_reports_host }}"
+  run_once: true
+  changed_when: false

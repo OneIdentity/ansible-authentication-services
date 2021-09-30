@@ -1,0 +1,15 @@
+AD User Conflicts,{{ client_username }},"{{ now(fmt='%Y-%m-%d %H:%M:%S') }}","{{ ad_user_conflicts_base_container }}"
+Unix Uid,samAccountName,Distinguished Name,
+{% for host in ansible_play_hosts_all | sort %}
+{% set conflicting_users = hostvars[host]['ansible_facts']['sas_ad_user_conflicts']['result'] | default() %}
+{% for key in conflicting_users | sort %}
+{% set users_with_same_uid = conflicting_users[key] %}
+{% for user in users_with_same_uid | sort(attribute='sAMAccountName') %}
+{{ '%s,"%s","%s",' | format(
+user['uidNumber'],
+user['sAMAccountName'],
+user['DistinguishedName']
+)}}
+{% endfor %}
+{% endfor %}
+{% endfor %}
