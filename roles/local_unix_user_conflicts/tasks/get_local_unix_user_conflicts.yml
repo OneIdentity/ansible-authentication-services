@@ -1,0 +1,16 @@
+---
+
+- name: Get local unix user conflicts
+  get_local_unix_user_conflicts:
+    user_name: "{{ local_unix_user_conflicts_user_name }}"
+    uid_number: "{{ local_unix_user_conflicts_uid_number }}"
+    facts: "{{ local_unix_user_conflicts_facts_generate or local_unix_user_conflicts_reports_generate }}"
+    facts_key: sas_local_unix_user_conflicts_key
+  register: result
+  failed_when: false
+
+# Fail if there was a message returned
+- fail:
+    msg: "{{ result.msg }}"
+  when: result.msg
+

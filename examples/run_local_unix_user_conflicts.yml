@@ -1,0 +1,22 @@
+---
+
+- hosts: all
+  gather_facts: false
+
+  # The variables you would most likely want/need to override have been included
+  vars:
+
+    # Report parameters
+    local_unix_user_conflicts_user_name: ''
+    local_unix_user_conflicts_uid_number: ''
+
+    # Facts
+    local_unix_user_conflicts_facts_generate: true
+
+    # Reports
+    local_unix_user_conflicts_reports_generate: true
+    local_unix_user_conflicts_reports_backup: false
+
+  roles:
+    - name: oneidentity.authentication_services.local_unix_user_conflicts
+
