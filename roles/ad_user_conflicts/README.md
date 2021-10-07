@@ -1,6 +1,6 @@
 # `ad_user_conflicts` Role
 
-The `ad_user_conflicts` role creates CSV and HTML reports that list all Unix computers in Active Directory in the requested scope.
+The `ad_user_conflicts` role creates CSV and HTML reports that list all users with Unix User ID numbers (UID numbers) assigned to other Unix-enabled user account.
 
 ## Requirements
 
