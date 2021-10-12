@@ -1,0 +1,38 @@
+Local Unix Users with AD logon,,{{ now(fmt='%Y-%m-%d %H:%M:%S') }},,,,,,
+
+{% for host in ansible_play_hosts_all | sort %}
+hostname,group,ip_address,os_distro,os_version,hw_arch,time,changed,unreachable,failed
+{# System time #}
+{% if hostvars[host]['ansible_facts']['date_time'] is not defined %}
+{% set sys_time = '' %}
+{% else %}
+{% set sys_time = hostvars[host]['ansible_facts']['date_time']['date'] + ' ' + hostvars[host]['ansible_facts']['date_time']['time'] %}
+{% endif %}
+{# Print CSV line #}
+{{ '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s' | format(
+host,
+hostvars[host]['group_names'] | join(', '),
+hostvars[host]['ansible_facts']['default_ipv4']['address'] | default(),
+hostvars[host]['ansible_facts']['distribution'] | default(),
+hostvars[host]['ansible_facts']['distribution_version'] | default(),
+hostvars[host]['ansible_facts']['architecture'] | default(),
+sys_time,
+hostvars[host]['ansible_facts']['sas_local_unix_users_with_ad_logon']['changed'] | default(False),
+hostvars[host]['ansible_facts']['sas_local_unix_users_with_ad_logon']['unreachable'] | default(False),
+hostvars[host]['ansible_facts']['sas_local_unix_users_with_ad_logon']['failed'] | default(True)
+)}}
+{% set local_unix_users_with_ad_logon = hostvars[host]['ansible_facts']['sas_local_unix_users_with_ad_logon_key']['local_unix_users_with_ad_logon'] | default() %}
+{% if local_unix_users_with_ad_logon | length %}
+
+Unix Name,AD Account Required for Login,GECOS
+{% for user in local_unix_users_with_ad_logon | sort %}
+{{ '%s,%s,"%s"' | format(
+user[0],
+user[1],
+user[2]
+)}}
+{% endfor %}
+{% endif %}
+
+{% endfor %}
+

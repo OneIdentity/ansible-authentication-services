@@ -1,0 +1,13 @@
+---
+
+- name: Get local unix users with ad logon
+  get_local_unix_users_with_ad_logon:
+    facts: "{{ local_unix_users_with_ad_logon_facts_generate or local_unix_users_with_ad_logon_reports_generate }}"
+    facts_key: sas_local_unix_users_with_ad_logon_key
+  register: result
+  failed_when: false
+
+# Fail if there was a message returned
+- fail:
+    msg: "{{ result.msg }}"
+  when: result.msg
