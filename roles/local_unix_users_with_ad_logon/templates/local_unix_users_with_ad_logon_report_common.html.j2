@@ -154,7 +154,7 @@ The Local Unix Users with AD Logon report is used to identify the local user acc
       {
       'unix_name': '{{ user[0] }}',
       'ad_account': '{{ user[1] | replace("\\", "\\\\") }}',
-      'gecos': '{{ user[2] }}'
+      'gecos': '{{ user[2] | replace("\\", "\\\\") }}'
       },
 {% endfor %}
     ];
