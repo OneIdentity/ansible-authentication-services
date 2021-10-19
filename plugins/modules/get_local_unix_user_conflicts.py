@@ -224,9 +224,9 @@ def run_normal(params, result):
                 local_unix_users = [user.split(':') for user in local_unix_users]
                 local_unix_users = [user for user in local_unix_users if len(user) == 7]
 
-            local_unix_users = [user for user in local_unix_users if
-                (user_name == user[0] and uid_number != user[2]) or
-                (user_name != user[0] and uid_number == user[2])]
+        local_unix_users = [user for user in local_unix_users if
+            (user_name == user[0] and uid_number != user[2]) or
+            (user_name != user[0] and uid_number == user[2])]
 
     except Exception:
         tb = traceback.format_exc()
