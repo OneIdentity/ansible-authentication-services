@@ -1,0 +1,24 @@
+---
+
+# Gather facts
+- name: gather host information
+  setup:
+  register: result
+  ignore_errors: true
+  ignore_unreachable: true
+
+- name: fail when unreachable
+  fail:
+    msg: "{{ result.msg }}"
+  when: result.unreachable is defined and result.unreachable == true
+
+# MODULE FAILURE\nSee stdout/stderr for the exact error
+- name: fail when module failure
+  fail:
+    msg: "{{ result.module_stderr + result.module_stdout }}"
+  register: result
+  when: result.msg is defined and "'See stdout/stderr for the exact error' in result.msg" 
+
+- fail:
+    msg: "{{ result.msg }}"
+  when: result.msg is defined

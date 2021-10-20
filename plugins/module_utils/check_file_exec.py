@@ -47,7 +47,7 @@ def check_file_exec(file_path, version_cmd):
             err = 'Insufficient permissions to execute ' + file_path
 
     # Get version
-    if not err:
+    if not err and version_cmd:
         err, version = get_file_version(file_path, version_cmd)
 
     # Return

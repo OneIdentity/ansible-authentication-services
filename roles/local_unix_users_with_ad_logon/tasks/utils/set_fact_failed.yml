@@ -1,0 +1,14 @@
+---
+
+# Set failed
+- set_fact:
+    cacheable: true
+    sas_local_unix_users_with_ad_logon:
+      unreachable: false
+      failed: true
+      changed: false
+  when: local_unix_users_with_ad_logon_reports_generate or local_unix_users_with_ad_logon_facts_generate
+
+# Propogate fail
+- fail:
+    msg: "{{ result.msg | default('Unexpected error') }}"
