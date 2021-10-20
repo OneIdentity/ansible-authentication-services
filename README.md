@@ -39,6 +39,8 @@ The One Identity Safeguard Authentication Services Ansible Collection, referred 
 
 * [`ad_user_conflicts role`](roles/ad_user_conflicts/README.md): Lists all users with Unix User ID numbers (UID numbers) assigned to other Unix-enabled user account.
 
+* [`local_unix_user_conflicts role`](roles/local_unix_user_conflicts/README.md): Identifies local user accounts that would conflict with a specified user name and UID on other hosts.
+
 ## Installation
 
 ### Prerequisites

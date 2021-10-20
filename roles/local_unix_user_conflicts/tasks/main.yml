@@ -1,0 +1,37 @@
+---
+
+# ------------------------------------------------------------------------------
+# Main
+# ------------------------------------------------------------------------------
+
+- block:
+    - fail:
+        msg: Both report parameters (User Name and UID Number) must be specified!
+      when: local_unix_user_conflicts_user_name == '' or local_unix_user_conflicts_uid_number == ''
+      run_once: true
+
+    # Gather facts
+    - include_tasks: gather_facts.yml
+
+    # Gather users from /etc/passwd
+    - include_tasks: get_local_unix_user_conflicts.yml
+
+    # We get here on success
+    - include_tasks: utils/set_fact_success.yml
+
+  ignore_unreachable: true
+
+  rescue:
+
+    # Set unreachable status and fail
+    - include_tasks: utils/set_fact_unreachable.yml
+      when: result.unreachable is defined and result.unreachable == true
+
+    # Set fail status and fail
+    - include_tasks: utils/set_fact_failed.yml
+
+  always:
+
+    # Generate reports
+    - include_tasks: generate_reports.yml
+      when: local_unix_user_conflicts_reports_generate

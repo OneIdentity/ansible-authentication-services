@@ -46,3 +46,7 @@ The [`unix_computers_in_ad`](run_unix_computers_in_ad.yml) role example shows us
 
 The [`ad_user_conflicts`](run_ad_user_conflicts.yml) role example shows use of the `ad_user_conflicts` role in an Ansbile playbook.  The variables most likely to be overriden have been included in this playbook for your convenience even though many are still set to their default values.
 
+## `local_unix_user_conflicts` Role Example
+
+The [`local_unix_user_conflicts`](run_local_unix_user_conflicts.yml) role example shows use of the `local_unix_user_conflicts` role in an Ansbile playbook.  The variables most likely to be overriden have been included in this playbook for your convenience even though many are still set to their default values.
+

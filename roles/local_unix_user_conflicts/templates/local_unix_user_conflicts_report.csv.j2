@@ -1,0 +1,45 @@
+Local Unix User Conflicts,,{{ now(fmt='%Y-%m-%d %H:%M:%S') }},,,,,,
+
+Report parameters:
+Name,UID
+{{local_unix_user_conflicts_user_name}},{{local_unix_user_conflicts_uid_number}}
+
+{% for host in ansible_play_hosts_all | sort %}
+hostname,group,ip_address,os_distro,os_version,hw_arch,time,changed,unreachable,failed
+{# System time #}
+{% if hostvars[host]['ansible_facts']['date_time'] is not defined %}
+{% set sys_time = '' %}
+{% else %}
+{% set sys_time = hostvars[host]['ansible_facts']['date_time']['date'] + ' ' + hostvars[host]['ansible_facts']['date_time']['time'] %}
+{% endif %}
+{# Print CSV line #}
+{{ '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s' | format(
+host,
+hostvars[host]['group_names'] | join(', '),
+hostvars[host]['ansible_facts']['default_ipv4']['address'] | default(),
+hostvars[host]['ansible_facts']['distribution'] | default(),
+hostvars[host]['ansible_facts']['distribution_version'] | default(),
+hostvars[host]['ansible_facts']['architecture'] | default(),
+sys_time,
+hostvars[host]['ansible_facts']['sas_local_unix_user_conflicts']['changed'] | default(False),
+hostvars[host]['ansible_facts']['sas_local_unix_user_conflicts']['unreachable'] | default(False),
+hostvars[host]['ansible_facts']['sas_local_unix_user_conflicts']['failed'] | default(True)
+)}}
+{% set local_unix_user_conflicts = hostvars[host]['ansible_facts']['sas_local_unix_user_conflicts_key']['local_unix_user_conflicts'] | default() %}
+{% if local_unix_user_conflicts | length %}
+
+Name,UID,GID,GECOS,Home,Shell
+{% for user in local_unix_user_conflicts | sort %}
+{{ '"%s",%s,%s,"%s","%s","%s"' | format(
+user[0],
+user[2],
+user[3],
+user[4],
+user[5],
+user[6]
+)}}
+{% endfor %}
+{% endif %}
+
+{% endfor %}
+
