@@ -37,6 +37,8 @@ The One Identity Safeguard Authentication Services Ansible Collection, referred 
 
 * [`unix_computers_in_ad role`](roles/unix_computers_in_ad/README.md): Lists all Unix computers in Active Directory in the requested scope.
 
+* [`ad_user_conflicts role`](roles/ad_user_conflicts/README.md): Lists all users with Unix User ID numbers (UID numbers) assigned to other Unix-enabled user account.
+
 ## Installation
 
 ### Prerequisites

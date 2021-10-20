@@ -1,0 +1,11 @@
+---
+
+# Set success
+- set_fact:
+    cacheable: true
+    sas_ad_user_conflicts:
+      unreachable: false
+      failed: false
+      changed: false
+      result: "{{ conflicting_users }}"
+  when: ad_user_conflicts_reports_generate

@@ -1,0 +1,90 @@
+---
+
+- name: Get default search base
+  community.windows.win_domain_object_info:
+    domain_server: "{{ client_domain }}"
+    domain_username: "{{ client_username }}"
+    domain_password: "{{ client_password }}"
+    ldap_filter: (objectClass=*)
+    search_scope: base
+  register: default_search_base_result
+  failed_when: false
+
+# Fail if there was a message returned
+- fail:
+    msg: "{{ default_search_base_result.msg }}"
+  when: default_search_base_result.msg is defined
+
+- set_fact:
+    default_search_base: "{{ default_search_base_result.objects[0].DistinguishedName }}"
+
+- set_fact:
+    ad_user_conflicts_base_container: "{{ default_search_base_result.objects[0].DistinguishedName }}"
+  when: ad_user_conflicts_base_container == ''
+
+- name: Get UidNumber object from QAC
+  community.windows.win_domain_object_info:
+    domain_server: "{{ client_domain }}"
+    domain_username: "{{ client_username }}"
+    domain_password: "{{ client_password }}"
+    ldap_filter: (objectClass=*)
+    properties: description
+    search_scope: base
+    search_base: "{{ 'CN=UidNumber,CN=Schema,CN={786E0064-A470-46B9-83FB-C7539C9FA27C},CN=Authentication Services,CN=Quest Software,CN=Program Data,' + default_search_base }}"
+  register: uidnumber_result
+  failed_when: false
+
+- set_fact:
+    uid_attr: altSecurityIdentities
+    shell_attr: altSecurityIdentities
+  when: uidnumber_result.msg is defined
+
+- set_fact:
+    uid_attr: "{{ uidnumber_result.objects[0].Description }}"
+  when: uidnumber_result.objects is defined
+
+- name: Get LoginShell object from QAC
+  community.windows.win_domain_object_info:
+    domain_server: "{{ client_domain }}"
+    domain_username: "{{ client_username }}"
+    domain_password: "{{ client_password }}"
+    ldap_filter: (objectClass=*)
+    properties: description
+    search_scope: base
+    search_base: "{{ 'CN=LoginShell,CN=Schema,CN={786E0064-A470-46B9-83FB-C7539C9FA27C},CN=Authentication Services,CN=Quest Software,CN=Program Data,' + default_search_base }}"
+  register: loginshell_result
+  failed_when: false
+  when: uidnumber_result.objects is defined
+
+- fail:
+    msg: "{{ loginshell_result.msg }}"
+  when: loginshell_result.msg is defined
+
+- set_fact:
+    shell_attr: "{{ loginshell_result.objects[0].Description }}"
+  when: loginshell_result.objects is defined
+
+- name: Get Users
+  community.windows.win_domain_object_info:
+    domain_server: "{{ client_domain }}"
+    domain_username: "{{ client_username }}"
+    domain_password: "{{ client_password }}"
+    ldap_filter: (&(objectClass=user)({{ uid_attr }}=*))
+    properties:
+    - DistinguishedName
+    - sAMAccountName
+    - "{{ uid_attr }}"
+    - "{{ shell_attr }}"
+    search_scope: subtree
+    search_base: "{{ ( ad_user_conflicts_base_container | length > 0 ) | ternary( ad_user_conflicts_base_container, omit) }}"
+  register: get_users_result
+  failed_when: false
+
+# Fail if there was a message returned
+- fail:
+    msg: "{{ result.msg }}"
+  when: get_users_result.msg is defined
+
+- set_fact:
+    conflicting_users: "{{ get_users_result.objects | oneidentity.authentication_services.selectconflictingusers(uid_attr, shell_attr) }}"
+

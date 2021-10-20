@@ -1,0 +1,31 @@
+---
+
+# Report parameters
+# ------------------------------------------------------------------------------
+
+ad_user_conflicts_base_container: ''
+
+# Reports settings
+# ------------------------------------------------------------------------------
+
+ad_user_conflicts_reports_generate: "{{ reports_generate }}"
+ad_user_conflicts_reports_backup: "{{ reports_backup }}"
+
+# On which host should the reports be generated.
+# TODO: This has only been tested on the Ansible control node (127.0.0.1)
+ad_user_conflicts_reports_host: "{{ reports_host }}"
+
+# List of reports to generate
+# src:  Is the report template file on the Ansible control node.
+#       With no or relative path Ansible will look in the ad_user_conflicts role template directory.
+#       Full path to find the template files elsewhere on the Ansible control node.
+# dest: Is the destination file on the host (ad_user_conflicts_reports_host.)
+#       With no or relative path when the destination is the Ansible control node.
+#       (ad_user_conflicts_reports_host = 127.0.0.1) relative to the playbook directory.
+#       Full path for other locations or on other hosts.
+#       In either case the directory must already exist.
+ad_user_conflicts_reports: 
+  - src:  ad_user_conflicts_report.csv.j2
+    dest: ad_user_conflicts_report.csv
+  - src:  ad_user_conflicts_report.html.j2
+    dest: ad_user_conflicts_report.html
