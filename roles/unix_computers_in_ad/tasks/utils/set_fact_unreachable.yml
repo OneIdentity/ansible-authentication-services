@@ -1,0 +1,14 @@
+---
+
+# Set unreachable
+- set_fact:
+    cacheable: true
+    sas_unix_computers_in_ad:
+      unreachable: true
+      failed: true
+      changed: false
+  when: unix_computers_in_ad_reports_generate
+
+# Propogate fail
+- fail:
+    msg: "{{ result.msg | default('Unexpected error') }}"

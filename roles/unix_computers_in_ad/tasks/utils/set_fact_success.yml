@@ -1,0 +1,11 @@
+---
+
+# Set success
+- set_fact:
+    cacheable: true
+    sas_unix_computers_in_ad:
+      unreachable: false
+      failed: false
+      changed: false
+      result: "{{ result }}"
+  when: unix_computers_in_ad_reports_generate

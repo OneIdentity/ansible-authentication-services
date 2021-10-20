@@ -1,0 +1,12 @@
+Unix Computers in AD,{{ client_username }},"{{ now(fmt='%Y-%m-%d %H:%M:%S') }}","{{ unix_computers_in_ad_base_container }}"
+samAccountName,Operating System,Distinguished Name,
+{% for host in ansible_play_hosts_all | sort %}
+{% set computers = hostvars[host]['ansible_facts']['sas_unix_computers_in_ad']['result']['objects'] | default() %}
+{% for computer in computers | sort(attribute='sAMAccountName') %}
+{{ '"%s","%s","%s",' | format(
+computer.sAMAccountName,
+computer.operatingSystem,
+computer.DistinguishedName
+)}}
+{% endfor %}
+{% endfor %}

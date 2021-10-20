@@ -1,0 +1,30 @@
+---
+
+# ------------------------------------------------------------------------------
+# Main 
+# ------------------------------------------------------------------------------
+
+- block:
+
+    # Run get_unix_computers_in_ad
+    - include_tasks: get_unix_computers_in_ad.yml
+
+    # We get here on success
+    - include_tasks: utils/set_fact_success.yml
+
+  ignore_unreachable: true
+
+  rescue:
+
+    # Set unreachable status and fail
+    - include_tasks: utils/set_fact_unreachable.yml
+      when: result.unreachable is defined and result.unreachable == true
+
+    # Set fail status and fail
+    - include_tasks: utils/set_fact_failed.yml
+
+  always:
+
+    # Generate reports
+    - include_tasks: generate_reports.yml
+      when: unix_computers_in_ad_reports_generate

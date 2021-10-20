@@ -5,6 +5,20 @@ all:
   # Hosts can be grouped anyway you like
   children:
 
+    # Here is a group for the Windows host
+    windows:
+
+      # These variables are for 'windows' host group only
+      vars:
+
+        ansible_user: user
+        ansible_password: pass
+        ansible_connection: winrm
+        ansible_winrm_server_cert_validation: ignore
+
+      hosts:
+        windowsserver:
+
     # Here is a group for 'unix' hosts
     unix:
 

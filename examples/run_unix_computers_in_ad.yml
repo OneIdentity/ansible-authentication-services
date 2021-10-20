@@ -1,0 +1,23 @@
+---
+
+- hosts: all
+  gather_facts: false
+
+  # The variables you would most likely want/need to override have been included
+  vars:
+
+    # Active Directory
+    client_domain: sample.net
+    client_username: user
+    client_password: pass
+
+    # Report parameters
+    unix_computers_in_ad_base_container: 'CN=Computers,DC=Sample,DC=net'
+
+    # Reports
+    unix_computers_in_ad_reports_generate: true
+    unix_computers_in_ad_reports_backup: false
+
+  roles:
+    - name: oneidentity.authentication_services.unix_computers_in_ad
+
