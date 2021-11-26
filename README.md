@@ -43,6 +43,8 @@ The One Identity Safeguard Authentication Services Ansible Collection, referred 
 
 * [`local_unix_users_with_ad_logon`](roles/local_unix_users_with_ad_logon/README.md): Identifies the local user accounts that are required to use Active Directory credentials to log onto the Unix hosts.
 
+* [`unix_enabled_ad_users role`](roles/unix_enabled_ad_users/README.md): Lists all Active Directory users that have Unix user attributes.
+
 ## Installation
 
 ### Prerequisites

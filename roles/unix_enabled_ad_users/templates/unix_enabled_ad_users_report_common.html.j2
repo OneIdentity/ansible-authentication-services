@@ -1,0 +1,184 @@
+{# Header #}
+{% macro head(report_name) %}
+<!doctype html>
+<html lang="en">
+<head>
+
+  {# Required meta tags for Bootstrap #}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  {# CSS libraries include at end of head per best practices #}
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.css">
+
+  {# Ionicons preferred method of inclusion #}
+  <script type="module" src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule="" src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.js"></script>
+
+  <title>Safeguard Authentication Services: {{ report_name }}</title>
+</head>
+{% endmacro %}
+
+{# Title #}
+{% macro title(report_name) %}
+<div class="row">
+  <a class="navbar-brand">
+
+  {# Import base-64-encoded logo and embed in doc #}
+  {% import 'Logo_2020-OneIdentity_FullColor_Horizontal.txt' as logo %}
+  <img height="80" class="d-inline-block" alt="One Identity" src="data:image/png;base64,{{ logo | replace('\n', '') }}" >
+
+  <b>Safeguard Authentication Services</b> {{ report_name }}
+  </a>
+</div>
+<div>
+<b>Active Directory Users with Unix user attributes from search base:</b> {{ unix_enabled_ad_users_base_container }}<br><br>
+{% endmacro %}
+
+
+{# Table #}
+{% macro table() %}
+<table id="table" class="table table-hover table-sm table-borderless" >
+  <thead class="thead-dark">
+    <tr>
+        <th data-field="name" data-sortable="true">Name</th>
+        <th data-field="distinguished_name" data-sortable="true">Distinguished Name</th>
+        <th data-field="unix_user_name" data-sortable="true">Unix User Name</th>
+        <th data-field="uid_number" data-sortable="true">UID Number</th>
+        <th data-field="primary_gid_number" data-sortable="true">Primary GID Number</th>
+        <th data-field="gecos" data-sortable="true">Comment (GECOS)</th>
+        <th data-field="home_directory" data-sortable="true">Home Directory</th>
+        <th data-field="login_shell" data-sortable="true">Login Shell</th>
+    </tr>
+  </thead>
+</table>
+
+{% endmacro %}
+
+{# Footer #}
+{% macro footer(report_version, report_time) %}
+<span class="d-flex justify-content-between my-3">
+<p class="font-weight-light text-left">Generated: {{ report_time }}</p>
+<p class="font-weight-light text-right">Version: {{ report_version }}</p>
+</span>
+{% endmacro %}
+
+{# JS libraries #}
+{% macro libraries() %}
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.js"></script>
+{% endmacro %}
+
+{# Table data #}
+{% macro table_data() %}
+<script>
+
+  // Grab reference to table
+  var $table = $('#table')
+
+  // Build array of table data
+  {% for host in ansible_play_hosts_all | sort %}
+    {% set unix_enabled_users = hostvars[host]['ansible_facts']['sas_unix_enabled_ad_users']['result'] | default() %}
+    $(function() {
+      var data = [
+      {% for user in unix_enabled_users | sort %}
+      {
+      'name': '{{ user[1] }}',
+      'distinguished_name': '{{ user[0] }}',
+      'unix_user_name': '{{ user[1] }}',
+      'uid_number': '{{ user[2] }}',
+      'primary_gid_number': '{{ user[3] }}',
+      'gecos': '{{ user[4] }}',
+      'home_directory': '{{ user[5] }}',
+      'login_shell': '{{ user[6] }}'
+      },
+      {% endfor %}
+    ];
+    $table.bootstrapTable({data: data})
+  })
+  {% endfor %}
+
+</script>
+{% endmacro %}
+
+{# Table detail formatter #}
+{% macro table_detail_formatter() %}
+<script>
+  function detailFormatter(index, row, element) {
+  }
+</script>
+{% endmacro %}
+
+{# Table detail copy tooltip #}
+{% macro table_detail_tooltip() %}
+<script>
+
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+
+  function setTooltip(btn, message) {
+    $(btn).tooltip('hide')
+      .attr('data-original-title', message)
+      .tooltip('show');
+  }
+
+  function hideTooltip(btn) {
+    setTimeout(function() {
+      $(btn).tooltip('hide');
+    }, 500);
+  }
+
+  var clipboard = new ClipboardJS('.btn');
+
+  clipboard.on('success', function(e) {
+    setTooltip(e.trigger, 'Copied!');
+    hideTooltip(e.trigger);
+  });
+
+  clipboard.on('error', function(e) {
+    setTooltip(e.trigger, 'Failed!');
+    hideTooltip(e.trigger);
+  });
+
+</script>
+{% endmacro %}
+
+{# Table cell style #}
+{% macro table_cell_style() %}
+<script>
+
+  function changedStyle(value, row, index) {
+    if (value == 'True') {
+      return {
+        classes: 'text-warning'
+      }
+    }
+    else {
+      return ''
+    }
+  }
+
+  function failedStyle(value, row, index) {
+    if (value == 'True') {
+      return {
+        classes: 'text-danger'
+      }
+    }
+    else {
+      return ''
+    }
+  }
+
+</script>
+{% endmacro %}
+
+{# HTML end #}
+{% macro end() %}
+</html>
+{% endmacro %}

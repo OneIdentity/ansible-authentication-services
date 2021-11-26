@@ -1,0 +1,200 @@
+---
+
+- name: Get default search base
+  community.windows.win_domain_object_info:
+    domain_server: "{{ client_domain }}"
+    domain_username: "{{ client_username }}"
+    domain_password: "{{ client_password }}"
+    ldap_filter: (objectClass=*)
+    search_scope: base
+  register: default_search_base_result
+  failed_when: false
+
+# Fail if there was a message returned
+- fail:
+    msg: "{{ default_search_base_result.msg }}"
+  when: default_search_base_result.msg is defined
+
+- set_fact:
+    default_search_base: "{{ default_search_base_result.objects[0].DistinguishedName }}"
+
+- set_fact:
+    unix_enabled_ad_users_base_container: "{{ default_search_base_result.objects[0].DistinguishedName }}"
+  when: unix_enabled_ad_users_base_container == ''
+
+
+- name: Get UidNumber object from QAC
+  community.windows.win_domain_object_info:
+    domain_server: "{{ client_domain }}"
+    domain_username: "{{ client_username }}"
+    domain_password: "{{ client_password }}"
+    ldap_filter: (objectClass=*)
+    properties: description
+    search_scope: base
+    search_base: "{{ 'CN=UidNumber,CN=Schema,CN={786E0064-A470-46B9-83FB-C7539C9FA27C},CN=Authentication Services,CN=Quest Software,CN=Program Data,' + default_search_base }}"
+  register: uid_number_result
+  failed_when: false
+
+- block:
+    - name: Get Users
+      community.windows.win_domain_object_info:
+        domain_server: "{{ client_domain }}"
+        domain_username: "{{ client_username }}"
+        domain_password: "{{ client_password }}"
+        ldap_filter: (&(objectClass=user)(altSecurityIdentities=*))
+        properties:
+        - DistinguishedName
+        - altSecurityIdentities
+        search_scope: subtree
+        search_base: "{{ ( unix_enabled_ad_users_base_container | length > 0 ) | ternary( unix_enabled_ad_users_base_container, omit) }}"
+      register: get_users_result
+      failed_when: false
+
+    # Fail if there was a message returned
+    - fail:
+        msg: "{{ result.msg }}"
+      when: get_users_result.msg is defined
+
+    - set_fact:
+        users_result: "{{ get_users_result.objects | oneidentity.authentication_services.userswhenschemaless() }}"
+
+  when: uid_number_result.msg is defined
+
+- block:
+    - set_fact:
+        uid_number_attr: "{{ uid_number_result.objects[0].Description }}"
+
+    - name: Get LoginName object from QAC
+      community.windows.win_domain_object_info:
+        domain_server: "{{ client_domain }}"
+        domain_username: "{{ client_username }}"
+        domain_password: "{{ client_password }}"
+        ldap_filter: (objectClass=*)
+        properties: description
+        search_scope: base
+        search_base: "{{ 'CN=LoginName,CN=Schema,CN={786E0064-A470-46B9-83FB-C7539C9FA27C},CN=Authentication Services,CN=Quest Software,CN=Program Data,' + default_search_base }}"
+      register: login_name_result
+      failed_when: false
+
+    - fail:
+        msg: "{{ login_name_result.msg }}"
+      when: login_name_result.msg is defined
+
+    - set_fact:
+        login_name_attr: "{{ login_name_result.objects[0].Description }}"
+      when: login_name_result.objects is defined
+
+
+    - name: Get UserGidNumber object from QAC
+      community.windows.win_domain_object_info:
+        domain_server: "{{ client_domain }}"
+        domain_username: "{{ client_username }}"
+        domain_password: "{{ client_password }}"
+        ldap_filter: (objectClass=*)
+        properties: description
+        search_scope: base
+        search_base: "{{ 'CN=UserGidNumber,CN=Schema,CN={786E0064-A470-46B9-83FB-C7539C9FA27C},CN=Authentication Services,CN=Quest Software,CN=Program Data,' + default_search_base }}"
+      register: primary_gid_number_result
+      failed_when: false
+
+    - fail:
+        msg: "{{ primary_gid_number_result.msg }}"
+      when: primary_gid_number_result.msg is defined
+
+    - set_fact:
+        primary_gid_number_attr: "{{ primary_gid_number_result.objects[0].Description }}"
+      when: primary_gid_number_result.objects is defined
+
+
+    - name: Get Gecos object from QAC
+      community.windows.win_domain_object_info:
+        domain_server: "{{ client_domain }}"
+        domain_username: "{{ client_username }}"
+        domain_password: "{{ client_password }}"
+        ldap_filter: (objectClass=*)
+        properties: description
+        search_scope: base
+        search_base: "{{ 'CN=Gecos,CN=Schema,CN={786E0064-A470-46B9-83FB-C7539C9FA27C},CN=Authentication Services,CN=Quest Software,CN=Program Data,' + default_search_base }}"
+      register: gecos_result
+      failed_when: false
+
+    - fail:
+        msg: "{{ gecos_result.msg }}"
+      when: gecos_result.msg is defined
+
+    - set_fact:
+        gecos_attr: "{{ gecos_result.objects[0].Description }}"
+      when: gecos_result.objects is defined
+
+
+    - name: Get HomeDirectory object from QAC
+      community.windows.win_domain_object_info:
+        domain_server: "{{ client_domain }}"
+        domain_username: "{{ client_username }}"
+        domain_password: "{{ client_password }}"
+        ldap_filter: (objectClass=*)
+        properties: description
+        search_scope: base
+        search_base: "{{ 'CN=HomeDirectory,CN=Schema,CN={786E0064-A470-46B9-83FB-C7539C9FA27C},CN=Authentication Services,CN=Quest Software,CN=Program Data,' + default_search_base }}"
+      register: home_directory_result
+      failed_when: false
+
+    - fail:
+        msg: "{{ home_directory_result.msg }}"
+      when: home_directory_result.msg is defined
+
+    - set_fact:
+        home_directory_attr: "{{ home_directory_result.objects[0].Description }}"
+      when: home_directory_result.objects is defined
+
+
+    - name: Get LoginShell object from QAC
+      community.windows.win_domain_object_info:
+        domain_server: "{{ client_domain }}"
+        domain_username: "{{ client_username }}"
+        domain_password: "{{ client_password }}"
+        ldap_filter: (objectClass=*)
+        properties: description
+        search_scope: base
+        search_base: "{{ 'CN=LoginShell,CN=Schema,CN={786E0064-A470-46B9-83FB-C7539C9FA27C},CN=Authentication Services,CN=Quest Software,CN=Program Data,' + default_search_base }}"
+      register: login_shell_result
+      failed_when: false
+
+    - fail:
+        msg: "{{ login_shell_result.msg }}"
+      when: login_shell_result.msg is defined
+
+    - set_fact:
+        login_shell_attr: "{{ login_shell_result.objects[0].Description }}"
+      when: login_shell_result.objects is defined
+
+
+    - name: Get Users
+      community.windows.win_domain_object_info:
+        domain_server: "{{ client_domain }}"
+        domain_username: "{{ client_username }}"
+        domain_password: "{{ client_password }}"
+        ldap_filter: (&(objectClass=user)({{ uid_number_attr }}=*)({{ primary_gid_number_attr }}=*)({{ home_directory_attr }}=*)({{ login_shell_attr }}=*)(!({{ login_shell_attr }}=/bin/false)))
+        properties:
+        - DistinguishedName
+        - "{{ uid_number_attr }}"
+        - "{{ login_name_attr }}"
+        - "{{ primary_gid_number_attr }}"
+        - "{{ gecos_attr }}"
+        - "{{ home_directory_attr }}"
+        - "{{ login_shell_attr }}"
+        search_scope: subtree
+        search_base: "{{ ( unix_enabled_ad_users_base_container | length > 0 ) | ternary( unix_enabled_ad_users_base_container, omit) }}"
+      register: get_users_result
+      failed_when: false
+
+    # Fail if there was a message returned
+    - fail:
+        msg: "{{ result.msg }}"
+      when: get_users_result.msg is defined
+
+    - set_fact:
+        users_result: "{{ get_users_result.objects | oneidentity.authentication_services.usersbyschema(uid_number_attr, login_name_attr, primary_gid_number_attr, gecos_attr, home_directory_attr, login_shell_attr) }}"
+
+  when: uid_number_result.objects is defined
+
