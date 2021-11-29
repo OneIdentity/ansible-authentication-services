@@ -1,0 +1,11 @@
+---
+
+# Set success
+- set_fact:
+    cacheable: true
+    sas_unix_enabled_ad_groups:
+      unreachable: false
+      failed: false
+      changed: false
+      result: "{{ groups_result }}"
+  when: unix_enabled_ad_groups_reports_generate
