@@ -1,0 +1,15 @@
+AD Group Conflicts,{{ client_username }},"{{ now(fmt='%Y-%m-%d %H:%M:%S') }}","{{ ad_group_conflicts_base_container }}"
+Unix Gid,samAccountName,Distinguished Name,
+{% for host in ansible_play_hosts_all | sort %}
+{% set conflicting_groups = hostvars[host]['ansible_facts']['sas_ad_group_conflicts']['result'] | default() %}
+{% for key in conflicting_groups | sort %}
+{% set groups_with_same_gid = conflicting_groups[key] %}
+{% for group in groups_with_same_gid | sort %}
+{{ '%s,"%s","%s",' | format(
+group[2],
+group[1],
+group[0]
+)}}
+{% endfor %}
+{% endfor %}
+{% endfor %}

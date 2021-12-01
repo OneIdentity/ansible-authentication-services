@@ -62,3 +62,7 @@ The [`unix_enabled_ad_users`](run_unix_enabled_ad_users.yml) role example shows 
 
 The [`unix_enabled_ad_groups`](run_unix_enabled_ad_groups.yml) role example shows use of the `unix_enabled_ad_groups` role in an Ansbile playbook.  The variables most likely to be overriden have been included in this playbook for your convenience even though many are still set to their default values.
 
+## `ad_group_conflicts` Role Example
+
+The [`ad_group_conflicts`](run_ad_group_conflicts.yml) role example shows use of the `ad_group_conflicts` role in an Ansbile playbook.  The variables most likely to be overriden have been included in this playbook for your convenience even though many are still set to their default values.
+

@@ -1,0 +1,11 @@
+---
+
+# Set success
+- set_fact:
+    cacheable: true
+    sas_ad_group_conflicts:
+      unreachable: false
+      failed: false
+      changed: false
+      result: "{{ conflicting_groups }}"
+  when: ad_group_conflicts_reports_generate
