@@ -1,0 +1,10 @@
+---
+
+# Set success
+- set_fact:
+    cacheable: true
+    sas_logon_policy_for_unix_host:
+      unreachable: false
+      failed: false
+      changed: false
+  when: logon_policy_for_unix_host_reports_generate or logon_policy_for_unix_host_facts_generate

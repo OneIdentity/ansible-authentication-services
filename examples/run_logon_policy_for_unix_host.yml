@@ -1,0 +1,18 @@
+---
+
+- hosts: all
+  gather_facts: false
+
+  # The variables you would most likely want/need to override have been included
+  vars:
+
+    # Facts
+    logon_policy_for_unix_host_facts_generate: true
+
+    # Reports
+    logon_policy_for_unix_host_reports_generate: true
+    logon_policy_for_unix_host_reports_backup: false
+
+  roles:
+    - name: oneidentity.authentication_services.logon_policy_for_unix_host
+

@@ -49,6 +49,8 @@ The One Identity Safeguard Authentication Services Ansible Collection, referred 
 
 * [`ad_group_conflicts role`](roles/ad_group_conflicts/README.md): Lists all Active Directory groups with Unix Group ID (GID) numbers assigned to other Unix-enabled groups.
 
+* [`logon_policy_for_unix_host role`](roles/logon_policy_for_unix_host/README.md): Identifies the Active Directory users that have been explicitly granted log on permissions for the Unix hosts.
+
 ## Installation
 
 ### Prerequisites

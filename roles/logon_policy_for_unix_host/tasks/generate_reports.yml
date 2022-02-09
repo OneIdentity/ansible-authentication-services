@@ -1,0 +1,11 @@
+---
+
+- name: generate reports
+  template:
+    src:  "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    backup: "{{ logon_policy_for_unix_host_reports_backup }}"
+  with_items: "{{ logon_policy_for_unix_host_reports }}"
+  delegate_to: "{{ logon_policy_for_unix_host_reports_host }}"
+  run_once: true
+  changed_when: false

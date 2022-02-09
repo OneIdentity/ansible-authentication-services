@@ -1,0 +1,13 @@
+---
+
+- name: Get logon policy for unix host
+  get_logon_policy_for_unix_host:
+    facts: "{{ logon_policy_for_unix_host_facts_generate or logon_policy_for_unix_host_reports_generate }}"
+    facts_key: sas_logon_policy_for_unix_host_key
+  register: result
+  failed_when: false
+
+# Fail if there was a message returned
+- fail:
+    msg: "{{ result.msg }}"
+  when: result.msg
