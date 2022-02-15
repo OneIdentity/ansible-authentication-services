@@ -34,6 +34,12 @@ description: >
     vastool list users-allowed command.
 
 options:
+    user_name:
+        description:
+            - Return only the specified user or all users?
+        type: str
+        required: false
+        default: ''
     facts:
         description:
             - Generate Ansible facts?
@@ -110,6 +116,7 @@ import ansible_collections.oneidentity.authentication_services.plugins.module_ut
 # ------------------------------------------------------------------------------
 
 # Arg choices and defaults
+USER_NAME_DEFAULT = ''
 FACTS_DEFAULT = True
 FACTS_VERBOSE_DEFAULT = True
 FACTS_KEY_DEFAULT = 'get_logon_policy_for_unix_host_facts_key'
@@ -127,6 +134,11 @@ def run_module():
 
     # Module argument info
     module_args = {
+            'user_name': {
+                'type': 'str',
+                'required': False,
+                'default': USER_NAME_DEFAULT
+            },
             'facts': {
                 'type': 'bool',
                 'required': False,
@@ -178,6 +190,7 @@ def run_normal(params, result):
     users_allowed = []
 
     # Parameters
+    user_name = params['user_name'] if params['user_name'] else USER_NAME_DEFAULT
     facts = params['facts']
     facts_key = params['facts_key'] if params['facts_key'] else FACTS_KEY_DEFAULT
 
@@ -189,6 +202,9 @@ def run_normal(params, result):
         # Run vastool
         if err is None:
             err, users_allowed = run_vastool_list_users_allowed()
+
+        if user_name:
+            users_allowed = [user for user in users_allowed if user[0] == user_name]
 
     except Exception:
         tb = traceback.format_exc()

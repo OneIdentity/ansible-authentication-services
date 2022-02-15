@@ -70,3 +70,7 @@ The [`ad_group_conflicts`](run_ad_group_conflicts.yml) role example shows use of
 
 The [`logon_policy_for_unix_host`](run_logon_policy_for_unix_host.yml) role example shows use of the `logon_policy_for_unix_host` role in an Ansbile playbook.  The variables most likely to be overriden have been included in this playbook for your convenience even though many are still set to their default values.
 
+## `logon_policy_for_ad_user` Role Example
+
+The [`logon_policy_for_ad_user`](run_logon_policy_for_ad_user.yml) role example shows use of the `logon_policy_for_ad_user` role in an Ansbile playbook.  The variables most likely to be overriden have been included in this playbook for your convenience even though many are still set to their default values.
+
