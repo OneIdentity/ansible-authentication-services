@@ -1,0 +1,43 @@
+Logon Policy For Unix Host,,{{ now(fmt='%Y-%m-%d %H:%M:%S') }},,,,,,
+
+Active Directory users granted login permission
+
+{% for host in ansible_play_hosts_all | sort %}
+hostname,group,ip_address,os_distro,os_version,hw_arch,time,changed,unreachable,failed
+{# System time #}
+{% if hostvars[host]['ansible_facts']['date_time'] is not defined %}
+{% set sys_time = '' %}
+{% else %}
+{% set sys_time = hostvars[host]['ansible_facts']['date_time']['date'] + ' ' + hostvars[host]['ansible_facts']['date_time']['time'] %}
+{% endif %}
+{# Print CSV line #}
+{{ '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s' | format(
+host,
+hostvars[host]['group_names'] | join(', '),
+hostvars[host]['ansible_facts']['default_ipv4']['address'] | default(),
+hostvars[host]['ansible_facts']['distribution'] | default(),
+hostvars[host]['ansible_facts']['distribution_version'] | default(),
+hostvars[host]['ansible_facts']['architecture'] | default(),
+sys_time,
+hostvars[host]['ansible_facts']['sas_logon_policy_for_unix_host']['changed'] | default(False),
+hostvars[host]['ansible_facts']['sas_logon_policy_for_unix_host']['unreachable'] | default(False),
+hostvars[host]['ansible_facts']['sas_logon_policy_for_unix_host']['failed'] | default(True)
+)}}
+{% set users_allowed = hostvars[host]['ansible_facts']['sas_logon_policy_for_unix_host_key']['users_allowed'] | default() %}
+{% if users_allowed | length %}
+
+Name,UID,GID,GECOS,Home,Shell
+{% for user in users_allowed | sort %}
+{{ '"%s",%s,%s,"%s","%s","%s"' | format(
+user[0],
+user[2],
+user[3],
+user[4],
+user[5],
+user[6]
+)}}
+{% endfor %}
+{% endif %}
+
+{% endfor %}
+
