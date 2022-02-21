@@ -6,18 +6,16 @@ The One Identity Safeguard Authentication Services Ansible Collection, referred 
 
 ## Collection Contents
 
-### Implemented
-
 * [`common role`](roles/common/README.md): Common tasks and variables required by other roles.
-
-* [`client_sw role`](roles/client_sw/README.md): Client software install, upgrade, downgrade, uninstall, and version checking.
-    * [`client_sw_pkgs module`](roles/client_sw/README.md#plugins) Client software install package directory checking. 
-    * [`pkgdict2items filter`](roles/client_sw/README.md#plugins) Client software package sorting by state and name.
 
 * [`client_preflight role`](roles/client_preflight/README.md): Check client readiness for software install and AD join.
     * [`preflight module`](roles/client_preflight/README.md#plugins) Performs preflight tasks on host.
 
-* [`client_join role`](roles/client_join/README.md): Client Active Directory joining/unjoining. 
+* [`client_sw role`](roles/client_sw/README.md): Client software install, upgrade, downgrade, uninstall, and version checking.
+    * [`client_sw_pkgs module`](roles/client_sw/README.md#plugins) Client software install package directory checking.
+    * [`pkgdict2items filter`](roles/client_sw/README.md#plugins) Client software package sorting by state and name.
+
+* [`client_join role`](roles/client_join/README.md): Client Active Directory joining/unjoining.
     * [`vastool_join module`](roles/client_join/README.md#plugins) Performs Active Directory join/unjoin tasks on host.
 
 * [`client_config role`](roles/client_config/README.md): Client configuration.
@@ -26,32 +24,40 @@ The One Identity Safeguard Authentication Services Ansible Collection, referred 
 * [`client_agent_status role`](roles/client_agent_status/README.md): Checks the health status of client agents.
     * [`vastool_status module`](roles/client_agent_status/README.md#plugins) Tests the machine's join against Active Directory and local configuration for various issues.
 
-* [`host_access_control role`](roles/host_access_control/README.md): Show the content of users.allow and users.deny files.
-    * [`get_host_access_control module`](roles/host_access_control/README.md#plugins) Reads and returns data from users.allow and users.deny.
-
-* [`local_unix_users role`](roles/local_unix_users/README.md): Lists all users on all hosts or lists the hosts where a specific user account exists in /etc/passwd.
-    * [`get_local_unix_users module`](roles/local_unix_users/README.md#plugins) Reads, filters and returns data from /etc/passwd.
-
-* [`local_unix_groups role`](roles/local_unix_groups/README.md): Lists all groups on all hosts or lists the hosts where a specific group exists in /etc/group.
-    * [`get_local_unix_groups module`](roles/local_unix_groups/README.md#plugins) Reads, filters and returns data from /etc/group.
+### Host reports
 
 * [`unix_computers_in_ad role`](roles/unix_computers_in_ad/README.md): Lists all Unix computers in Active Directory in the requested scope.
+
+### User reports
 
 * [`ad_user_conflicts role`](roles/ad_user_conflicts/README.md): Lists all users with Unix User ID numbers (UID numbers) assigned to other Unix-enabled user account.
 
 * [`local_unix_user_conflicts role`](roles/local_unix_user_conflicts/README.md): Identifies local user accounts that would conflict with a specified user name and UID on other hosts.
 
+* [`local_unix_users role`](roles/local_unix_users/README.md): Lists all users on all hosts or lists the hosts where a specific user account exists in /etc/passwd.
+    * [`get_local_unix_users module`](roles/local_unix_users/README.md#plugins) Reads, filters and returns data from /etc/passwd.
+
 * [`local_unix_users_with_ad_logon role`](roles/local_unix_users_with_ad_logon/README.md): Identifies the local user accounts that are required to use Active Directory credentials to log onto the Unix hosts.
 
 * [`unix_enabled_ad_users role`](roles/unix_enabled_ad_users/README.md): Lists all Active Directory users that have Unix user attributes.
 
-* [`unix_enabled_ad_groups role`](roles/unix_enabled_ad_groups/README.md): Lists all Active Directory groups that have Unix group attributes.
+### Group reports
 
 * [`ad_group_conflicts role`](roles/ad_group_conflicts/README.md): Lists all Active Directory groups with Unix Group ID (GID) numbers assigned to other Unix-enabled groups.
+
+* [`local_unix_groups role`](roles/local_unix_groups/README.md): Lists all groups on all hosts or lists the hosts where a specific group exists in /etc/group.
+    * [`get_local_unix_groups module`](roles/local_unix_groups/README.md#plugins) Reads, filters and returns data from /etc/group.
+
+* [`unix_enabled_ad_groups role`](roles/unix_enabled_ad_groups/README.md): Lists all Active Directory groups that have Unix group attributes.
+
+### Access & Privileges reports
 
 * [`logon_policy_for_unix_host role`](roles/logon_policy_for_unix_host/README.md): Identifies the Active Directory users that have been explicitly granted log on permissions for the Unix hosts.
 
 * [`logon_policy_for_ad_user role`](roles/logon_policy_for_ad_user/README.md): Identifies the hosts where Active Directory users have been granted log on permission.
+
+* [`host_access_control role`](roles/host_access_control/README.md): Show the content of users.allow and users.deny files.
+    * [`get_host_access_control module`](roles/host_access_control/README.md#plugins) Reads and returns data from users.allow and users.deny.
 
 ## Installation
 
