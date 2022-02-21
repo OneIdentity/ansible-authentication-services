@@ -10,7 +10,4 @@ client_config_group_override_path: "{{ client_config_base_path }}/group-override
 client_config_users_allow_path: "{{ client_config_base_path }}/users.allow"
 client_config_users_deny_path: "{{ client_config_base_path }}/users.deny"
 
-client_config_groups_allow_path: "{{ client_config_base_path }}/groups.allow"
-client_config_groups_deny_path: "{{ client_config_base_path }}/groups.deny"
-
 client_config_users_starling_path: "{{ client_config_base_path }}/users.starling"
