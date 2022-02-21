@@ -61,6 +61,8 @@ The One Identity Safeguard Authentication Services Ansible Collection, referred 
 
     * `Collections are a new feature introduced in Ansible version 2.9.  Please use the latest 2.9+ release for the best user experience.`
 
+* [Jinja](https://github.com/pallets/jinja) version 2.10 or later.
+
 * One Identity [Safeguard Authentication Services](https://www.oneidentity.com/products/authentication-services/) version 4.2.x or later
 
     * `This collection expects the components and structure of Safeguard Authentication Services 4.2.x or later.`
