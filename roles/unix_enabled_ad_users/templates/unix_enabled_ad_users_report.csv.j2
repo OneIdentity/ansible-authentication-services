@@ -1,0 +1,17 @@
+Unix-enabled AD Users,{{ client_username }},"{{ now(fmt='%Y-%m-%d %H:%M:%S') }}","{{ unix_enabled_ad_users_base_container }}"
+Name,Distinguished Name,Unix User Name,UID Number,Primary GID Number,Comment (GECOS),Home Directory,Login Shell
+{% for host in ansible_play_hosts_all | sort %}
+{% set unix_enabled_users = hostvars[host]['ansible_facts']['sas_unix_enabled_ad_users']['result'] | default() %}
+{% for user in unix_enabled_users | sort %}
+{{ '"%s","%s","%s",%s,%s,"%s","%s","%s",' | format(
+user[1],
+user[0],
+user[1],
+user[2],
+user[3],
+user[4],
+user[5],
+user[6]
+)}}
+{% endfor %}
+{% endfor %}
