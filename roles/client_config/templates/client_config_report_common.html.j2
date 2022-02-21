@@ -118,8 +118,6 @@
         {% set group_override_raw = hostvars[host]['ansible_facts']['sas_client_config_group_override'] | default('') %}
         {% set users_allow_raw = hostvars[host]['ansible_facts']['sas_client_config_users_allow'] | default('') %}
         {% set users_deny_raw = hostvars[host]['ansible_facts']['sas_client_config_users_deny'] | default('') %}
-        {% set groups_allow_raw = hostvars[host]['ansible_facts']['sas_client_config_groups_allow'] | default('') %}
-        {% set groups_deny_raw = hostvars[host]['ansible_facts']['sas_client_config_groups_deny'] | default('') %}
         {% set users_starling_raw = hostvars[host]['ansible_facts']['sas_client_config_users_starling'] | default('') %}
         {# Details #}
         {% set details = {
@@ -134,8 +132,6 @@
                 'group-override': group_override_raw,
                 'users.allow': users_allow_raw,
                 'users.deny': users_deny_raw,
-                'groups.allow': groups_allow_raw,
-                'groups.deny': groups_deny_raw,
                 'users.starling': users_starling_raw,
                 }
             }

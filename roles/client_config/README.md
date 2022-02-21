@@ -155,15 +155,15 @@ Please see top of the [Configuration Files](#configuration-files) section for th
         * Optional
         * Omitted if not set.  In the case of a `regex` match will insert `line` on the line before the match.
 
-#### users.allow, users.deny, groups.allow, and groups.deny
+#### users.allow, users.deny
 
-The `users.allow`, `users.deny`, `groups.allows` and `groups.deny` configuration files allow per-host, local control of allowed and denied users and groups.  See [Safeguard Authentication Services docs](https://support.oneidentity.com/technical-documents/authentication-services/4.2.4/administration-guide/31#TOPIC-1468068) for further information on the format of these files.
+The `users.allow`, `users.deny` configuration files allow per-host, local control of allowed and denied users.  See [Safeguard Authentication Services docs](https://support.oneidentity.com/technical-documents/authentication-services/4.2.4/administration-guide/31#TOPIC-1468068) for further information on the format of these files.
 
 The Ansible `lineinfile` module is used for formatting these files.  See [Ansible lineinfile module docs](https://docs.ansible.com/ansible/latest/modules/lineinfile_module.html#lineinfile-module) for details on this module.
 
 Please see top of the [Configuration Files](#configuration-files) section for the variables that control creation, backup and permissions of these files but not their content.  The variables that control their content are shown below.
 
-* `client_config_users_allow`, `client_config_users_deny`, `client_config_groups_allow` and `client_config_groups_deny` are a list of items to set or clear in `users.allow`, `users.deny`, `groups.allow` and `groups.deny`
+* `client_config_users_allow`, `client_config_users_deny` are a list of items to set or clear in `users.allow`, `users.deny`
 
     Each item in this list can contain the following fields:
 

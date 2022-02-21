@@ -6,18 +6,16 @@ The One Identity Safeguard Authentication Services Ansible Collection, referred 
 
 ## Collection Contents
 
-### Implemented
-
 * [`common role`](roles/common/README.md): Common tasks and variables required by other roles.
-
-* [`client_sw role`](roles/client_sw/README.md): Client software install, upgrade, downgrade, uninstall, and version checking.
-    * [`client_sw_pkgs module`](roles/client_sw/README.md#plugins) Client software install package directory checking. 
-    * [`pkgdict2items filter`](roles/client_sw/README.md#plugins) Client software package sorting by state and name.
 
 * [`client_preflight role`](roles/client_preflight/README.md): Check client readiness for software install and AD join.
     * [`preflight module`](roles/client_preflight/README.md#plugins) Performs preflight tasks on host.
 
-* [`client_join role`](roles/client_join/README.md): Client Active Directory joining/unjoining. 
+* [`client_sw role`](roles/client_sw/README.md): Client software install, upgrade, downgrade, uninstall, and version checking.
+    * [`client_sw_pkgs module`](roles/client_sw/README.md#plugins) Client software install package directory checking.
+    * [`pkgdict2items filter`](roles/client_sw/README.md#plugins) Client software package sorting by state and name.
+
+* [`client_join role`](roles/client_join/README.md): Client Active Directory joining/unjoining.
     * [`vastool_join module`](roles/client_join/README.md#plugins) Performs Active Directory join/unjoin tasks on host.
 
 * [`client_config role`](roles/client_config/README.md): Client configuration.
@@ -26,32 +24,40 @@ The One Identity Safeguard Authentication Services Ansible Collection, referred 
 * [`client_agent_status role`](roles/client_agent_status/README.md): Checks the health status of client agents.
     * [`vastool_status module`](roles/client_agent_status/README.md#plugins) Tests the machine's join against Active Directory and local configuration for various issues.
 
-* [`host_access_control role`](roles/host_access_control/README.md): Show the content of users.allow and users.deny files.
-    * [`get_host_access_control module`](roles/host_access_control/README.md#plugins) Reads and returns data from users.allow and users.deny.
-
-* [`local_unix_users role`](roles/local_unix_users/README.md): Lists all users on all hosts or lists the hosts where a specific user account exists in /etc/passwd.
-    * [`get_local_unix_users module`](roles/local_unix_users/README.md#plugins) Reads, filters and returns data from /etc/passwd.
-
-* [`local_unix_groups role`](roles/local_unix_groups/README.md): Lists all groups on all hosts or lists the hosts where a specific group exists in /etc/group.
-    * [`get_local_unix_groups module`](roles/local_unix_groups/README.md#plugins) Reads, filters and returns data from /etc/group.
+### Host reports
 
 * [`unix_computers_in_ad role`](roles/unix_computers_in_ad/README.md): Lists all Unix computers in Active Directory in the requested scope.
+
+### User reports
 
 * [`ad_user_conflicts role`](roles/ad_user_conflicts/README.md): Lists all users with Unix User ID numbers (UID numbers) assigned to other Unix-enabled user account.
 
 * [`local_unix_user_conflicts role`](roles/local_unix_user_conflicts/README.md): Identifies local user accounts that would conflict with a specified user name and UID on other hosts.
 
-* [`local_unix_users_with_ad_logon`](roles/local_unix_users_with_ad_logon/README.md): Identifies the local user accounts that are required to use Active Directory credentials to log onto the Unix hosts.
+* [`local_unix_users role`](roles/local_unix_users/README.md): Lists all users on all hosts or lists the hosts where a specific user account exists in /etc/passwd.
+    * [`get_local_unix_users module`](roles/local_unix_users/README.md#plugins) Reads, filters and returns data from /etc/passwd.
+
+* [`local_unix_users_with_ad_logon role`](roles/local_unix_users_with_ad_logon/README.md): Identifies the local user accounts that are required to use Active Directory credentials to log onto the Unix hosts.
 
 * [`unix_enabled_ad_users role`](roles/unix_enabled_ad_users/README.md): Lists all Active Directory users that have Unix user attributes.
 
-* [`unix_enabled_ad_groups role`](roles/unix_enabled_ad_groups/README.md): Lists all Active Directory groups that have Unix group attributes.
+### Group reports
 
 * [`ad_group_conflicts role`](roles/ad_group_conflicts/README.md): Lists all Active Directory groups with Unix Group ID (GID) numbers assigned to other Unix-enabled groups.
+
+* [`local_unix_groups role`](roles/local_unix_groups/README.md): Lists all groups on all hosts or lists the hosts where a specific group exists in /etc/group.
+    * [`get_local_unix_groups module`](roles/local_unix_groups/README.md#plugins) Reads, filters and returns data from /etc/group.
+
+* [`unix_enabled_ad_groups role`](roles/unix_enabled_ad_groups/README.md): Lists all Active Directory groups that have Unix group attributes.
+
+### Access & Privileges reports
 
 * [`logon_policy_for_unix_host role`](roles/logon_policy_for_unix_host/README.md): Identifies the Active Directory users that have been explicitly granted log on permissions for the Unix hosts.
 
 * [`logon_policy_for_ad_user role`](roles/logon_policy_for_ad_user/README.md): Identifies the hosts where Active Directory users have been granted log on permission.
+
+* [`host_access_control role`](roles/host_access_control/README.md): Show the content of users.allow and users.deny files.
+    * [`get_host_access_control module`](roles/host_access_control/README.md#plugins) Reads and returns data from users.allow and users.deny.
 
 ## Installation
 
@@ -60,6 +66,8 @@ The One Identity Safeguard Authentication Services Ansible Collection, referred 
 * [Ansible](https://github.com/ansible/ansible) version 2.9 or later
 
     * `Collections are a new feature introduced in Ansible version 2.9.  Please use the latest 2.9+ release for the best user experience.`
+
+* [Jinja](https://github.com/pallets/jinja) version 2.10 or later.
 
 * One Identity [Safeguard Authentication Services](https://www.oneidentity.com/products/authentication-services/) version 4.2.x or later
 
@@ -98,14 +106,14 @@ To install from [GitHub](https://github.com/OneIdentity/ansible-authentication-s
 
 Using `ansible-galaxy` command:
 ```bash
-ansible-galaxy collection install https://github.com/OneIdentity/ansible-authentication-services/releases/download/v0.0.8/oneidentity-authentication_services-0.0.8.tar.gz
+ansible-galaxy collection install https://github.com/OneIdentity/ansible-authentication-services/releases/download/v0.1.0/oneidentity-authentication_services-0.1.0.tar.gz
 ```
 
 The collection can also be added to a project's `requirements.yml` file
 ```yaml
 ---
 collections:
-  - name: https://github.com/OneIdentity/ansible-authentication-services/releases/download/v0.0.8/oneidentity-authentication_services-0.0.8.tar.gz
+  - name: https://github.com/OneIdentity/ansible-authentication-services/releases/download/v0.1.0/oneidentity-authentication_services-0.1.0.tar.gz
 ```
 
 and installed using the `ansible-galaxy` command.  This method allows all required collections for a project to be specified in one place and installed with one command.
@@ -135,7 +143,7 @@ For local build and installation, you can clone the Git repository, build the co
     The build command will generate an Ansible Galaxy collection artifact with a `tar.gz` file extension, sample output will look like the following:
 
     ```
-    Created collection for oneidentity.authentication_services at /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.8.tar.gz
+    Created collection for oneidentity.authentication_services at /home/user/ansible-authentication-services/oneidentity-authentication_services-0.1.0.tar.gz
     ```
 
     `Pleae note the path shown above is just an example, the path to your build artifact will be in the root directory of the cloned repository.`
@@ -145,14 +153,14 @@ For local build and installation, you can clone the Git repository, build the co
     Using `ansible-galaxy` command:
 
     ```bash
-    ansible-galaxy collection install /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.8.tar.gz
+    ansible-galaxy collection install /home/user/ansible-authentication-services/oneidentity-authentication_services-0.1.0.tar.gz
     ```
 
     The collection can also be added to a project's `requirements.yml` file
     ```yaml
     ---
     collections:
-    - name: /home/user/ansible-authentication-services/oneidentity-authentication_services-0.0.8.tar.gz
+    - name: /home/user/ansible-authentication-services/oneidentity-authentication_services-0.1.0.tar.gz
     ```
 
     and installed using the `ansible-galaxy` command.  This method allows all required collections for a project to be specified in one place and installed with one command.

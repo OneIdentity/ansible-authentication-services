@@ -39,7 +39,7 @@ client_config_group_override_group: "{{ client_config_group }}"
 client_config_group_override_backup: "{{ client_config_backup }}"
 
 
-# users/groups.allow/deny settings
+# users.allow/deny settings
 # ------------------------------------------------------------------------------
 
 client_config_users_allow: []
@@ -55,20 +55,6 @@ client_config_users_deny_mode: "{{ client_config_mode }}"
 client_config_users_deny_owner: "{{ client_config_owner }}"
 client_config_users_deny_group: "{{ client_config_group }}"
 client_config_users_deny_backup: "{{ client_config_backup }}"
-
-client_config_groups_allow: []
-client_config_groups_allow_create: "{{ client_config_create }}"
-client_config_groups_allow_mode: "{{ client_config_mode }}"
-client_config_groups_allow_owner: "{{ client_config_owner }}"
-client_config_groups_allow_group: "{{ client_config_group }}"
-client_config_groups_allow_backup: "{{ client_config_backup }}"
-
-client_config_groups_deny: []
-client_config_groups_deny_create: "{{ client_config_create }}"
-client_config_groups_deny_mode: "{{ client_config_mode }}"
-client_config_groups_deny_owner: "{{ client_config_owner }}"
-client_config_groups_deny_group: "{{ client_config_group }}"
-client_config_groups_deny_backup: "{{ client_config_backup }}"
 
 
 # users.starling settings
