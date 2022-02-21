@@ -1,0 +1,242 @@
+{# Header #}
+{% macro head(report_name) %}
+<!doctype html>
+<html lang="en">
+<head>
+
+  {# Required meta tags for Bootstrap #}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  {# CSS libraries include at end of head per best practices #}
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.css">
+
+  {# Ionicons preferred method of inclusion #}
+  <script type="module" src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule="" src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.js"></script>
+
+  <title>Safeguard Authentication Services: {{ report_name }}</title>
+</head>
+{% endmacro %}
+
+{# Title #}
+{% macro title(report_name) %}
+<div class="row">
+  <a class="navbar-brand">
+
+  {# Import base-64-encoded logo and embed in doc #}
+  {% import 'Logo_2020-OneIdentity_FullColor_Horizontal.txt' as logo %}
+  <img height="80" class="d-inline-block" alt="One Identity" src="data:image/png;base64,{{ logo | replace('\n', '') }}" >
+
+  <b>Safeguard Authentication Services</b> {{ report_name }}
+  </a>
+</div>
+<b>The Logon Policy for AD User report is used to identify the hosts where one or more AD Users have been granted logon permission.</b>
+<div>
+{% if logon_policy_for_ad_user_user_name %}
+<b>Selected AD User:</b> {{logon_policy_for_ad_user_user_name}}<br>
+{% else %}
+<b>Selected AD User:</b> All<br>
+{% endif %}
+</div>
+{% endmacro %}
+
+
+{# Table #}
+{% macro table() %}
+<table 
+  id="table" 
+  class="table table-hover table-sm table-borderless" 
+  data-search="true" 
+  data-show-search-clear-button="true"
+  data-visible-search="false"
+  data-pagination="true" 
+  data-pagination-v-align="top"
+  data-pagination-h-align="left"
+  data-pagination-detail-h-align="right"
+  data-detail-view="true" 
+  data-detail-view-icon="true" 
+  data-detail-view-by-click="true" 
+  data-detail-formatter="detailFormatter"
+  data-maintain-meta-data="true"
+  data-show-fullscreen="false"
+  data-buttons="btn btn-sm"
+  data-icon-size="sm"
+  data-unique-id="unique_id"
+  >
+  <thead class="thead-dark">
+    <tr>
+        <th data-field="unique_id" data-visible="false">Id</th>
+        <th data-field="num_of_hosts" data-sortable="true">Number of Hosts</th>
+        <th data-field="user_name" data-sortable="true">Username</th>
+        <th data-field="user_id" data-sortable="true">User ID</th>
+        <th data-field="group_id" data-sortable="true">Group ID</th>
+        <th data-field="comment" data-sortable="true">Comment</th>
+        <th data-field="home_directory" data-sortable="true">Home Directory</th>
+        <th data-field="login_shell" data-sortable="true">Login Shell</th>
+    </tr>
+  </thead>
+</table>
+
+{% for policy in logon_policy_for_ad_user | sort %}
+<table id="tableInner{{ loop.index0 }}" class="table table-hover table-sm table-borderless" >
+  <thead class="thead-light">
+    <tr>
+        <th data-field="hostname" data-sortable="true">Hostname</th>
+        <th data-field="group" data-sortable="true">Group</th>
+        <th data-field="ip address" data-sortable="true">IP Address</th>
+        <th data-field="os distro" data-sortable="true">OS Distro</th>
+        <th data-field="os version" data-sortable="true">OS Version</th>
+        <th data-field="hw arch" data-sortable="true">HW Arch</th>
+    </tr>
+  </thead>
+</table>
+{% endfor %}
+{% endmacro %}
+
+{# Footer #}
+{% macro footer(report_version, report_time) %}
+<span class="d-flex justify-content-between my-3">
+<p class="font-weight-light text-left">Generated: {{ report_time }}</p>
+<p class="font-weight-light text-right">Version: {{ report_version }}</p>
+</span>
+{% endmacro %}
+
+{# JS libraries #}
+{% macro libraries() %}
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.js"></script>
+{% endmacro %}
+
+{# Table data #}
+{% macro table_data() %}
+<script>
+
+  // Grab reference to table
+  var $table = $('#table')
+
+  // Build array of table data
+  $(function() {
+    var data = [
+      {% for policy in logon_policy_for_ad_user | sort %}
+        {
+          'unique_id': '{{ loop.index0 }}',
+          'num_of_hosts': '{{ logon_policy_for_ad_user[policy]['hosts'] | default() | length }}',
+          'user_name': '{{ logon_policy_for_ad_user[policy]['user'][0] | replace("\\", "\\\\") }}',
+          'user_id': '{{ logon_policy_for_ad_user[policy]['user'][2] }}',
+          'group_id': '{{ logon_policy_for_ad_user[policy]['user'][3] }}',
+          'comment': '{{ logon_policy_for_ad_user[policy]['user'][4] | replace("\\", "\\\\") }}',
+          'home_directory': '{{ logon_policy_for_ad_user[policy]['user'][5] }}',
+          'login_shell': '{{ logon_policy_for_ad_user[policy]['user'][6] }}'
+        },
+      {% endfor %}
+    ]
+    $table.bootstrapTable({data: data})
+  })
+
+{% for policy in logon_policy_for_ad_user | sort %}
+  $(function() {
+    var data = [
+{% for host in logon_policy_for_ad_user[policy]['hosts'] | sort %}
+      {
+      'hostname': '{{ host }}',
+      'group': '{{ hostvars[host]['group_names'] | join(', ') }}', 
+      'ip address': '{{ hostvars[host]['ansible_facts']['default_ipv4']['address'] | default() }}',
+      'os distro': '{{ hostvars[host]['ansible_facts']['distribution'] | default() }}',
+      'os version': '{{ hostvars[host]['ansible_facts']['distribution_version'] | default() }}',
+      'hw arch': '{{ hostvars[host]['ansible_facts']['architecture'] | default() }}'
+      },
+{% endfor %}
+    ];
+    $('#tableInner{{ loop.index0 }}').bootstrapTable({data: data})
+  })
+{% endfor %}
+</script>
+{% endmacro %}
+
+{# Table detail formatter #}
+{% macro table_detail_formatter() %}
+<script>
+  function detailFormatter(index, row, element) {
+    $(element).html($('#tableInner'+row['unique_id']).clone(true).attr('id',"clonedTableInner"+row['unique_id']).show());
+  }
+</script>
+{% endmacro %}
+
+{# Table detail copy tooltip #}
+{% macro table_detail_tooltip() %}
+<script>
+
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+
+  function setTooltip(btn, message) {
+    $(btn).tooltip('hide')
+      .attr('data-original-title', message)
+      .tooltip('show');
+  }
+
+  function hideTooltip(btn) {
+    setTimeout(function() {
+      $(btn).tooltip('hide');
+    }, 500);
+  }
+
+  var clipboard = new ClipboardJS('.btn');
+
+  clipboard.on('success', function(e) {
+    setTooltip(e.trigger, 'Copied!');
+    hideTooltip(e.trigger);
+  });
+
+  clipboard.on('error', function(e) {
+    setTooltip(e.trigger, 'Failed!');
+    hideTooltip(e.trigger);
+  });
+
+</script>
+{% endmacro %}
+
+{# Table cell style #}
+{% macro table_cell_style() %}
+<script>
+
+  function changedStyle(value, row, index) {
+    if (value == 'True') {
+      return {
+        classes: 'text-warning'
+      }
+    }
+    else {
+      return ''
+    }
+  }
+
+  function failedStyle(value, row, index) {
+    if (value == 'True') {
+      return {
+        classes: 'text-danger'
+      }
+    }
+    else {
+      return ''
+    }
+  }
+
+{% for policy in logon_policy_for_ad_user | sort %}
+$("#tableInner{{ loop.index0 }}").hide();
+{% endfor %}
+
+</script>
+{% endmacro %}
+
+{# HTML end #}
+{% macro end() %}
+</html>
+{% endmacro %}

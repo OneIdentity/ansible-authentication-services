@@ -1,0 +1,25 @@
+---
+
+- name: Get logon policy for ad user
+  get_logon_policy_for_unix_host:
+    user_name: "{{ logon_policy_for_ad_user_user_name }}"
+    facts: "{{ logon_policy_for_ad_user_facts_generate or logon_policy_for_ad_user_reports_generate }}"
+    facts_key: sas_logon_policy_for_ad_user_key
+  register: result
+  failed_when: false
+
+# Fail if there was a message returned
+- fail:
+    msg: "{{ result.msg }}"
+  when: result.msg
+
+- set_fact:
+    logon_policy_for_ad_user: |
+      {%- set logon_policy_for_unix_hosts = {} %}
+      {%- for host in play_hosts %}
+        {%- if logon_policy_for_unix_hosts.update({host: (hostvars[host].ansible_facts.sas_logon_policy_for_ad_user_key.users_allowed | default([])) }) %}
+        {%- endif %}
+      {%- endfor %}
+      {{ logon_policy_for_unix_hosts | oneidentity.authentication_services.logonpolicyforaduser() }}
+  run_once: true
+

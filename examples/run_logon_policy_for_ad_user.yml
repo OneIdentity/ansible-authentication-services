@@ -1,0 +1,21 @@
+---
+
+- hosts: all
+  gather_facts: false
+
+  # The variables you would most likely want/need to override have been included
+  vars:
+
+    # Report parameters
+    logon_policy_for_ad_user_user_name: ''
+
+    # Facts
+    logon_policy_for_ad_user_facts_generate: true
+
+    # Reports
+    logon_policy_for_ad_user_reports_generate: true
+    logon_policy_for_ad_user_reports_backup: false
+
+  roles:
+    - name: oneidentity.authentication_services.logon_policy_for_ad_user
+

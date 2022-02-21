@@ -1,0 +1,21 @@
+Logon Policy For AD User,,{{ now(fmt='%Y-%m-%d %H:%M:%S') }},,,,,,
+
+Active Directory User,System Name,IP Address,OS Distro,OS Version,UID,GID,GECOS,Home,Shell
+
+{% for policy in logon_policy_for_ad_user | sort %}
+{% for host in logon_policy_for_ad_user[policy]['hosts'] | sort %}
+{{ '"%s","%s","%s","%s","%s","%s","%s","%s","%s","%s"' | format(
+logon_policy_for_ad_user[policy]['user'][0],
+host,
+hostvars[host]['ansible_facts']['default_ipv4']['address'] | default(),
+hostvars[host]['ansible_facts']['distribution'] | default(),
+hostvars[host]['ansible_facts']['distribution_version'] | default(),
+logon_policy_for_ad_user[policy]['user'][2],
+logon_policy_for_ad_user[policy]['user'][3],
+logon_policy_for_ad_user[policy]['user'][4],
+logon_policy_for_ad_user[policy]['user'][5],
+logon_policy_for_ad_user[policy]['user'][6]
+)}}
+{% endfor %}
+{% endfor %}
+

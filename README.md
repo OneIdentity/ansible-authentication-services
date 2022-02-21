@@ -51,6 +51,8 @@ The One Identity Safeguard Authentication Services Ansible Collection, referred 
 
 * [`logon_policy_for_unix_host role`](roles/logon_policy_for_unix_host/README.md): Identifies the Active Directory users that have been explicitly granted log on permissions for the Unix hosts.
 
+* [`logon_policy_for_ad_user role`](roles/logon_policy_for_ad_user/README.md): Identifies the hosts where Active Directory users have been granted log on permission.
+
 ## Installation
 
 ### Prerequisites

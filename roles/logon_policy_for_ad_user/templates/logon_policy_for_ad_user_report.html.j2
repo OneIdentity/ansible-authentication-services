@@ -1,0 +1,45 @@
+{# Imports #}
+{% import 'logon_policy_for_ad_user_report_common.html.j2' as report with context %}
+
+{# Globals #}
+{% set report_name = 'Logon Policy For AD User Report' %}
+
+{# HTML head #}
+{{ report.head(report_name) }}
+
+{# HTML body #}
+<body>
+
+  {# Create overall page container #}
+  <div class="container-fluid">
+
+    {# Title #}
+    {{ report.title(report_name) }}
+
+    {# Data table #}
+    {{ report.table() }}
+   
+    {# Footer #}
+    {{ report.footer(collection_version, now(fmt='%Y-%m-%d %H:%M:%S')) }}
+
+    {# JS libraries #}
+    {{ report.libraries() }}
+
+    {# Table data #}
+    {{ report.table_data() }}
+
+    {# Table detail formatter #}
+    {{ report.table_detail_formatter() }}
+
+    {# Table detail copy tooltip #}
+    {{ report.table_detail_tooltip() }}
+
+    {# Table cell style #}
+    {{ report.table_cell_style() }}
+
+  </div>
+
+</body>
+
+{# HTML end #}
+{{ report.end() }}
