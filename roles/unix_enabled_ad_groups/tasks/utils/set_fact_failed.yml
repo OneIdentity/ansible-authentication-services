@@ -1,0 +1,14 @@
+---
+
+# Set failed
+- set_fact:
+    cacheable: true
+    sas_unix_enabled_ad_groups:
+      unreachable: false
+      failed: true
+      changed: false
+  when: unix_enabled_ad_groups_reports_generate
+
+# Propogate fail
+- fail:
+    msg: "{{ result.msg | default('Unexpected error') }}"

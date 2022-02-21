@@ -45,6 +45,8 @@ The One Identity Safeguard Authentication Services Ansible Collection, referred 
 
 * [`unix_enabled_ad_users role`](roles/unix_enabled_ad_users/README.md): Lists all Active Directory users that have Unix user attributes.
 
+* [`unix_enabled_ad_groups role`](roles/unix_enabled_ad_groups/README.md): Lists all Active Directory groups that have Unix group attributes.
+
 ## Installation
 
 ### Prerequisites

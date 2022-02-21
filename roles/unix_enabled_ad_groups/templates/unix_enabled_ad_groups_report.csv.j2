@@ -1,0 +1,13 @@
+Unix-enabled AD Groups,{{ client_username }},"{{ now(fmt='%Y-%m-%d %H:%M:%S') }}","{{ unix_enabled_ad_groups_base_container }}"
+Name,Distinguished Name,Group Name,GID Number
+{% for host in ansible_play_hosts_all | sort %}
+{% set unix_enabled_groups = hostvars[host]['ansible_facts']['sas_unix_enabled_ad_groups']['result'] | default() %}
+{% for group in unix_enabled_groups | sort %}
+{{ '"%s","%s","%s",%s' | format(
+group[1],
+group[0],
+group[1],
+group[2]
+)}}
+{% endfor %}
+{% endfor %}
