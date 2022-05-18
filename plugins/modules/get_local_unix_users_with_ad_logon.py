@@ -279,7 +279,7 @@ def run_dscl(args):
 # ------------------------------------------------------------------------------
 def get_user_property(user, prop):
 
-    rc, rval_str = run_dscl('. -read /Users/' + user + ' ' + prop)
+    rc, rval_str = run_dscl('. -read /Users/' + enclose_shell_arg(user) + ' ' + prop)
     if rc == 0:
         # -read: Prints a directory. The property key is followed by colon, then a
         # space-separated list of the values for that property. If any value contains

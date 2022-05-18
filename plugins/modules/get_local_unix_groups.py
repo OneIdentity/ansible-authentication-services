@@ -124,7 +124,7 @@ import platform
 import subprocess
 import sys
 import traceback
-import ansible_collections.oneidentity.authentication_services.plugins.module_utils.check_file_exec as cfe
+from ansible_collections.oneidentity.authentication_services.plugins.module_utils.misc_utils import enclose_shell_arg
 
 
 # ------------------------------------------------------------------------------
@@ -315,7 +315,7 @@ def run_dscl(args):
 # ------------------------------------------------------------------------------
 def get_group_property(group, prop):
 
-    rc, rval_str = run_dscl('. -read /Groups/' + group + ' ' + prop)
+    rc, rval_str = run_dscl('. -read /Groups/' + enclose_shell_arg(group) + ' ' + prop)
     if rc == 0:
         # -read: Prints a directory. The property key is followed by colon, then a
         # space-separated list of the values for that property. If any value contains

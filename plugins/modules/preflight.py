@@ -154,6 +154,7 @@ import sys
 import traceback
 import subprocess
 import ansible_collections.oneidentity.authentication_services.plugins.module_utils.check_file_exec as cfe
+from ansible_collections.oneidentity.authentication_services.plugins.module_utils.misc_utils import enclose_shell_arg
 
 
 # ------------------------------------------------------------------------------
@@ -345,6 +346,9 @@ def run_preflight(
     Run preflight
     """
 
+    if not password:
+        return 'Error: password is empty string!', []
+
     # Return values
     err = None
     steps = []
@@ -352,8 +356,8 @@ def run_preflight(
     # Build preflight command
     cmd = []
     cmd += [path]
-    cmd += ['-u ' + username]
-    cmd += ['-w ' + password]
+    cmd += ['-u ' + enclose_shell_arg(username)]
+    cmd += ['-w ' + enclose_shell_arg(password)]
     cmd += ['--csv']
     cmd += ['-t ' + str(timeout)]
     cmd += ['-S'] if timesync else []

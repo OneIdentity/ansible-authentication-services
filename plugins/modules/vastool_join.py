@@ -163,6 +163,7 @@ import traceback
 import re
 import ansible_collections.oneidentity.authentication_services.plugins.module_utils.vastool as vt
 import ansible_collections.oneidentity.authentication_services.plugins.module_utils.check_file_exec as cfe
+from ansible_collections.oneidentity.authentication_services.plugins.module_utils.misc_utils import enclose_shell_arg
 
 
 # ------------------------------------------------------------------------------
@@ -429,12 +430,12 @@ def run_vastool_join(
     # Build vastool command
     cmd = []
     cmd += [vt.VASTOOL_PATH]
-    cmd += ['-u ' + username]
-    cmd += ['-w ' + password]
+    cmd += ['-u ' + enclose_shell_arg(username)]
+    cmd += ['-w ' + enclose_shell_arg(password)]
     cmd += ['join']
     cmd += ['-f']
     cmd += ['-n ' + account_name] if account_name else []
-    cmd += ['-c ' + account_container] if account_container else []
+    cmd += ['-c ' + enclose_shell_arg(account_container)] if account_container else []
     cmd += [extra_args] if extra_args else []
     cmd += [domain]
     cmd += servers if servers else []
@@ -473,8 +474,8 @@ def run_vastool_unjoin(
     # Build vastool command
     cmd = []
     cmd += [vt.VASTOOL_PATH]
-    cmd += ['-u ' + username]
-    cmd += ['-w ' + password]
+    cmd += ['-u ' + enclose_shell_arg(username)]
+    cmd += ['-w ' + enclose_shell_arg(password)]
     cmd += ['unjoin']
     cmd += ['-f']
     cmd += ['-n ' + account_name] if account_name else []
