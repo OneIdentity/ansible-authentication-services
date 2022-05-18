@@ -86,8 +86,8 @@
       {% for user in users_with_same_uid | sort(attribute='sAMAccountName') %}
       {
       'uidnumber': '{{ user['uidNumber'] }}',
-      'samaccountname': '{{ user['sAMAccountName'] }}',
-      'distinguishedname': '{{ user['DistinguishedName'] }}'
+      'samaccountname': '{{ user['sAMAccountName'] | replace("'", '\\x27') }}',
+      'distinguishedname': '{{ user['DistinguishedName'] | replace("'", '\\x27') }}'
       },
       {% endfor %}
       {% endfor %}

@@ -88,13 +88,13 @@
       var data = [
       {% for user in unix_enabled_users | sort %}
       {
-      'name': '{{ user[1] }}',
-      'distinguished_name': '{{ user[0] }}',
-      'unix_user_name': '{{ user[1] }}',
+      'name': '{{ user[1] | replace("'", '\\x27') }}',
+      'distinguished_name': '{{ user[0] | replace("'", '\\x27') }}',
+      'unix_user_name': '{{ user[1] | replace("'", '\\x27') }}',
       'uid_number': '{{ user[2] }}',
       'primary_gid_number': '{{ user[3] }}',
-      'gecos': '{{ user[4] }}',
-      'home_directory': '{{ user[5] }}',
+      'gecos': '{{ user[4] | replace("'", '\\x27') }}',
+      'home_directory': '{{ user[5] | replace("'", '\\x27') }}',
       'login_shell': '{{ user[6] }}'
       },
       {% endfor %}

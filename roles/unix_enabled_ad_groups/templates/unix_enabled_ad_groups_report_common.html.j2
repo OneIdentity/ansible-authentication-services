@@ -84,9 +84,9 @@
       var data = [
       {% for group in unix_enabled_groups | sort %}
       {
-      'name': '{{ group[1] }}',
-      'distinguished_name': '{{ group[0] }}',
-      'group_name': '{{ group[1] }}',
+      'name': '{{ group[1] | replace("'", '\\x27') }}',
+      'distinguished_name': '{{ group[0] | replace("'", '\\x27') }}',
+      'group_name': '{{ group[1] | replace("'", '\\x27') }}',
       'group_gid_number': '{{ group[2] }}'
       },
       {% endfor %}

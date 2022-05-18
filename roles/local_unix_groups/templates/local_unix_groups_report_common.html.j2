@@ -168,9 +168,9 @@ Report parameters:<br>
     var data = [
 {% for group in local_unix_groups | sort %}
       {
-      'group_name': '{{ group[0] }}',
+      'group_name': '{{ group[0] | replace("'", '\\x27') }}',
       'group_id': '{{ group[2] }}',
-      'members': '{{ group[3] }}'
+      'members': '{{ group[3] | replace("'", '\\x27') }}'
       },
 {% endfor %}
     ];
