@@ -153,11 +153,11 @@
     var data = [
 {% for user in users_allowed | sort %}
       {
-      'user_name': '{{ user[0] }}',
+      'user_name': '{{ user[0] | replace("'", '\\x27') | replace("\\", "\\\\") }}',
       'user_id': '{{ user[2] }}',
       'group_id': '{{ user[3] }}',
-      'comment': '{{ user[4] }}',
-      'home_directory': '{{ user[5] }}',
+      'comment': '{{ user[4] | replace("'", '\\x27') | replace("\\", "\\\\") }}',
+      'home_directory': '{{ user[5] | replace("'", '\\x27') }}',
       'login_shell': '{{ user[6] }}'
       },
 {% endfor %}

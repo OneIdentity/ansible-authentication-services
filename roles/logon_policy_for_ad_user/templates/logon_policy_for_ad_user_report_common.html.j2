@@ -127,11 +127,11 @@
         {
           'unique_id': '{{ loop.index0 }}',
           'num_of_hosts': '{{ logon_policy_for_ad_user[policy]['hosts'] | default() | length }}',
-          'user_name': '{{ logon_policy_for_ad_user[policy]['user'][0] | replace("\\", "\\\\") }}',
+          'user_name': '{{ logon_policy_for_ad_user[policy]['user'][0] | replace("'", '\\x27') | replace("\\", "\\\\") }}',
           'user_id': '{{ logon_policy_for_ad_user[policy]['user'][2] }}',
           'group_id': '{{ logon_policy_for_ad_user[policy]['user'][3] }}',
-          'comment': '{{ logon_policy_for_ad_user[policy]['user'][4] | replace("\\", "\\\\") }}',
-          'home_directory': '{{ logon_policy_for_ad_user[policy]['user'][5] }}',
+          'comment': '{{ logon_policy_for_ad_user[policy]['user'][4] | replace("'", '\\x27') | replace("\\", "\\\\") }}',
+          'home_directory': '{{ logon_policy_for_ad_user[policy]['user'][5] | replace("'", '\\x27') }}',
           'login_shell': '{{ logon_policy_for_ad_user[policy]['user'][6] }}'
         },
       {% endfor %}

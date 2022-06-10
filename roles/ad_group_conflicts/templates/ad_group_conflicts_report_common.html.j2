@@ -86,8 +86,8 @@
       {% for group in groups_with_same_gid | sort %}
       {
       'gidnumber': '{{ group[2] }}',
-      'samaccountname': '{{ group[1] }}',
-      'distinguishedname': '{{ group[0] }}'
+      'samaccountname': '{{ group[1] | replace("'", '\\x27') }}',
+      'distinguishedname': '{{ group[0] | replace("'", '\\x27') }}'
       },
       {% endfor %}
       {% endfor %}

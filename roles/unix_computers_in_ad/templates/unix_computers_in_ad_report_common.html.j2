@@ -88,9 +88,9 @@
       var data = [
       {% for computer in computers | sort(attribute='sAMAccountName') %}
       {
-      'samaccountname': '{{ computer.sAMAccountName }}',
-      'operatingsystem': '{{ computer.operatingSystem }}',
-      'distinguishedname': '{{ computer.DistinguishedName }}'
+      'samaccountname': '{{ computer.sAMAccountName | replace("'", '\\x27') }}',
+      'operatingsystem': '{{ computer.operatingSystem | replace("'", '\\x27') }}',
+      'distinguishedname': '{{ computer.DistinguishedName | replace("'", '\\x27') }}'
       },
       {% endfor %}
     ];

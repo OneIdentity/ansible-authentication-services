@@ -157,11 +157,11 @@ Report of all local user accounts that conflict with:<br>
     var data = [
 {% for user in local_unix_user_conflicts | sort %}
       {
-      'user_name': '{{ user[0] }}',
+      'user_name': '{{ user[0] | replace("'", '\\x27') }}',
       'user_id': '{{ user[2] }}',
       'group_id': '{{ user[3] }}',
-      'comment': '{{ user[4] }}',
-      'home_directory': '{{ user[5] }}',
+      'comment': '{{ user[4] | replace("'", '\\x27') }}',
+      'home_directory': '{{ user[5] | replace("'", '\\x27') }}',
       'login_shell': '{{ user[6] }}'
       },
 {% endfor %}
