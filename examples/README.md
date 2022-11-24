@@ -24,6 +24,10 @@ The [`client_join`](run_client_join.yml) role example shows use of the `client_j
 
 The [`client_config`](run_client_config.yml) role example shows use of the `client_config` role in an Ansible playbook.
 
+### `client_join_status` Role Example
+
+The [`client_join_status`](run_client_join_status.yml) role example shows use of the `client_join_status` role in an Ansible playbook.
+
 ### `client_agent_status` Role Example
 
 The [`client_agent_status`](run_client_agent_status.yml) role example shows use of the `client_agent_status` role in an Ansible playbook.

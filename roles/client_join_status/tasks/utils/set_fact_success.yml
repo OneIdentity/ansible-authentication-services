@@ -1,0 +1,9 @@
+---
+
+# Set success
+- set_fact:
+    cacheable: true
+    sas_client:
+      unreachable: false
+      failed: false
+  when: client_join_status_reports_generate

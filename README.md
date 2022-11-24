@@ -21,6 +21,8 @@ The One Identity Safeguard Authentication Services Ansible Collection, referred 
 * [`client_config role`](roles/client_config/README.md): Client configuration.
     * [`dictlistselect filter`](roles/client_config/README.md#plugins) Filter list of dicts to only include specified keys.
 
+* [`client_join_status role`](roles/client_join_status/README.md): Checks the Active Directory join status of client hosts.
+
 * [`client_agent_status role`](roles/client_agent_status/README.md): Checks the health status of client agents.
     * [`vastool_status module`](roles/client_agent_status/README.md#plugins) Tests the machine's join against Active Directory and local configuration for various issues.
 

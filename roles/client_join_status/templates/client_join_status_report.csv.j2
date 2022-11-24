@@ -1,0 +1,17 @@
+{# Print CSV header #}
+hostname,group,ip_address,os_distro,os_version,sas_version,ad_domain,unreachable,failed
+{# Loop through all hosts #}
+{% for host in ansible_play_hosts_all | sort %}
+{# Print CSV line #}
+{{ '%s,%s,%s,%s,%s,%s,%s,%s,%s' | format(
+host,
+hostvars[host]['group_names'] | join(', '),
+hostvars[host]['ansible_facts']['default_ipv4']['address'] | default(),
+hostvars[host]['ansible_facts']['distribution'] | default(),
+hostvars[host]['ansible_facts']['distribution_version'] | default(),
+hostvars[host]['ansible_facts']['sas_client_join_status']['version'] | default(),
+hostvars[host]['ansible_facts']['sas_client_join_status']['domain'] | default(),
+hostvars[host]['ansible_facts']['sas_client']['unreachable'] | default(),
+hostvars[host]['ansible_facts']['sas_client']['failed'] | default()
+)}}
+{% endfor %}

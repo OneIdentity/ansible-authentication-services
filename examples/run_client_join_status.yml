@@ -1,0 +1,15 @@
+---
+
+- hosts: all
+  gather_facts: false
+
+  # The variables you would most likely want/need to override have been included
+  vars:
+
+    # Reports
+    client_join_status_reports_generate: true
+    client_join_status_reports_backup: false
+
+  roles:
+    - name: oneidentity.authentication_services.client_join_status
+
