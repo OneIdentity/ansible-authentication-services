@@ -1,0 +1,12 @@
+---
+
+- name: get join status
+  get_join_status:
+    facts_key: sas_client_join_status
+  register: result
+  failed_when: false
+
+# Fail if there was a message returned
+- fail:
+    msg: "{{ result.msg }}"
+  when: result.msg
