@@ -14,8 +14,6 @@
     client_agent_status_reports_generate: true
     client_agent_status_reports_backup: false
 
-    reports_details_format: json
-
   roles:
     - name: oneidentity.authentication_services.client_agent_status
 

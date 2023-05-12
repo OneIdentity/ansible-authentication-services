@@ -13,8 +13,6 @@
     host_access_control_reports_generate: true
     host_access_control_reports_backup: false
 
-    host_access_control_reports_details_format: json
-
   roles:
     - name: oneidentity.authentication_services.host_access_control
 
