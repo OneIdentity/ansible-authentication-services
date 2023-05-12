@@ -163,7 +163,7 @@
           'changed': '{{ changed }}',
           'unreachable': '{{ unreachable }}',
           'failed': '{{ failed }}',
-          'details': `{{ details }}`,
+          'details': `{{ details | replace("`", "\\`") }}`,
         },
       {% endfor %}
     ]
