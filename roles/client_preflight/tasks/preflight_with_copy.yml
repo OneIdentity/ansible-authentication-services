@@ -16,7 +16,7 @@
   - include_tasks: preflight.yml
 
   # Remove temporary directory
-  - include_tasks: utils/temp_dir_delete.yml
+  # - include_tasks: utils/temp_dir_delete.yml
 
   vars:
     package: preflight
