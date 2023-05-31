@@ -86,13 +86,13 @@
     var data = [
       {% for host in ansible_play_hosts_all | sort %}
         {
-          'hostname':    '{{ host }}',
-          'group':       '{{ hostvars[host]['group_names'] | join(', ') }}',
-          'ip address':  '{{ hostvars[host]['ansible_facts']['default_ipv4']['address']           | default() }}',
-          'os distro':   '{{ hostvars[host]['ansible_facts']['distribution']                      | default() }}',
-          'os version':  '{{ hostvars[host]['ansible_facts']['distribution_version']              | default() }}',
-          'sas version': '{{ hostvars[host]['ansible_facts']['sas_client_join_status']['version'] | default() }}',
-          'domain':      '{{ hostvars[host]['ansible_facts']['sas_client_join_status']['domain']  | default() }}',
+          'hostname':    '{{ host | replace("'", '\\x27') }}',
+          'group':       '{{ hostvars[host]['group_names'] | join(', ') | replace("'", '\\x27') }}',
+          'ip address':  '{{ hostvars[host]['ansible_facts']['default_ipv4']['address']           | default() | replace("'", '\\x27') }}',
+          'os distro':   '{{ hostvars[host]['ansible_facts']['distribution']                      | default() | replace("'", '\\x27') }}',
+          'os version':  '{{ hostvars[host]['ansible_facts']['distribution_version']              | default() | replace("'", '\\x27') }}',
+          'sas version': '{{ hostvars[host]['ansible_facts']['sas_client_join_status']['version'] | default() | replace("'", '\\x27') }}',
+          'domain':      '{{ hostvars[host]['ansible_facts']['sas_client_join_status']['domain']  | default() | replace("'", '\\x27') }}',
           'unreachable': '{{ hostvars[host]['ansible_facts']['sas_client']['unreachable']         | default() }}',
           'failed':      '{{ hostvars[host]['ansible_facts']['sas_client']['failed']              | default() }}',
         },

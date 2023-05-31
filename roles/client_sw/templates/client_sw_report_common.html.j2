@@ -153,12 +153,12 @@
         {% endif %}
         {# Javascript object #}
         {
-          'hostname': '{{ host }}',
-          'group': '{{ hostvars[host]['group_names'] | join(', ') }}', 
-          'ip address': '{{ hostvars[host]['ansible_facts']['default_ipv4']['address'] | default() }}',
-          'os distro': '{{ hostvars[host]['ansible_facts']['distribution'] | default() }}',
-          'os version': '{{ hostvars[host]['ansible_facts']['distribution_version'] | default() }}',
-          'hw arch': '{{ hostvars[host]['ansible_facts']['architecture'] | default() }}',
+          'hostname': '{{ host | replace("'", '\\x27') }}',
+          'group': '{{ hostvars[host]['group_names'] | join(', ') | replace("'", '\\x27') }}', 
+          'ip address': '{{ hostvars[host]['ansible_facts']['default_ipv4']['address'] | default() | replace("'", '\\x27') }}',
+          'os distro': '{{ hostvars[host]['ansible_facts']['distribution'] | default() | replace("'", '\\x27') }}',
+          'os version': '{{ hostvars[host]['ansible_facts']['distribution_version'] | default() | replace("'", '\\x27') }}',
+          'hw arch': '{{ hostvars[host]['ansible_facts']['architecture'] | default() | replace("'", '\\x27') }}',
           'sys_time': '{{ sys_time }}',
           'changed': '{{ changed }}',
           'unreachable': '{{ unreachable }}',
