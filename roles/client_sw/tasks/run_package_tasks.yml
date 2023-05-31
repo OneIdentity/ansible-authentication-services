@@ -21,9 +21,9 @@
   loop: "{{ client_sw_pkg_state | oneidentity.authentication_services.pkgdict2items }}"
 
 # Remove temporary directory 
-- include_tasks: temp_dir_delete.yml
-  when: 
-    - "'present' in client_sw_pkg_state.values()"
+# - include_tasks: temp_dir_delete.yml
+#   when: 
+#     - "'present' in client_sw_pkg_state.values()"
 
 # Read package versions after changes
 - include_tasks: read_package_version.yml
