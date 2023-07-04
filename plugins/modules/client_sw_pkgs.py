@@ -156,7 +156,8 @@ PKG_PATHS = {
         'x86_64': 'solaris10-x64',
         'amd64': 'solaris10-x64',
         'sparc': 'solaris10-sparc',
-        'sparc64': 'solaris10-sparc'
+        'sparc64': 'solaris10-sparc',
+        'sun4v': 'solaris10-sparc'
     },
     'darwin': {
         'x86_64': 'macos'
