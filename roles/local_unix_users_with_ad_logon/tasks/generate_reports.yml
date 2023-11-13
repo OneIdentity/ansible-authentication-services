@@ -9,3 +9,5 @@
   delegate_to: "{{ local_unix_users_with_ad_logon_reports_host }}"
   run_once: true
   changed_when: false
+  vars:
+    ansible_become: false

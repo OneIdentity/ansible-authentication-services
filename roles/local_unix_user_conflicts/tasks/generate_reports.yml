@@ -9,3 +9,5 @@
   delegate_to: "{{ local_unix_user_conflicts_reports_host }}"
   run_once: true
   changed_when: false
+  vars:
+    ansible_become: false

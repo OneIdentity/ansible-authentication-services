@@ -9,3 +9,5 @@
   delegate_to: "{{ unix_enabled_ad_groups_reports_host }}"
   run_once: true
   changed_when: false
+  vars:
+    ansible_become: false

@@ -9,3 +9,5 @@
   delegate_to: "{{ logon_policy_for_ad_user_reports_host }}"
   run_once: true
   changed_when: false
+  vars:
+    ansible_become: false
