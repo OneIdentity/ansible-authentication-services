@@ -71,6 +71,13 @@ All of the variables shown below have a default value but can be overridden to s
     client_password:
     ```
 
+* `client_keytab` sets the Kerberos 5 keytab file used to authenticate the user or principal with Active Directory.  If both the `client_password` and the `client_keytab` file are specified, the `client_password` will be used for authentication.
+
+    Default value is:
+    ```yaml
+    client_keytab:
+    ```
+
 * `client_servers` sets a list of domain controllers to use for checks.  This is optional as the default domain controller will be detected through DNS and LDAP lookups.
 
     Default value is: 

@@ -10,7 +10,8 @@
     client_join_state: joined
     client_domain: sample.net
     client_username: user
-    client_password: pass
+    # client_password: pass
+    client_keytab: /tmp/1id/admin.keytab
 
     # Facts
     client_join_facts_generate: true

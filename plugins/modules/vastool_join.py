@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 # ------------------------------------------------------------------------------
-# Copyright (c) 2020, One Identity LLC
+# Copyright (c) 2023, One Identity LLC
 # File: vastool_join.py
 # Desc: Ansible module that wraps vastool join/unjoin commands.
-# Auth: Mark Stillings
+# Auth: Mark Stillings, Laszlo Nagy
 # Note:
 # ------------------------------------------------------------------------------
 
@@ -53,7 +53,14 @@ options:
         description:
             - Active Directory password to authenticate
         type: str
-        required: true
+        required: false
+        default: ''
+    keytab:
+        description:
+            - Full path and filename of Kerberos 5 keytab to authenticate
+        type: str
+        required: false
+        default: ''
     servers:
         description:
             - Servers to use for join
@@ -157,6 +164,7 @@ ansible_facts:
 # ------------------------------------------------------------------------------
 
 from ansible.module_utils.basic import AnsibleModule
+import os
 import sys
 import subprocess
 import traceback
@@ -211,8 +219,14 @@ def run_module():
             },
             'password': {
                 'type': 'str',
-                'required': True,
-                'no_log': True
+                'required': False,
+                'no_log': True,
+                'default': ''
+            },
+            'keytab': {
+                'type': 'str',
+                'required': False,
+                'default': ''
             },
             'servers': {
                 'type': 'list',
@@ -296,6 +310,7 @@ def run_normal(params, result):
     domain = params['domain']
     username = params['username']
     password = params['password']
+    keytab = params['keytab']
     servers = params['servers']
     account_name = params['account_name']
     account_container = params['account_container']
@@ -309,6 +324,14 @@ def run_normal(params, result):
         # Check vastool
         err, version = cfe.check_file_exec(vt.VASTOOL_PATH, '-v')
 
+        if err is None:
+            if not password and not keytab:
+                err = 'Either password or keytab must be specified!'
+
+        if err is None and keytab:
+            if not os.path.isfile(keytab):
+                err = keytab + ' is not found!'
+
         # Run vastool
         if err is None:
             err, changed, steps = run_vastool(
@@ -316,6 +339,7 @@ def run_normal(params, result):
                 domain,
                 username,
                 password,
+                keytab,
                 servers,
                 account_name,
                 account_container,
@@ -349,6 +373,7 @@ def run_vastool(
         domain,
         username,
         password,
+        keytab,
         servers,
         account_name,
         account_container,
@@ -374,6 +399,7 @@ def run_vastool(
                 domain,
                 username,
                 password,
+                keytab,
                 servers,
                 account_name,
                 account_container,
@@ -396,6 +422,7 @@ def run_vastool(
             err, changed, steps = run_vastool_unjoin(
                 username,
                 password,
+                keytab,
                 account_name,
                 extra_args
             )
@@ -417,6 +444,7 @@ def run_vastool_join(
         domain,
         username,
         password,
+        keytab,
         servers,
         account_name,
         account_container,
@@ -431,7 +459,10 @@ def run_vastool_join(
     cmd = []
     cmd += [vt.VASTOOL_PATH]
     cmd += ['-u ' + enclose_shell_arg(username)]
-    cmd += ['-w ' + enclose_shell_arg(password)]
+    if password:
+        cmd += ['-w ' + enclose_shell_arg(password)]
+    if keytab:
+        cmd += ['-k ' + enclose_shell_arg(keytab)]
     cmd += ['join']
     cmd += ['-f']
     cmd += ['-n ' + account_name] if account_name else []
@@ -463,6 +494,7 @@ def run_vastool_join(
 def run_vastool_unjoin(
         username,
         password,
+        keytab,
         account_name,
         extra_args):
 
@@ -475,7 +507,10 @@ def run_vastool_unjoin(
     cmd = []
     cmd += [vt.VASTOOL_PATH]
     cmd += ['-u ' + enclose_shell_arg(username)]
-    cmd += ['-w ' + enclose_shell_arg(password)]
+    if password:
+        cmd += ['-w ' + enclose_shell_arg(password)]
+    if keytab:
+        cmd += ['-k ' + enclose_shell_arg(keytab)]
     cmd += ['unjoin']
     cmd += ['-f']
     cmd += ['-n ' + account_name] if account_name else []

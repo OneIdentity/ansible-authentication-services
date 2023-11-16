@@ -7,6 +7,7 @@
     domain: "{{ client_domain }}" 
     username: "{{ client_username }}" 
     password: "{{ client_password }}" 
+    keytab: "{{ client_keytab }}"
     servers: "{{ client_servers }}" 
     account_name: "{{ client_account_name }}" 
     account_container: "{{ client_account_container }}" 
