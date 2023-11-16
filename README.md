@@ -75,7 +75,7 @@ The One Identity Safeguard Authentication Services Ansible Collection, referred 
 
     * `This collection expects the components and structure of Safeguard Authentication Services 4.2.x or later.`
     * See collection role [documentation](docs/) for specific, per-role  requirements and instructions.
-    * See One Identity [Safeguard Authentication Services documentation](https://support.oneidentity.com/authentication-services/4.2.4/technical-documents) for requirements and instructions.
+    * See One Identity [Safeguard Authentication Services documentation](https://support.oneidentity.com/safeguard-authentication-services/technical-documents) for requirements and instructions.
 
 ### From Ansible Galaxy 
 
@@ -178,7 +178,7 @@ The collection provides various sample playbooks in the [examples](examples/READ
 
 ## Supported Platforms
 
-All [Safeguard Authentication Services supported platforms](https://support.oneidentity.com/technical-documents/authentication-services/4.2.4/release-notes/2#TOPIC-1376245).
+All [Safeguard Authentication Services supported platforms](https://support.oneidentity.com/technical-documents/safeguard-authentication-services/release-notes).
 
 ## Notes
 

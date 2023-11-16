@@ -101,7 +101,7 @@ The contents, creation, backup, and permissions of each configuration file are s
 
 #### vas.conf
 
-The `vas.conf` configuration file is formatted per standard [INI file](https://en.wikipedia.org/wiki/INI_file) conventions.  See [Safeguard Authentication Services vas.conf docs](https://support.oneidentity.com/technical-documents/authentication-services/4.2.4/administration-guide/7#TOPIC-1467970) for further information on valid sections and options for this file.
+The `vas.conf` configuration file is formatted per standard [INI file](https://en.wikipedia.org/wiki/INI_file) conventions.  See [Safeguard Authentication Services vas.conf docs](https://support.oneidentity.com/technical-documents/safeguard-authentication-services/administration-guide) for further information on valid sections and options for this file.
 
 The Ansible `ini_file` module is used for formatting this file.  See [Ansible ini_file module docs](https://docs.ansible.com/ansible/latest/modules/ini_file_module.html#ini-file-module) for details on this module.
 
@@ -127,7 +127,7 @@ Please see top of the [Configuration Files](#configuration-files) section for th
 
 #### user-override and group-override
 
-The `user-override` and `group-override` configuration files allow per-host, local mapping between Active Directory and local users and groups.  See [Safeguard Authentication Services docs](https://support.oneidentity.com/technical-documents/authentication-services/4.2.4/administration-guide/36#TOPIC-1468088) for further information on the format of these files.
+The `user-override` and `group-override` configuration files allow per-host, local mapping between Active Directory and local users and groups.  See [Safeguard Authentication Services docs](https://support.oneidentity.com/technical-documents/safeguard-authentication-services/administration-guide) for further information on the format of these files.
 
 The Ansible `lineinfile` module is used for formatting these files.  See [Ansible lineinfile module docs](https://docs.ansible.com/ansible/latest/modules/lineinfile_module.html#lineinfile-module) for details on this module.
 
@@ -157,7 +157,7 @@ Please see top of the [Configuration Files](#configuration-files) section for th
 
 #### users.allow, users.deny
 
-The `users.allow`, `users.deny` configuration files allow per-host, local control of allowed and denied users.  See [Safeguard Authentication Services docs](https://support.oneidentity.com/technical-documents/authentication-services/4.2.4/administration-guide/31#TOPIC-1468068) for further information on the format of these files.
+The `users.allow`, `users.deny` configuration files allow per-host, local control of allowed and denied users.  See [Safeguard Authentication Services docs](https://support.oneidentity.com/technical-documents/safeguard-authentication-services/administration-guide) for further information on the format of these files.
 
 The Ansible `lineinfile` module is used for formatting these files.  See [Ansible lineinfile module docs](https://docs.ansible.com/ansible/latest/modules/lineinfile_module.html#lineinfile-module) for details on this module.
 
@@ -187,7 +187,7 @@ Please see top of the [Configuration Files](#configuration-files) section for th
 
 #### users.starling
 
-The `users.starling` configuration file is for per-host, local configuration of Starling.  See [Safeguard Authentication Services docs](https://support.oneidentity.com/technical-documents/authentication-services/4.2.4/administration-guide/44#TOPIC-1468117) for further information on the format of this file.
+The `users.starling` configuration file is for per-host, local configuration of Starling.  See [Safeguard Authentication Services docs](https://support.oneidentity.com/technical-documents/safeguard-authentication-services/administration-guide) for further information on the format of this file.
 
 The Ansible `lineinfile` module is used for formatting this file.  See [Ansible lineinfile module docs](https://docs.ansible.com/ansible/latest/modules/lineinfile_module.html#lineinfile-module) for details on this module.
 
