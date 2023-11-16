@@ -12,6 +12,8 @@
   delegate_to: "{{ client_sw_host }}"
   failed_when: false
   register: client_sw_pkgs 
+  vars:
+    ansible_become: false
 
 # Fail if there was a message returned
 - fail:
