@@ -9,3 +9,5 @@
   delegate_to: "{{ host_access_control_reports_host }}"
   run_once: true
   changed_when: false
+  vars:
+    ansible_become: false

@@ -9,3 +9,5 @@
   delegate_to: "{{ unix_computers_in_ad_reports_host }}"
   run_once: true
   changed_when: false
+  vars:
+    ansible_become: false

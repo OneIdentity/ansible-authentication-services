@@ -10,3 +10,5 @@
   delegate_to: "{{ client_preflight_reports_host }}"    
   run_once: true
   changed_when: false
+  vars:
+    ansible_become: false
