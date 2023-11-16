@@ -190,8 +190,7 @@ def run_module():
             },
             'username': {
                 'type': 'str',
-                'required': True,
-                'no_log': True
+                'required': True
             },
             'password': {
                 'type': 'str',
