@@ -5,7 +5,7 @@
 
 client_preflight_timeout: 5 
 client_preflight_timesync: false
-client_preflight_extra_args:
+client_preflight_extra_args: ''
 
 
 # Facts settings

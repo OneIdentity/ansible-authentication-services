@@ -26,21 +26,21 @@ All of the variables shown below have a default value but can be overridden to s
 
     Default value is:
     ```yaml
-    client_config_mode:
+    client_config_mode: ''
     ```
 
 * `client_config_owner` sets the default setting for configuration file owner.  Possible values are either blank which uses the owner of the account Ansible is using on the host for file creation and does not modify the owner when the file is modified, or a string containing the desired owner.
 
     Default value is:
     ```yaml
-    client_config_owner:
+    client_config_owner: ''
     ```
 
 * `client_config_group` sets the default setting for configuration file group.  Possible values are either blank which uses the group of the account Ansible is using on the host for file creation and does not modify the group when the file is modified, or a string containing the desired group.
 
     Default value is:
     ```yaml
-    client_config_group:
+    client_config_group: ''
     ```
 
 * `client_config_backup` sets the default setting for configuration file backup.  This creates a backup of the file every time it is modified by Ansible.  Each backup file has the name and time of the backup as part of the file name.  Backup files are not automatically removed so their removal needs to be managed when this option is enabled.  Possible values are:

@@ -30,7 +30,7 @@ See [Active Directory variables](../common/README.md#active-directory) in the [`
 
     Default value is: 
     ```yaml
-    client_preflight_extra_args:
+    client_join_extra_args: ''
     ```
 
 ### Facts generation

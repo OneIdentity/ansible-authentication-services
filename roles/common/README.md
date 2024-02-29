@@ -54,28 +54,28 @@ All of the variables shown below have a default value but can be overridden to s
 
     Default value is: 
     ```yaml
-    client_domain:
+    client_domain: ''
     ```
 
 * `client_username` sets the user or principal to perform Active Directory readiness and join/unjoin operations.  Secrets do not have to be provided in plain text, see [Ansible Vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html) for futher information.
 
     Default value is: 
     ```yaml
-    client_username:
+    client_username: ''
     ```
 
 * `client_password` sets the password used to authenticate the user or principal with Active Directory.  Secrets do not have to be provided in plain text, see [Ansible Vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html) for futher information.
 
     Default value is: 
     ```yaml
-    client_password:
+    client_password: ''
     ```
 
 * `client_keytab` sets the Kerberos 5 keytab file used to authenticate the user or principal with Active Directory.  If both the `client_password` and the `client_keytab` file are specified, the `client_password` will be used for authentication.
 
     Default value is:
     ```yaml
-    client_keytab:
+    client_keytab: ''
     ```
 
 * `client_servers` sets a list of domain controllers to use for checks.  This is optional as the default domain controller will be detected through DNS and LDAP lookups.
@@ -89,14 +89,14 @@ All of the variables shown below have a default value but can be overridden to s
 
     Default value is: 
     ```yaml
-    client_account_name:
+    client_account_name: ''
     ```
 
 * `client_account_container` sets the name of the computer account container for the host in Active Directory. This is optional and the default is the default computers container in Active Directory. 
 
     Default value is: 
     ```yaml
-    client_account_container:
+    client_account_container: ''
     ```
 
 ### Facts generation
