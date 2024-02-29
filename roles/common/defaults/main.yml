@@ -18,13 +18,13 @@ client_sw_tmp_dir: /tmp/1id
 # Client general settings
 # ------------------------------------------------------------------------------
 
-client_domain: 
-client_username: 
-client_password: 
-client_keytab:
+client_domain: ''
+client_username: ''
+client_password: ''
+client_keytab: ''
 client_servers: []
-client_account_name:
-client_account_container:
+client_account_name: ''
+client_account_container: ''
 
 
 # Facts settings

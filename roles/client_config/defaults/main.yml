@@ -4,9 +4,9 @@
 # ------------------------------------------------------------------------------
 
 client_config_create: yes
-client_config_mode:
-client_config_owner:
-client_config_group:
+client_config_mode: ''
+client_config_owner: ''
+client_config_group: ''
 client_config_backup: yes
 
 

@@ -5,7 +5,7 @@
 
 # Valid options are: 'joined' or 'unjoined'
 client_join_state: joined
-client_join_extra_args:
+client_join_extra_args: ''
 
 
 # Facts settings
