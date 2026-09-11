@@ -1,0 +1,39 @@
+---
+
+- name: Exercise Solaris package ownership detection
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    ansible_facts:
+      os_family: Solaris
+      distribution_major_version: "{{ test_solaris_major }}"
+
+  tasks:
+    - include_role:
+        name: client_sw
+        tasks_from: read_package_version.yml
+      vars:
+        package: "{{ test_package }}"
+        state: "{{ test_state }}"
+        flag: beg
+
+    - name: Verify Solaris package ownership facts
+      assert:
+        that:
+          - >-
+            hostvars[inventory_hostname]
+            ['sas_client_sw_' + test_package + '_owner_beg']
+            == expected_owner
+          - >-
+            hostvars[inventory_hostname]
+            ['sas_client_sw_' + test_package + '_present_beg']
+            == expected_present
+          - >-
+            hostvars[inventory_hostname]
+            ['sas_client_sw_' + test_package + '_migration_required_beg']
+            == expected_migration_required
+          - >-
+            hostvars[inventory_hostname]
+            ['sas_client_sw_' + test_package + '_vers_beg']
+            == expected_version

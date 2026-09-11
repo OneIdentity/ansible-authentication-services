@@ -37,6 +37,8 @@
            'package': package,
            'state': state,
            'installed_version': sas_plan_installed_version,
+           'owner': sas_plan_owner,
+           'migration_required': sas_plan_migration_required,
            'target_version': sas_plan_target_version,
            'source_path': sas_plan_source_path,
            'source_file': sas_plan_source_file,
@@ -60,6 +62,12 @@
     sas_plan_target_version: >-
       {{ client_sw_pkgs['packages'][package]['vers']
          if package in client_sw_pkgs['packages'] else '' }}
+    sas_plan_owner: >-
+      {{ hostvars[inventory_hostname]
+         ['sas_client_sw_' + package + '_owner_beg'] }}
+    sas_plan_migration_required: >-
+      {{ hostvars[inventory_hostname]
+         ['sas_client_sw_' + package + '_migration_required_beg'] }}
     sas_plan_source_path: >-
       {{ client_sw_pkgs['packages'][package]['path']
          if package in client_sw_pkgs['packages'] else '' }}
@@ -71,6 +79,10 @@
          if package in client_sw_pkgs['packages'] else '' }}
     sas_plan_action: "{{ sas_client_sw_planned_action | trim }}"
     sas_plan_requires_source: >-
-      {{ sas_plan_action in ['install', 'upgrade', 'downgrade'] }}
+      {{ (sas_plan_action in ['install', 'upgrade', 'downgrade'])
+         or sas_plan_migration_required }}
     sas_plan_may_remove: >-
-      {{ sas_plan_action in ['remove', 'upgrade', 'downgrade'] }}
+      {{ sas_plan_action == 'remove'
+         or sas_plan_migration_required
+         or (sas_plan_owner == 'svr4'
+             and sas_plan_action in ['upgrade', 'downgrade']) }}

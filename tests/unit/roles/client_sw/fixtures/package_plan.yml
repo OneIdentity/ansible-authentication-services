@@ -9,6 +9,15 @@
       os_family: Solaris
 
   tasks:
+    - name: Supply package ownership facts
+      set_fact:
+        "sas_client_sw_{{ item.key }}_owner_beg": "{{ item.value.owner }}"
+        "sas_client_sw_{{ item.key }}_present_beg": >-
+          {{ item.value.owner != 'absent' }}
+        "sas_client_sw_{{ item.key }}_migration_required_beg": >-
+          {{ item.value.migration_required | default(false) }}
+      loop: "{{ test_ownership | default({}) | dict2items }}"
+
     - include_role:
         name: client_sw
         tasks_from: build_package_plan.yml

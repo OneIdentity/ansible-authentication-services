@@ -31,11 +31,16 @@ def package(path, version, publisher=''):
 
 
 def plan_entry(name, state, installed, target, source, action,
-               requires_source, may_remove, publisher=''):
+               requires_source, may_remove, publisher='', owner=None,
+               migration_required=False):
+    if owner is None:
+        owner = 'svr4' if installed else 'absent'
     return {
         'package': name,
         'state': state,
         'installed_version': installed,
+        'owner': owner,
+        'migration_required': migration_required,
         'target_version': target,
         'source_path': source,
         'source_file': os.path.basename(source) if source else '',
@@ -100,15 +105,21 @@ class PackagePlanBehaviorTests(unittest.TestCase):
             'sas_client_sw_vasclnt_vers_beg': '7.1.0.900',
             'sas_client_sw_vasgp_vers_beg': '7.1.0.1000',
             'sas_client_sw_vassc_vers_beg': '7.1.0.1000',
+            'test_ownership': {
+                'vascert': {'owner': 'absent'},
+                'vasclnt': {'owner': 'ips'},
+                'vasgp': {'owner': 'ips'},
+                'vassc': {'owner': 'ips'},
+            },
             'expected_plan': [
                 plan_entry('vascert', 'present', '', '1.4.0.70', source,
                            'install', True, False),
                 plan_entry('vasclnt', 'present', '7.1.0.900', '7.1.0.1000',
-                           source, 'upgrade', True, True),
+                           source, 'upgrade', True, False, owner='ips'),
                 plan_entry('vasgp', 'present', '7.1.0.1000', '7.1.0.900',
-                           source, 'downgrade', True, True),
+                           source, 'downgrade', True, False, owner='ips'),
                 plan_entry('vassc', 'present', '7.1.0.1000', '7.1.0.1000',
-                           source, 'none', False, False),
+                           source, 'none', False, False, owner='ips'),
             ],
             'expected_sources': [
                 {'path': source, 'file': 'sas.p5p'},
@@ -134,6 +145,11 @@ class PackagePlanBehaviorTests(unittest.TestCase):
             'sas_client_sw_dnsupdate_vers_beg': SAS_5,
             'sas_client_sw_pamdefender_vers_beg': SAS_5,
             'sas_client_sw_vasclnt_vers_beg': SAS_6,
+            'test_ownership': {
+                'dnsupdate': {'owner': 'svr4'},
+                'pamdefender': {'owner': 'svr4'},
+                'vasclnt': {'owner': 'svr4'},
+            },
             'expected_plan': [
                 plan_entry('dnsupdate', 'present', SAS_5, SAS_6, source,
                            'upgrade', True, True),
@@ -159,11 +175,16 @@ class PackagePlanBehaviorTests(unittest.TestCase):
             'sas_client_sw_vascert_vers_beg': '1.4.0.70',
             'sas_client_sw_vasclnt_vers_beg': '7.0.0.8900',
             'sas_client_sw_vasgp_vers_beg': '',
+            'test_ownership': {
+                'vascert': {'owner': 'ips'},
+                'vasclnt': {'owner': 'ips'},
+                'vasgp': {'owner': 'absent'},
+            },
             'expected_plan': [
                 plan_entry('vascert', 'check', '1.4.0.70', '', '',
-                           'check', False, False),
+                           'check', False, False, owner='ips'),
                 plan_entry('vasclnt', 'absent', '7.0.0.8900', '', '',
-                           'remove', False, True),
+                           'remove', False, True, owner='ips'),
                 plan_entry('vasgp', 'absent', '', '', '',
                            'none', False, False),
             ],
@@ -190,9 +211,15 @@ class PackagePlanBehaviorTests(unittest.TestCase):
             'sas_client_sw_vasclnt_vers_beg': '6.1.0.4900',
             'sas_client_sw_vasgp_vers_beg': '',
             'sas_client_sw_vasqa_vers_beg': '',
+            'test_ownership': {
+                'vasclnt': {'owner': 'ips'},
+                'vasgp': {'owner': 'absent'},
+                'vasqa': {'owner': 'absent'},
+            },
             'expected_plan': [
                 plan_entry('vasclnt', 'present', '6.1.0.4900', '7.0.0.8900',
-                           standard, 'upgrade', True, True, 'OneIdentity'),
+                           standard, 'upgrade', True, False, 'OneIdentity',
+                           'ips'),
                 plan_entry('vasgp', 'present', '', '7.0.0.8900', standard,
                            'install', True, False, 'OneIdentity'),
                 plan_entry('vasqa', 'present', '', '7.0.0.8900', qa,
@@ -231,6 +258,20 @@ class PackagePlanBehaviorTests(unittest.TestCase):
         self.assertIn('does not have complete version and source metadata',
                       completed.stdout)
 
+    def test_missing_ownership_facts_fail_before_planning(self):
+        source = '/media/sas.p5p'
+        variables = {
+            'client_sw_pkg_state': {'vasclnt': 'present'},
+            'client_sw_pkgs': {'packages': {
+                'vasclnt': package(source, '7.0.0.8900'),
+            }},
+            'sas_client_sw_vasclnt_vers_beg': '6.1.0.4900',
+            'expected_plan': [],
+            'expected_sources': [],
+        }
+        completed = self.run_case(variables, expected_success=False)
+        self.assertIn('ownership facts', completed.stdout)
+
     def test_unexpected_state_does_not_plan_a_version_transition(self):
         source = '/media/sas.p5p'
         variables = {
@@ -239,6 +280,9 @@ class PackagePlanBehaviorTests(unittest.TestCase):
                 'vasclnt': package(source, '7.0.0.8900'),
             }},
             'sas_client_sw_vasclnt_vers_beg': '6.1.0.4900',
+            'test_ownership': {
+                'vasclnt': {'owner': 'svr4'},
+            },
             'expected_plan': [
                 plan_entry('vasclnt', 'unexpected', '6.1.0.4900',
                            '7.0.0.8900', source, 'none', False, False),
@@ -255,9 +299,13 @@ class PackagePlanBehaviorTests(unittest.TestCase):
                 'vasclnt': package(source, '7.0.0.8900'),
             }},
             'sas_client_sw_vasclnt_vers_beg': '6.1.0.4900',
+            'test_ownership': {
+                'vasclnt': {'owner': 'ips'},
+            },
             'expected_plan': [
                 plan_entry('vasclnt', 'present', '6.1.0.4900',
-                           '7.0.0.8900', source, 'upgrade', True, True),
+                           '7.0.0.8900', source, 'upgrade', True, False,
+                           owner='ips'),
             ],
             'expected_sources': [
                 {'path': source, 'file': 'sas.p5p'},
@@ -265,6 +313,31 @@ class PackagePlanBehaviorTests(unittest.TestCase):
         }
         completed = self.run_case(variables, check_mode=True)
         self.assertIn('changed=0', completed.stdout)
+
+    def test_equal_version_legacy_package_requires_migration_source(self):
+        source = '/media/solaris11-sparc/sas_site.p5p'
+        variables = {
+            'client_sw_pkg_state': {'vasclnts': 'present'},
+            'client_sw_pkgs': {'packages': {
+                'vasclnts': package(source, '6.1.0.4900', 'OneIdentity'),
+            }},
+            'sas_client_sw_vasclnts_vers_beg': '6.1.0.4900',
+            'test_ownership': {
+                'vasclnts': {
+                    'owner': 'svr4',
+                    'migration_required': True,
+                },
+            },
+            'expected_plan': [
+                plan_entry('vasclnts', 'present', '6.1.0.4900',
+                           '6.1.0.4900', source, 'none', True, True,
+                           'OneIdentity', 'svr4', True),
+            ],
+            'expected_sources': [
+                {'path': source, 'file': 'sas_site.p5p'},
+            ],
+        }
+        self.run_case(variables)
 
     def test_mutually_exclusive_standard_and_site_packages_fail(self):
         for states, message in (

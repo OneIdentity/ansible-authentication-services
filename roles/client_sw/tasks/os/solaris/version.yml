@@ -1,14 +1,130 @@
 ---
 
-# ------------------------------------------------------------------------------
-# Solaris - grab package version 
-# ------------------------------------------------------------------------------
+- name: validate Solaris major version for package ownership detection
+  assert:
+    that:
+      - ansible_facts['distribution_major_version'] is defined
+      - >-
+        ansible_facts['distribution_major_version'] | string
+        is match('^[0-9]+$')
+    fail_msg: >-
+      Cannot determine the Solaris package system without a numeric
+      distribution_major_version fact
 
-# Grab installed version of package 
-- name: get {{ package }} version
+- name: query {{ package }} IPS registration
   command:
-    cmd: pkginfo -l {{ package }}
-  register: pkg_version
+    argv:
+      - pkg
+      - info
+      - "{{ package }}"
+  environment:
+    LC_ALL: C
+  register: sas_client_sw_ips_query
   changed_when: false
   failed_when: false
-  ignore_errors: true
+  check_mode: false
+  when: ansible_facts['distribution_major_version'] | int >= 11
+
+- name: query {{ package }} SVR4 registration
+  command:
+    argv:
+      - pkginfo
+      - -l
+      - "{{ package }}"
+  environment:
+    LC_ALL: C
+  register: sas_client_sw_svr4_query
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: validate {{ package }} IPS probe result
+  assert:
+    that:
+      - >-
+        sas_client_sw_ips_query.rc == 0
+        or (sas_client_sw_ips_query.rc == 1
+            and sas_client_sw_ips_query.stderr
+                is match(sas_client_sw_ips_absence_pattern))
+    fail_msg: >-
+      Could not determine the IPS registration of {{ package }}: pkg info
+      exited {{ sas_client_sw_ips_query.rc }} with unexpected output:
+      {{ (sas_client_sw_ips_query.stderr | default('') | trim)
+         or (sas_client_sw_ips_query.stdout | default('') | trim) }}
+  vars:
+    sas_client_sw_ips_absence_pattern: >-
+      ^(?:: unknown locale\n)?pkg: info: no packages matching the following
+      patterns you specified are\s+installed on the system\.  Try querying
+      remotely instead:\s+{{ package }}\s*$
+  when: ansible_facts['distribution_major_version'] | int >= 11
+
+- name: validate {{ package }} SVR4 probe result
+  assert:
+    that:
+      - >-
+        sas_client_sw_svr4_query.rc == 0
+        or (sas_client_sw_svr4_query.rc == 1
+            and sas_client_sw_svr4_query.stderr
+                is match(sas_client_sw_svr4_absence_pattern))
+    fail_msg: >-
+      Could not determine the SVR4 registration of {{ package }}: pkginfo
+      exited {{ sas_client_sw_svr4_query.rc }} with unexpected output:
+      {{ (sas_client_sw_svr4_query.stderr | default('') | trim)
+         or (sas_client_sw_svr4_query.stdout | default('') | trim) }}
+  vars:
+    sas_client_sw_svr4_absence_pattern: >-
+      ^(?:: unknown locale\n)?ERROR: information for "{{ package }}" was not
+      found\s*$
+
+- name: parse {{ package }} package versions
+  set_fact:
+    sas_client_sw_detected_ips_versions: >-
+      {{ sas_client_sw_ips_query.stdout | default('')
+         | regex_findall('(?m)^\s*Version:\s+(\S+)')
+         if (ansible_facts['distribution_major_version'] | int >= 11
+             and sas_client_sw_ips_query.rc == 0)
+         else [] }}
+    sas_client_sw_detected_svr4_versions: >-
+      {{ sas_client_sw_svr4_query.stdout | default('')
+         | regex_findall('(?m)^\s*VERSION:\s+([^,\s]+)')
+         if sas_client_sw_svr4_query.rc == 0
+         else [] }}
+
+- name: validate {{ package }} installed version
+  assert:
+    that:
+      - >-
+        sas_client_sw_detected_ips_versions | length
+        == (1 if sas_client_sw_ips_query.rc | default(1) == 0 else 0)
+      - >-
+        sas_client_sw_detected_svr4_versions | length
+        == (1 if sas_client_sw_svr4_query.rc == 0 else 0)
+    fail_msg: >-
+      Could not parse exactly one installed version for {{ package }} from its
+      successful Solaris package query
+
+- name: record {{ package }} package ownership
+  set_fact:
+    pkg_version:
+      stdout: "{{ sas_client_sw_detected_version }}"
+    "sas_client_sw_{{ package }}_owner_{{ flag }}": >-
+      {{ sas_client_sw_detected_owner }}
+    "sas_client_sw_{{ package }}_present_{{ flag }}": >-
+      {{ sas_client_sw_detected_owner != 'absent' }}
+    "sas_client_sw_{{ package }}_migration_required_{{ flag }}": >-
+      {{ (ansible_facts['distribution_major_version'] | int >= 11)
+         and sas_client_sw_detected_owner == 'svr4'
+         and state | default('check') == 'present' }}
+  vars:
+    sas_client_sw_detected_owner: >-
+      {{ 'ips'
+         if (ansible_facts['distribution_major_version'] | int >= 11
+             and sas_client_sw_ips_query.rc == 0)
+         else ('svr4' if sas_client_sw_svr4_query.rc == 0 else 'absent') }}
+    sas_client_sw_detected_version: >-
+      {{ (sas_client_sw_detected_ips_versions | first)
+         if (ansible_facts['distribution_major_version'] | int >= 11
+             and sas_client_sw_ips_query.rc == 0)
+         else ((sas_client_sw_detected_svr4_versions | first
+                | replace('-', '.'))
+               if sas_client_sw_svr4_query.rc == 0 else '') }}

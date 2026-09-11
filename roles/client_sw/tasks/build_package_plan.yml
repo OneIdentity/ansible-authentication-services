@@ -43,6 +43,38 @@
     - item.value == 'present'
     - item.key in client_sw_pkgs['packages']
 
+- name: validate detected package ownership
+  assert:
+    that:
+      - sas_plan_owner in ['ips', 'svr4', 'absent']
+      - sas_plan_present == (sas_plan_owner != 'absent')
+      - >-
+        (sas_plan_installed_version | length > 0) == sas_plan_present
+      - >-
+        not sas_plan_migration_required
+        or (sas_plan_owner == 'svr4' and item.value == 'present')
+    fail_msg: >-
+      Package ownership facts for {{ item.key }} are missing or inconsistent
+  vars:
+    sas_plan_owner: >-
+      {{ hostvars[inventory_hostname]
+         ['sas_client_sw_' + item.key + '_owner_beg']
+         | default('unknown', true) }}
+    sas_plan_present: >-
+      {{ hostvars[inventory_hostname]
+         ['sas_client_sw_' + item.key + '_present_beg']
+         | default(false) }}
+    sas_plan_migration_required: >-
+      {{ hostvars[inventory_hostname]
+         ['sas_client_sw_' + item.key + '_migration_required_beg']
+         | default(false) }}
+    sas_plan_installed_version: >-
+      {{ hostvars[inventory_hostname]
+         ['sas_client_sw_' + item.key + '_vers_beg'] | default('', true) }}
+  loop: "{{ client_sw_pkg_state | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+
 - name: initialize package operation plan
   set_fact:
     sas_client_sw_package_plan: []
