@@ -1,13 +1,62 @@
 ---
 
-# ------------------------------------------------------------------------------
-# Solaris - remove package
-# ------------------------------------------------------------------------------
+- name: validate SVR4 removal platform for {{ package }}
+  assert:
+    that:
+      - ansible_facts['distribution_major_version'] | int < 11
+    fail_msg: >-
+      Solaris 11 package removal requires native IPS handling
 
-# Remove package
-- name: remove {{ package }}
-  svr4pkg:
-    name: "{{ package }}"
-    state: absent 
-  register: pkg_remove 
-  changed_when: true 
+- name: remove {{ package }} with SVR4
+  block:
+    - name: create SVR4 admin directory for {{ package }}
+      file:
+        path: "{{ package_dest_dir }}"
+        state: directory
+        mode: '0700'
+      changed_when: false
+
+    - name: allocate {{ package }} SVR4 admin file
+      tempfile:
+        state: file
+        path: "{{ package_dest_dir }}"
+        prefix: "sas-{{ package }}-"
+        suffix: .admin
+      register: sas_client_sw_svr4_admin
+      changed_when: false
+
+    - name: create {{ package }} SVR4 admin file
+      template:
+        src: solaris_svr4_admin.j2
+        dest: "{{ sas_client_sw_svr4_admin.path }}"
+        mode: '0600'
+      changed_when: false
+
+    - name: run interactive pkgrm for {{ package }}
+      shell:
+        cmd: >-
+          yes | pkgrm -a {{ sas_client_sw_svr4_admin.path | quote }}
+          {{ package | quote }}
+      environment:
+        LC_ALL: C
+      register: pkg_remove
+      changed_when: pkg_remove.rc in [0, 2, 10, 20]
+      failed_when: pkg_remove.rc not in [0, 2, 10, 20]
+
+    - name: report {{ package }} pkgrm completion status
+      debug:
+        msg: >-
+          pkgrm for {{ package }} completed with return code
+          {{ pkg_remove.rc }}
+          ({{ 'reboot required'
+              if pkg_remove.rc in [10, 20] else 'warning' }}).
+      when: pkg_remove.rc in [2, 10, 20]
+
+  always:
+    - name: remove {{ package }} SVR4 admin file
+      file:
+        path: "{{ sas_client_sw_svr4_admin.path }}"
+        state: absent
+      changed_when: false
+      when: sas_client_sw_svr4_admin.path is defined
+  when: not ansible_check_mode

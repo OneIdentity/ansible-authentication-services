@@ -18,6 +18,13 @@
   when: 
     - "'present' in client_sw_pkg_state.values()"
 
+# Stage every Solaris 10 source before the per-package loop can remove an
+# installed package. This keeps multi-package replacements recoverable.
+- include_tasks: preflight_svr4.yml
+  when:
+    - ansible_facts['os_family'] | lower == 'solaris'
+    - ansible_facts['distribution_major_version'] | int < 11
+
 # Perform package tasks  
 - include_tasks: run_package_task.yml
   vars:

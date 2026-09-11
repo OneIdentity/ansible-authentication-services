@@ -1,0 +1,24 @@
+---
+
+- name: Exercise a Solaris 10 SVR4 package operation
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    ansible_facts:
+      os_family: Solaris
+      distribution_major_version: "{{ test_solaris_major | default('10') }}"
+    package: "{{ test_package }}"
+    client_sw_tmp_dir: "{{ test_temp_dir }}"
+    client_sw_pkgs:
+      packages: "{{ test_packages }}"
+
+  tasks:
+    - include_role:
+        name: client_sw
+        tasks_from: temp_dir_create.yml
+      when: test_operation == 'install'
+
+    - include_role:
+        name: client_sw
+        tasks_from: "os/solaris/{{ test_operation }}.yml"

@@ -1,0 +1,22 @@
+---
+
+- name: Exercise equal-version Solaris 10 routing
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    ansible_facts:
+      os_family: Solaris
+      distribution_major_version: '10'
+    package: "{{ test_package }}"
+    state: present
+    client_sw_reports_generate: false
+    client_sw_facts_generate: false
+    client_sw_tmp_dir: "{{ test_temp_dir }}"
+    client_sw_pkgs:
+      packages: "{{ test_packages }}"
+
+  tasks:
+    - include_role:
+        name: client_sw
+        tasks_from: run_package_task.yml
