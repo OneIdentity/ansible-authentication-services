@@ -106,7 +106,7 @@
     - package in client_sw_pkgs['packages']
     - state == 'present'
     - hostvars[inventory_hostname]['sas_client_sw_' + package + '_vers_beg'] 
-    - hostvars[inventory_hostname]['sas_client_sw_' + package + '_vers_beg'] < client_sw_pkgs['packages'][package]['vers']
+    - hostvars[inventory_hostname]['sas_client_sw_' + package + '_vers_beg'] is version(client_sw_pkgs['packages'][package]['vers'], '<')
 
 # Handle downgrade
 - name: downgrade {{ package }}
@@ -135,7 +135,7 @@
     - package in client_sw_pkgs['packages']
     - state == 'present'
     - hostvars[inventory_hostname]['sas_client_sw_' + package + '_vers_beg'] 
-    - hostvars[inventory_hostname]['sas_client_sw_' + package + '_vers_beg'] > client_sw_pkgs['packages'][package]['vers']
+    - hostvars[inventory_hostname]['sas_client_sw_' + package + '_vers_beg'] is version(client_sw_pkgs['packages'][package]['vers'], '>')
 
 # Handle no action 
 - include_tasks: utils/set_state.yml

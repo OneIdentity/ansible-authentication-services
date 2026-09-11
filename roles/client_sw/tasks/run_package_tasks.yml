@@ -8,6 +8,11 @@
     flag: beg
   loop: "{{ client_sw_pkg_state | oneidentity.authentication_services.pkgdict2items }}"
 
+# Build and validate the complete Solaris operation plan before staging or
+# package mutation. Other platforms retain their existing execution flow.
+- include_tasks: build_package_plan.yml
+  when: ansible_facts['os_family'] | lower == 'solaris'
+
 # Create temporary directory
 - include_tasks: temp_dir_create.yml
   when: 

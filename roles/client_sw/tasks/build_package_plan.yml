@@ -1,0 +1,58 @@
+---
+
+- name: validate client package family request
+  assert:
+    that:
+      - >-
+        not (client_sw_pkg_state.get('vasclnt', 'check') == 'present'
+             and client_sw_pkg_state.get('vasclnts', 'check') == 'present')
+    fail_msg: vasclnt and vasclnts cannot both be requested present
+
+- name: validate group policy package family request
+  assert:
+    that:
+      - >-
+        not (client_sw_pkg_state.get('vasgp', 'check') == 'present'
+             and client_sw_pkg_state.get('vasgps', 'check') == 'present')
+    fail_msg: vasgp and vasgps cannot both be requested present
+
+- name: validate requested present packages
+  assert:
+    that:
+      - item.value != 'present' or item.key in client_sw_pkgs['packages']
+    fail_msg: >-
+      Requested present package {{ item.key }} was not found in the selected
+      platform media
+  loop: "{{ client_sw_pkg_state | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+
+- name: validate requested present package metadata
+  assert:
+    that:
+      - client_sw_pkgs['packages'][item.key]['vers'] | default('') | length > 0
+      - client_sw_pkgs['packages'][item.key]['path'] | default('') | length > 0
+      - client_sw_pkgs['packages'][item.key]['file'] | default('') | length > 0
+    fail_msg: >-
+      Requested present package {{ item.key }} does not have complete version
+      and source metadata
+  loop: "{{ client_sw_pkg_state | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  when:
+    - item.value == 'present'
+    - item.key in client_sw_pkgs['packages']
+
+- name: initialize package operation plan
+  set_fact:
+    sas_client_sw_package_plan: []
+    sas_client_sw_required_sources: []
+
+- name: build package operation plan
+  include_tasks: build_package_plan_item.yml
+  vars:
+    package: "{{ item.key }}"
+    state: "{{ item.value }}"
+  loop: "{{ client_sw_pkg_state | dict2items | sort(attribute='key') }}"
+  loop_control:
+    label: "{{ item.key }}"
