@@ -369,9 +369,18 @@ class PackagePlanTaskContractTests(unittest.TestCase):
         includes = [task.get('include_tasks') for task in tasks]
         plan_index = includes.index('build_package_plan.yml')
         plan_task = tasks[plan_index]
+        operation_index = next(
+            index for index, task in enumerate(tasks)
+            if task.get('name') == 'preflight and perform package operations'
+        )
+        operation_includes = [
+            task.get('include_tasks')
+            for task in tasks[operation_index]['block']
+        ]
         self.assertEqual(includes.count('build_package_plan.yml'), 1)
         self.assertLess(plan_index, includes.index('temp_dir_create.yml'))
-        self.assertLess(plan_index, includes.index('run_package_task.yml'))
+        self.assertLess(plan_index, operation_index)
+        self.assertEqual(operation_includes.count('run_package_task.yml'), 1)
         self.assertEqual(
             plan_task['when'],
             "ansible_facts['os_family'] | lower == 'solaris'",

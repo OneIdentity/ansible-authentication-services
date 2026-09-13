@@ -18,19 +18,36 @@
   when: 
     - "'present' in client_sw_pkg_state.values()"
 
-# Stage every Solaris 10 source before the per-package loop can remove an
-# installed package. This keeps multi-package replacements recoverable.
-- include_tasks: preflight_svr4.yml
-  when:
-    - ansible_facts['os_family'] | lower == 'solaris'
-    - ansible_facts['distribution_major_version'] | int < 11
+- name: preflight and perform package operations
+  block:
+    # Stage every Solaris 10 source before the per-package loop can remove an
+    # installed package. This keeps multi-package replacements recoverable.
+    - include_tasks: preflight_svr4.yml
+      when:
+        - ansible_facts['os_family'] | lower == 'solaris'
+        - ansible_facts['distribution_major_version'] | int < 11
 
-# Perform package tasks  
-- include_tasks: run_package_task.yml
-  vars:
-    package: "{{ item.key }}"
-    state: "{{ item.value }}"
-  loop: "{{ client_sw_pkg_state | oneidentity.authentication_services.pkgdict2items }}"
+    # Validate topology and every exact archive-backed FMRI before any Solaris
+    # 11 package action can begin.
+    - include_tasks: preflight_ips.yml
+      when:
+        - ansible_facts['os_family'] | lower == 'solaris'
+        - ansible_facts['distribution_major_version'] | int >= 11
+
+    # Perform package tasks
+    - include_tasks: run_package_task.yml
+      vars:
+        package: "{{ item.key }}"
+        state: "{{ item.value }}"
+      loop: >-
+        {{ client_sw_pkg_state
+           | oneidentity.authentication_services.pkgdict2items }}
+
+  always:
+    - include_tasks: cleanup_ips.yml
+      when:
+        - ansible_facts['os_family'] | lower == 'solaris'
+        - ansible_facts['distribution_major_version'] | int >= 11
 
 # Remove temporary directory 
 # - include_tasks: temp_dir_delete.yml

@@ -359,14 +359,22 @@ class SolarisSvr4TaskContractTests(unittest.TestCase):
         includes = [task.get('include_tasks') for task in tasks]
         plan_index = includes.index('build_package_plan.yml')
         temp_dir_index = includes.index('temp_dir_create.yml')
-        preflight_index = includes.index('preflight_svr4.yml')
-        mutation_index = includes.index('run_package_task.yml')
-        self.assertEqual(includes.count('preflight_svr4.yml'), 1)
+        operation_index = next(
+            index for index, task in enumerate(tasks)
+            if task.get('name') == 'preflight and perform package operations'
+        )
+        operation_tasks = tasks[operation_index]['block']
+        operation_includes = [
+            task.get('include_tasks') for task in operation_tasks
+        ]
+        preflight_index = operation_includes.index('preflight_svr4.yml')
+        mutation_index = operation_includes.index('run_package_task.yml')
+        self.assertEqual(operation_includes.count('preflight_svr4.yml'), 1)
         self.assertLess(plan_index, temp_dir_index)
-        self.assertLess(temp_dir_index, preflight_index)
+        self.assertLess(temp_dir_index, operation_index)
         self.assertLess(preflight_index, mutation_index)
         self.assertEqual(
-            tasks[preflight_index]['when'],
+            operation_tasks[preflight_index]['when'],
             [
                 "ansible_facts['os_family'] | lower == 'solaris'",
                 "ansible_facts['distribution_major_version'] | int < 11",
