@@ -459,6 +459,10 @@ class SolarisIpsPreflightTaskContractTests(unittest.TestCase):
         self.assertEqual(block_includes.count('preflight_ips.yml'), 1)
         self.assertLess(
             block_includes.index('preflight_ips.yml'),
+            block_includes.index('run_ips_operations.yml'),
+        )
+        self.assertLess(
+            block_includes.index('run_ips_operations.yml'),
             block_includes.index('run_package_task.yml'),
         )
         self.assertEqual(always_includes, ['cleanup_ips.yml'])
@@ -472,10 +476,26 @@ class SolarisIpsPreflightTaskContractTests(unittest.TestCase):
                 "ansible_facts['distribution_major_version'] | int >= 11",
             ],
         )
-        mutation_task = operation_task['block'][
+        ips_operation_task = operation_task['block'][
+            block_includes.index('run_ips_operations.yml')
+        ]
+        self.assertEqual(
+            ips_operation_task['when'],
+            [
+                "ansible_facts['os_family'] | lower == 'solaris'",
+                "ansible_facts['distribution_major_version'] | int >= 11",
+            ],
+        )
+        ordinary_task = operation_task['block'][
             block_includes.index('run_package_task.yml')
         ]
-        self.assertNotIn('when', mutation_task)
+        self.assertEqual(
+            ordinary_task['when'],
+            [
+                "item.key not in (sas_client_sw_ips_processed_packages "
+                "| default([]))",
+            ],
+        )
 
     def test_step5_tasks_do_not_mutate_packages_or_publishers(self):
         task_dir = ROOT / 'roles/client_sw/tasks'
@@ -490,6 +510,19 @@ class SolarisIpsPreflightTaskContractTests(unittest.TestCase):
                 'pkg unset-publisher',
                 'pkgadd',
                 'pkgrm'):
+            with self.subTest(command=command):
+                self.assertNotIn(command, task_text)
+
+    def test_native_ips_tasks_do_not_mutate_publishers_or_use_svr4(self):
+        task_dir = ROOT / 'roles/client_sw/tasks'
+        task_text = '\n'.join(
+            (task_dir / name).read_text()
+            for name in (
+                'run_ips_operations.yml',
+                'run_ips_archive_transaction.yml',
+            )
+        )
+        for command in ('set-publisher', 'unset-publisher', 'pkgadd', 'pkgrm'):
             with self.subTest(command=command):
                 self.assertNotIn(command, task_text)
 

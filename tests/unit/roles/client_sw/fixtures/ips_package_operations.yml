@@ -1,0 +1,38 @@
+---
+
+- name: Exercise Solaris 11 IPS package operations
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    ansible_facts:
+      os_family: Solaris
+      distribution_major_version: '11'
+    client_sw_facts_generate: false
+    client_sw_reports_generate: "{{ test_reports | default(false) }}"
+    sas_client_sw_package_plan: "{{ test_package_plan }}"
+    sas_client_sw_ips_staged_sources: "{{ test_staged_sources }}"
+
+  tasks:
+    - include_role:
+        name: client_sw
+        tasks_from: run_ips_operations.yml
+
+    - name: Verify processed IPS packages
+      assert:
+        that:
+          - sas_client_sw_ips_processed_packages == expected_processed_packages
+
+    - name: Verify IPS package action facts
+      assert:
+        that:
+          - >-
+            hostvars[inventory_hostname]
+            ['sas_client_sw_' + item.key + '_act'] == item.value
+          - >-
+            hostvars[inventory_hostname]
+            ['sas_client_sw_' + item.key + '_req']
+            == expected_request_facts[item.key]
+      loop: "{{ expected_action_facts | default({}) | dict2items }}"
+      loop_control:
+        label: "{{ item.key }}"

@@ -1,0 +1,140 @@
+---
+
+- name: identify native Solaris 11 IPS transitions
+  set_fact:
+    sas_client_sw_ips_native_transitions: >-
+      {{ sas_client_sw_package_plan
+         | selectattr('requires_source', 'equalto', true)
+         | rejectattr('migration_required', 'equalto', true)
+         | list }}
+    sas_client_sw_ips_native_removals: >-
+      {{ sas_client_sw_package_plan
+         | selectattr('action', 'equalto', 'remove')
+         | selectattr('owner', 'equalto', 'ips')
+         | list }}
+    sas_client_sw_ips_processed_packages: >-
+      {{ (sas_client_sw_package_plan
+          | selectattr('action', 'equalto', 'remove')
+          | selectattr('owner', 'equalto', 'ips')
+          | map(attribute='package') | list)
+         + (sas_client_sw_package_plan
+            | selectattr('requires_source', 'equalto', true)
+            | rejectattr('migration_required', 'equalto', true)
+            | map(attribute='package') | list) }}
+
+- name: record requested state for native Solaris 11 IPS packages
+  include_tasks: utils/set_state.yml
+  vars:
+    package: "{{ sas_ips_report_entry.package }}"
+    flag: req
+    value: "{{ sas_ips_report_entry.state }}"
+  loop: >-
+    {{ sas_client_sw_ips_native_removals
+       + sas_client_sw_ips_native_transitions }}
+  loop_control:
+    loop_var: sas_ips_report_entry
+    label: "{{ sas_ips_report_entry.package }}"
+  when: client_sw_reports_generate or client_sw_facts_generate
+
+- name: validate native Solaris 11 IPS transitions
+  assert:
+    that:
+      - >-
+        (item.action == 'install' and item.owner == 'absent')
+        or (item.action in ['upgrade', 'downgrade'] and item.owner == 'ips')
+    fail_msg: >-
+      Solaris 11 package {{ item.package }} cannot use an ordinary native IPS
+      transition from owner {{ item.owner }} and action {{ item.action }}
+  loop: "{{ sas_client_sw_ips_native_transitions }}"
+  loop_control:
+    label: "{{ item.package }}"
+
+- name: validate staged archives for native Solaris 11 IPS transitions
+  assert:
+    that:
+      - sas_ips_matching_stages | length == 1
+      - sas_ips_matching_stage_path | length > 0
+    fail_msg: >-
+      The archive for Solaris 11 package {{ item.package }} was not staged
+      exactly once before package mutation
+  vars:
+    sas_ips_matching_stages: >-
+      {{ sas_client_sw_ips_staged_sources
+         | selectattr('source_path', 'equalto', item.source_path) | list }}
+    sas_ips_matching_stage_path: >-
+      {{ ((sas_ips_matching_stages | first).staged_path | default('', true))
+         if sas_ips_matching_stages | length == 1 else '' }}
+  loop: "{{ sas_client_sw_ips_native_transitions }}"
+  loop_control:
+    label: "{{ item.package }}"
+  when: not ansible_check_mode
+
+- name: remove native Solaris 11 IPS packages
+  block:
+    - name: uninstall native Solaris 11 IPS packages
+      command:
+        argv: >-
+          {{ ['pkg', 'uninstall']
+             + (sas_client_sw_ips_native_removals
+                | map(attribute='package') | list) }}
+      environment:
+        LC_ALL: C
+      register: sas_client_sw_ips_uninstall
+      changed_when: sas_client_sw_ips_uninstall.rc == 0
+      failed_when: sas_client_sw_ips_uninstall.rc not in [0, 4]
+      when: not ansible_check_mode
+
+    - name: report native Solaris 11 IPS removals
+      include_tasks: utils/set_state.yml
+      vars:
+        package: "{{ sas_ips_report_entry.package }}"
+        flag: act
+        value: removed
+      loop: "{{ sas_client_sw_ips_native_removals }}"
+      loop_control:
+        loop_var: sas_ips_report_entry
+        label: "{{ sas_ips_report_entry.package }}"
+      when: client_sw_reports_generate or client_sw_facts_generate
+
+  rescue:
+    - name: report failed native Solaris 11 IPS removals
+      include_tasks: utils/set_state.yml
+      vars:
+        package: "{{ sas_ips_report_entry.package }}"
+        flag: act
+        value: failed
+      loop: "{{ sas_client_sw_ips_native_removals }}"
+      loop_control:
+        loop_var: sas_ips_report_entry
+        label: "{{ sas_ips_report_entry.package }}"
+      when: client_sw_reports_generate or client_sw_facts_generate
+
+    - fail:
+        msg: failed to remove native Solaris 11 IPS packages
+
+  when: sas_client_sw_ips_native_removals | length > 0
+
+- name: report check-mode native Solaris 11 IPS transitions
+  include_tasks: utils/set_state.yml
+  vars:
+    package: "{{ sas_ips_report_entry.package }}"
+    flag: act
+    value: >-
+      {{ {'install': 'installed',
+          'upgrade': 'upgraded',
+          'downgrade': 'downgraded'}[sas_ips_report_entry.action] }}
+  loop: "{{ sas_client_sw_ips_native_transitions }}"
+  loop_control:
+    loop_var: sas_ips_report_entry
+    label: "{{ sas_ips_report_entry.package }}"
+  when:
+    - ansible_check_mode
+    - client_sw_reports_generate or client_sw_facts_generate
+
+- name: run archive-backed Solaris 11 IPS transactions
+  include_tasks: run_ips_archive_transaction.yml
+  loop: "{{ sas_client_sw_ips_staged_sources }}"
+  loop_control:
+    loop_var: sas_ips_archive
+    label: "{{ sas_ips_archive.source_file }}"
+  when: not ansible_check_mode

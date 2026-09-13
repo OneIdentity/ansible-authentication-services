@@ -34,6 +34,11 @@
         - ansible_facts['os_family'] | lower == 'solaris'
         - ansible_facts['distribution_major_version'] | int >= 11
 
+    - include_tasks: run_ips_operations.yml
+      when:
+        - ansible_facts['os_family'] | lower == 'solaris'
+        - ansible_facts['distribution_major_version'] | int >= 11
+
     # Perform package tasks
     - include_tasks: run_package_task.yml
       vars:
@@ -42,6 +47,9 @@
       loop: >-
         {{ client_sw_pkg_state
            | oneidentity.authentication_services.pkgdict2items }}
+      when:
+        - >-
+          item.key not in (sas_client_sw_ips_processed_packages | default([]))
 
   always:
     - include_tasks: cleanup_ips.yml
