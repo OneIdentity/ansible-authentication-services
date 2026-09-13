@@ -34,6 +34,11 @@
         - ansible_facts['os_family'] | lower == 'solaris'
         - ansible_facts['distribution_major_version'] | int >= 11
 
+    - include_tasks: migrate_legacy_svr4.yml
+      when:
+        - ansible_facts['os_family'] | lower == 'solaris'
+        - ansible_facts['distribution_major_version'] | int >= 11
+
     - include_tasks: run_ips_operations.yml
       when:
         - ansible_facts['os_family'] | lower == 'solaris'
@@ -50,6 +55,9 @@
       when:
         - >-
           item.key not in (sas_client_sw_ips_processed_packages | default([]))
+        - >-
+          item.key not in
+          (sas_client_sw_legacy_processed_packages | default([]))
 
   always:
     - include_tasks: cleanup_ips.yml

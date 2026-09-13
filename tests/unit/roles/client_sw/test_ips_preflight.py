@@ -459,6 +459,10 @@ class SolarisIpsPreflightTaskContractTests(unittest.TestCase):
         self.assertEqual(block_includes.count('preflight_ips.yml'), 1)
         self.assertLess(
             block_includes.index('preflight_ips.yml'),
+            block_includes.index('migrate_legacy_svr4.yml'),
+        )
+        self.assertLess(
+            block_includes.index('migrate_legacy_svr4.yml'),
             block_includes.index('run_ips_operations.yml'),
         )
         self.assertLess(
@@ -479,6 +483,10 @@ class SolarisIpsPreflightTaskContractTests(unittest.TestCase):
         ips_operation_task = operation_task['block'][
             block_includes.index('run_ips_operations.yml')
         ]
+        migration_task = operation_task['block'][
+            block_includes.index('migrate_legacy_svr4.yml')
+        ]
+        self.assertEqual(migration_task['when'], ips_task['when'])
         self.assertEqual(
             ips_operation_task['when'],
             [
@@ -493,6 +501,8 @@ class SolarisIpsPreflightTaskContractTests(unittest.TestCase):
             ordinary_task['when'],
             [
                 "item.key not in (sas_client_sw_ips_processed_packages "
+                "| default([]))",
+                "item.key not in (sas_client_sw_legacy_processed_packages "
                 "| default([]))",
             ],
         )
@@ -523,6 +533,25 @@ class SolarisIpsPreflightTaskContractTests(unittest.TestCase):
             )
         )
         for command in ('set-publisher', 'unset-publisher', 'pkgadd', 'pkgrm'):
+            with self.subTest(command=command):
+                self.assertNotIn(command, task_text)
+
+    def test_legacy_migration_does_not_mutate_publishers_or_use_pkgadd(self):
+        task_dir = ROOT / 'roles/client_sw/tasks'
+        task_text = '\n'.join(
+            (task_dir / name).read_text()
+            for name in (
+                'migrate_legacy_svr4.yml',
+                'remove_legacy_svr4_package.yml',
+                'run_legacy_ips_archive_transaction.yml',
+            )
+        )
+        for command in (
+                'set-publisher',
+                'unset-publisher',
+                'pkg uninstall',
+                'pkgadd',
+                'pkgrm -n'):
             with self.subTest(command=command):
                 self.assertNotIn(command, task_text)
 
