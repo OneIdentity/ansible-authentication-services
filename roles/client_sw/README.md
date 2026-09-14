@@ -145,7 +145,7 @@ architecture or media contents.
 | Solaris 11 x86 | `solaris11-x64` | `.p5p` | IPS |
 
 SPARC aliases include `sparc`, `sparc64`, `sun4u`, and `sun4v`. x86 aliases
-include `i386`, `x86_64`, and `amd64`.
+include `i386`, `i86pc`, `x86_64`, and `amd64`.
 
 Solaris 10 installs and removes SVR4 packages with interactive `pkgadd` and
 `pkgrm` operations. Package request scripts run during these operations so that
@@ -176,9 +176,9 @@ registrations.
 After package operations, the role verifies native ownership and exact version
 for `present`, and verifies no IPS or SVR4 registration remains for `absent`.
 It also checks relevant Solaris SMF services. The shared
-`svc:/quest/vas/vasd:default` service must be online while a client or group
-policy package remains installed. The Solaris 11 IPS group policy configuration
-services `svc:/site/vasgp-config:default` and
+`svc:/quest/vas/vasd:default` service must be registered while a client or group
+policy package remains installed. The Solaris 11 IPS group policy
+configuration services `svc:/site/vasgp-config:default` and
 `svc:/site/vasgps-config:default` must be online, indicating that their
 transient self-assembly methods completed successfully. They must be stopped or
 absent after their package is removed.

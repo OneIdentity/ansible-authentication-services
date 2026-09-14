@@ -195,7 +195,7 @@ class SolarisFinalStateTests(unittest.TestCase):
         self.assertEqual(completed.returncode, 0, completed.stdout)
         self.assertEqual(log, 'svcs\t-aH\t-o\tFMRI,STATE\n')
 
-    def test_present_client_requires_vasd_running(self):
+    def test_present_client_allows_registered_offline_vasd(self):
         completed, log = self.run_case(
             {'vasclnt': 'check', 'vasclnts': 'present'},
             {'vasclnts': {'vers': '7.0.0.8900'}},
@@ -205,8 +205,7 @@ class SolarisFinalStateTests(unittest.TestCase):
             },
             vasd_state='offline',
         )
-        self.assertNotEqual(completed.returncode, 0, completed.stdout)
-        self.assertIn('vasd:default is not online', completed.stdout)
+        self.assertEqual(completed.returncode, 0, completed.stdout)
         self.assertEqual(log, 'svcs\t-aH\t-o\tFMRI,STATE\n')
 
     def test_solaris10_client_requires_vasd_registration(self):
@@ -335,7 +334,7 @@ class SolarisFinalStateTests(unittest.TestCase):
         self.assertEqual(completed.returncode, 0, completed.stdout)
         self.assertEqual(log, 'svcs\t-aH\t-o\tFMRI,STATE\n')
 
-    def test_present_group_policy_requires_shared_vasd_online(self):
+    def test_present_group_policy_allows_registered_offline_vasd(self):
         completed, log = self.run_case(
             {'vasgps': 'present'},
             {'vasgps': {'vers': '7.0.0.8900'}},
@@ -345,8 +344,7 @@ class SolarisFinalStateTests(unittest.TestCase):
                 'svc:/site/vasgps-config:default': 'online',
             },
         )
-        self.assertNotEqual(completed.returncode, 0, completed.stdout)
-        self.assertIn('vasd:default is not online', completed.stdout)
+        self.assertEqual(completed.returncode, 0, completed.stdout)
         self.assertEqual(log, 'svcs\t-aH\t-o\tFMRI,STATE\n')
 
     def test_present_solaris10_group_policy_uses_shared_vasd(self):

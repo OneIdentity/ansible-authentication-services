@@ -166,6 +166,7 @@ PKG_PATHS = {
     },
     'sunos': {
         'i386': 'solaris10-x64',
+        'i86pc': 'solaris10-x64',
         'x86_64': 'solaris10-x64',
         'amd64': 'solaris10-x64',
         'sparc': 'solaris10-sparc',

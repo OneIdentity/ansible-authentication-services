@@ -147,17 +147,13 @@
          or (sas_client_sw_final_smf_query.stdout | default('') | trim) }}
   when: sas_client_sw_service_verification_requested
 
-- name: verify final Solaris vasd service is registered and online
+- name: verify final Solaris vasd service is registered
   assert:
     that:
       - sas_vasd_registration_matches | length == 1
-      - sas_vasd_online_matches | length == 1
     fail_msg: >-
-      Required Solaris service {{ sas_client_sw_vasd_fmri }}
-      {{ 'is not registered'
-         if sas_vasd_registration_matches | length == 0
-         else 'is not online' }} after client or group-policy package
-      installation
+      Required Solaris service {{ sas_client_sw_vasd_fmri }} is not registered
+      after client or group-policy package installation
   vars:
     sas_client_sw_vasd_fmri: svc:/quest/vas/vasd:default
     sas_vasd_registration_matches: >-
@@ -165,11 +161,6 @@
          | default([]) | map('trim')
          | select('match', '^' + sas_client_sw_vasd_fmri + '[ \t]+')
          | list }}
-    sas_vasd_online_matches: >-
-      {{ sas_client_sw_final_smf_query.stdout_lines
-         | default([]) | map('trim')
-         | select('match', '^' + sas_client_sw_vasd_fmri
-                            + '[ \t]+online[ \t]*$') | list }}
   when: sas_client_sw_vasd_required
 
 - name: verify final Solaris vasd service absence

@@ -60,7 +60,7 @@ class SolarisPathTests(unittest.TestCase):
             self.assertIsNone(error)
             self.assertEqual(path, 'solaris10-sparc')
 
-        for architecture in ('i386', 'x86_64', 'amd64'):
+        for architecture in ('i386', 'i86pc', 'x86_64', 'amd64'):
             error, path = client_sw_pkgs.find_packages_path(
                 'sunos', architecture, '10')
             self.assertIsNone(error)
@@ -73,7 +73,7 @@ class SolarisPathTests(unittest.TestCase):
             self.assertIsNone(error)
             self.assertEqual(path, 'solaris11-sparc')
 
-        for architecture in ('i386', 'x86_64', 'amd64'):
+        for architecture in ('i386', 'i86pc', 'x86_64', 'amd64'):
             error, path = client_sw_pkgs.find_packages_path(
                 'sunos', architecture, '11')
             self.assertIsNone(error)
