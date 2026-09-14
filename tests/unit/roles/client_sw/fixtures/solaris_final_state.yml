@@ -1,0 +1,34 @@
+---
+
+- name: Exercise final Solaris package-state verification
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    ansible_facts:
+      os_family: Solaris
+      distribution_major_version: "{{ test_solaris_major }}"
+    client_sw_pkg_state: "{{ test_package_state }}"
+    client_sw_pkgs:
+      packages: "{{ test_packages }}"
+    sas_client_sw_ips_stage: "{{ test_ips_stage | default({}) }}"
+    sas_client_sw_ips_staged_sources: >-
+      {{ test_ips_staged_sources | default([]) }}
+    sas_client_sw_ips_cleaned_stage_path: >-
+      {{ test_ips_cleaned_stage_path | default('') }}
+    sas_client_sw_legacy_stage: "{{ test_legacy_stage | default({}) }}"
+
+  tasks:
+    - name: Supply final Solaris package facts
+      set_fact:
+        "sas_client_sw_{{ item.key }}_owner_end": "{{ item.value.owner }}"
+        "sas_client_sw_{{ item.key }}_present_end": >-
+          {{ item.value.owner != 'absent' }}
+        "sas_client_sw_{{ item.key }}_vers_end": "{{ item.value.version }}"
+      loop: "{{ test_final_packages | dict2items }}"
+      loop_control:
+        label: "{{ item.key }}"
+
+    - include_role:
+        name: client_sw
+        tasks_from: verify_solaris_state.yml

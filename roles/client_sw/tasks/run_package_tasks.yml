@@ -77,3 +77,21 @@
     state: "{{ item.value }}"
     flag: end
   loop: "{{ client_sw_pkg_state | oneidentity.authentication_services.pkgdict2items }}"
+
+- name: read final Solaris service package state
+  include_tasks: read_package_version.yml
+  vars:
+    package: "{{ item }}"
+    state: check
+    flag: end
+  loop:
+    - vasclnt
+    - vasclnts
+    - vasgp
+    - vasgps
+  when:
+    - ansible_facts['os_family'] | lower == 'solaris'
+    - item not in client_sw_pkg_state
+
+- include_tasks: verify_solaris_state.yml
+  when: ansible_facts['os_family'] | lower == 'solaris'

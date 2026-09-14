@@ -4,6 +4,7 @@
   set_fact:
     sas_client_sw_ips_stage: {}
     sas_client_sw_ips_staged_sources: []
+    sas_client_sw_ips_cleaned_stage_path: ''
 
 - name: query Solaris 11 linked-image topology
   command:
