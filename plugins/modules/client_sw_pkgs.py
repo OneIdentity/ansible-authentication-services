@@ -428,7 +428,7 @@ def solaris_major_version(ver):
     """
 
     try:
-        return int(str(ver).split('.')[0])
+        return int(str(ver).partition('.')[0])
     except (AttributeError, TypeError, ValueError):
         return 0
 

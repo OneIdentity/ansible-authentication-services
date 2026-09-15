@@ -118,6 +118,7 @@ class SolarisIpsPreflightTests(unittest.TestCase):
                 command,
                 cwd=str(ROOT),
                 env=environment,
+                check=False,
                 text=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
