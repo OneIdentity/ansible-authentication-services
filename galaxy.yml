@@ -10,7 +10,7 @@ namespace: oneidentity
 name: authentication_services  
 
 # Semantic versioning compliant version designation
-version: "0.3.1"
+version: "0.4.0"
 
 # The path do the Markdown(.md) readme file
 readme: README.md
@@ -70,3 +70,7 @@ homepage: https://www.oneidentity.com/products/authentication-services
 
 # Issue tracking URL
 issues: https://github.com/OneIdentity/ansible-authentication-services/issues
+
+# Never package local lab inventories, credentials, logs, or build copies.
+build_ignore:
+  - .local

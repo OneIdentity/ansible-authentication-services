@@ -1,0 +1,302 @@
+---
+
+- name: verify final present Solaris package state
+  assert:
+    that:
+      - sas_final_owner == sas_expected_owner
+      - sas_final_version == sas_expected_version
+    fail_msg: >-
+      Final Solaris package {{ item.key }} state does not match requested
+      version {{ sas_expected_version }} with native {{ sas_expected_owner }}
+      ownership: found owner {{ sas_final_owner }} and version
+      {{ sas_final_version | default('absent', true) }}
+  vars:
+    sas_final_owner: >-
+      {{ hostvars[inventory_hostname]
+         ['sas_client_sw_' + item.key + '_owner_end']
+         | default('unknown', true) }}
+    sas_final_version: >-
+      {{ hostvars[inventory_hostname]
+         ['sas_client_sw_' + item.key + '_vers_end']
+         | default('', true) }}
+    sas_expected_owner: >-
+      {{ 'ips'
+         if ansible_facts['distribution_major_version'] | int >= 11
+         else 'svr4' }}
+    sas_expected_version: >-
+      {{ client_sw_pkgs['packages'][item.key]['vers'] | string }}
+  loop: "{{ client_sw_pkg_state | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  when:
+    - not ansible_check_mode
+    - item.value == 'present'
+
+- name: verify final absent Solaris package state
+  assert:
+    that:
+      - sas_final_owner == 'absent'
+      - sas_final_version | length == 0
+    fail_msg: >-
+      Final Solaris package {{ item.key }} remains registered with
+      {{ sas_final_owner }} ownership and version
+      {{ sas_final_version | default('unknown', true) }}
+  vars:
+    sas_final_owner: >-
+      {{ hostvars[inventory_hostname]
+         ['sas_client_sw_' + item.key + '_owner_end']
+         | default('unknown', true) }}
+    sas_final_version: >-
+      {{ hostvars[inventory_hostname]
+         ['sas_client_sw_' + item.key + '_vers_end']
+         | default('', true) }}
+  loop: "{{ client_sw_pkg_state | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  when:
+    - not ansible_check_mode
+    - item.value == 'absent'
+
+- name: determine whether final Solaris service verification is required
+  set_fact:
+    sas_client_sw_service_verification_requested: >-
+      {{ not ansible_check_mode
+         and (client_sw_pkg_state.get('vasclnt', 'check')
+              in ['present', 'absent']
+              or client_sw_pkg_state.get('vasclnts', 'check')
+                 in ['present', 'absent']
+              or client_sw_pkg_state.get('vasgp', 'check')
+                 in ['present', 'absent']
+              or client_sw_pkg_state.get('vasgps', 'check')
+                 in ['present', 'absent']) }}
+
+- name: validate final Solaris service package ownership facts
+  assert:
+    that:
+      - sas_service_package_owner in ['ips', 'svr4', 'absent']
+    fail_msg: >-
+      Final Solaris ownership for service package {{ item }} is unavailable
+  vars:
+    sas_service_package_owner: >-
+      {{ hostvars[inventory_hostname]
+         ['sas_client_sw_' + item + '_owner_end']
+         | default('unknown', true) }}
+  loop:
+    - vasclnt
+    - vasclnts
+    - vasgp
+    - vasgps
+  loop_control:
+    label: "{{ item }}"
+  when: sas_client_sw_service_verification_requested
+
+- name: determine final Solaris service expectations
+  set_fact:
+    sas_client_sw_vasd_required: >-
+      {{ sas_client_sw_service_verification_requested
+         and ((hostvars[inventory_hostname]
+               ['sas_client_sw_vasclnt_owner_end']
+               | default('unknown', true)) in ['ips', 'svr4']
+              or (hostvars[inventory_hostname]
+                  ['sas_client_sw_vasclnts_owner_end']
+                  | default('unknown', true)) in ['ips', 'svr4']
+              or (hostvars[inventory_hostname]
+                  ['sas_client_sw_vasgp_owner_end']
+                  | default('unknown', true)) in ['ips', 'svr4']
+              or (hostvars[inventory_hostname]
+                  ['sas_client_sw_vasgps_owner_end']
+                  | default('unknown', true)) in ['ips', 'svr4']) }}
+    sas_client_sw_vasd_absence_required: >-
+      {{ sas_client_sw_service_verification_requested
+         and (hostvars[inventory_hostname]
+              ['sas_client_sw_vasclnt_owner_end']
+              | default('unknown', true)) == 'absent'
+         and (hostvars[inventory_hostname]
+              ['sas_client_sw_vasclnts_owner_end']
+              | default('unknown', true)) == 'absent'
+         and (hostvars[inventory_hostname]
+              ['sas_client_sw_vasgp_owner_end']
+              | default('unknown', true)) == 'absent'
+         and (hostvars[inventory_hostname]
+              ['sas_client_sw_vasgps_owner_end']
+              | default('unknown', true)) == 'absent' }}
+
+- name: query final Solaris SMF service registrations
+  command:
+    argv:
+      - svcs
+      - -aH
+      - -o
+      - FMRI,STATE
+  environment:
+    LC_ALL: C
+  register: sas_client_sw_final_smf_query
+  changed_when: false
+  failed_when: false
+  check_mode: false
+  when: sas_client_sw_service_verification_requested
+
+- name: validate final Solaris SMF query
+  assert:
+    that:
+      - sas_client_sw_final_smf_query.rc == 0
+    fail_msg: >-
+      Could not query final Solaris SMF state: svcs exited
+      {{ sas_client_sw_final_smf_query.rc }} with
+      {{ (sas_client_sw_final_smf_query.stderr | default('') | trim)
+         or (sas_client_sw_final_smf_query.stdout | default('') | trim) }}
+  when: sas_client_sw_service_verification_requested
+
+- name: verify final Solaris vasd service is registered
+  assert:
+    that:
+      - sas_vasd_registration_matches | length == 1
+    fail_msg: >-
+      Required Solaris service {{ sas_client_sw_vasd_fmri }} is not registered
+      after client or group-policy package installation
+  vars:
+    sas_client_sw_vasd_fmri: svc:/quest/vas/vasd:default
+    sas_vasd_registration_matches: >-
+      {{ sas_client_sw_final_smf_query.stdout_lines
+         | default([]) | map('trim')
+         | select('match', '^' + sas_client_sw_vasd_fmri + '[ \t]+')
+         | list }}
+  when: sas_client_sw_vasd_required
+
+- name: verify final Solaris vasd service absence
+  assert:
+    that:
+      - sas_vasd_registration_matches | length == 0
+    fail_msg: >-
+      Solaris service {{ sas_client_sw_vasd_fmri }} remains registered after
+      complete client and group-policy package removal
+  vars:
+    sas_client_sw_vasd_fmri: svc:/quest/vas/vasd:default
+    sas_vasd_registration_matches: >-
+      {{ sas_client_sw_final_smf_query.stdout_lines
+         | default([]) | map('trim')
+         | select('match', '^' + sas_client_sw_vasd_fmri + '[ \t]+')
+         | list }}
+  when: sas_client_sw_vasd_absence_required
+
+- name: verify final Solaris 11 group-policy service is registered and online
+  assert:
+    that:
+      - sas_vgp_online_matches | length == 1
+    fail_msg: >-
+      Required Solaris service {{ sas_vgp_service_fmri }} is not online after
+      group-policy package installation
+  vars:
+    sas_vgp_service_fmri: "svc:/site/{{ item }}-config:default"
+    sas_vgp_final_owner: >-
+      {{ hostvars[inventory_hostname]
+         ['sas_client_sw_' + item + '_owner_end']
+         | default('unknown', true) }}
+    sas_vgp_online_matches: >-
+      {{ sas_client_sw_final_smf_query.stdout_lines
+         | default([]) | map('trim')
+         | select('match', '^' + sas_vgp_service_fmri
+                            + '[ \t]+online[ \t]*$') | list }}
+  loop:
+    - vasgp
+    - vasgps
+  loop_control:
+    label: "{{ item }}"
+  when:
+    - sas_client_sw_service_verification_requested
+    - ansible_facts['distribution_major_version'] | int >= 11
+    - sas_vgp_final_owner == 'ips'
+
+- name: verify final Solaris 11 group-policy service is not running
+  assert:
+    that:
+      - sas_vgp_online_matches | length == 0
+      - >-
+        sas_vgp_registration_matches | length == 0
+        or sas_vgp_stopped_matches | length == 1
+    fail_msg: >-
+      Solaris service {{ sas_vgp_service_fmri }} is not stopped after
+      group-policy package removal
+  vars:
+    sas_vgp_service_fmri: "svc:/site/{{ item }}-config:default"
+    sas_vgp_final_owner: >-
+      {{ hostvars[inventory_hostname]
+         ['sas_client_sw_' + item + '_owner_end']
+         | default('unknown', true) }}
+    sas_vgp_online_matches: >-
+      {{ sas_client_sw_final_smf_query.stdout_lines
+         | default([]) | map('trim')
+         | select('match', '^' + sas_vgp_service_fmri
+                            + '[ \t]+online[ \t]*$') | list }}
+    sas_vgp_registration_matches: >-
+      {{ sas_client_sw_final_smf_query.stdout_lines
+         | default([]) | map('trim')
+         | select('match', '^' + sas_vgp_service_fmri + '[ \t]+')
+         | list }}
+    sas_vgp_stopped_matches: >-
+      {{ sas_client_sw_final_smf_query.stdout_lines
+         | default([]) | map('trim')
+         | select('match', '^' + sas_vgp_service_fmri
+                            + '[ \t]+(disabled|offline)[ \t]*$') | list }}
+  loop:
+    - vasgp
+    - vasgps
+  loop_control:
+    label: "{{ item }}"
+  when:
+    - sas_client_sw_service_verification_requested
+    - ansible_facts['distribution_major_version'] | int >= 11
+    - sas_vgp_final_owner != 'ips'
+
+- name: verify final Solaris 11 IPS cleanup state
+  assert:
+    that:
+      - sas_client_sw_ips_stage is defined
+      - sas_client_sw_ips_staged_sources is defined
+      - sas_client_sw_ips_cleaned_stage_path is defined
+      - sas_client_sw_ips_stage == {}
+      - sas_client_sw_ips_staged_sources == []
+    fail_msg: Solaris 11 IPS operation state was not cleared after cleanup
+  when: ansible_facts['distribution_major_version'] | int >= 11
+
+- name: inspect final Solaris 11 IPS operation directory
+  stat:
+    path: "{{ sas_client_sw_ips_cleaned_stage_path }}"
+    get_checksum: false
+  register: sas_client_sw_final_ips_stage
+  changed_when: false
+  when:
+    - ansible_facts['distribution_major_version'] | int >= 11
+    - sas_client_sw_ips_cleaned_stage_path | length > 0
+
+- name: verify final Solaris 11 IPS operation cleanup
+  assert:
+    that:
+      - not sas_client_sw_final_ips_stage.stat.exists
+    fail_msg: >-
+      Solaris 11 IPS operation directory was not removed:
+      {{ sas_client_sw_ips_cleaned_stage_path }}
+  when:
+    - ansible_facts['distribution_major_version'] | int >= 11
+    - sas_client_sw_ips_cleaned_stage_path | length > 0
+
+- name: inspect final legacy Solaris 11 operation directory
+  stat:
+    path: "{{ sas_client_sw_legacy_stage.path }}"
+    get_checksum: false
+  register: sas_client_sw_final_legacy_stage
+  changed_when: false
+  when:
+    - ansible_facts['distribution_major_version'] | int >= 11
+    - sas_client_sw_legacy_stage.path is defined
+
+- name: verify final legacy Solaris 11 operation cleanup
+  assert:
+    that:
+      - not sas_client_sw_final_legacy_stage.stat.exists
+    fail_msg: >-
+      Solaris 11 legacy operation directory was not removed:
+      {{ sas_client_sw_legacy_stage.path }}
+  when:
+    - ansible_facts['distribution_major_version'] | int >= 11
+    - sas_client_sw_legacy_stage.path is defined

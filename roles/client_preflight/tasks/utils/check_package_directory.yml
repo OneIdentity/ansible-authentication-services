@@ -6,6 +6,7 @@
     sys: "{{ ansible_facts['system'] }}" 
     dist: "{{ ansible_facts['os_family'] }}" 
     arch: "{{ ansible_facts['architecture'] }}" 
+    ver: "{{ ansible_facts['distribution_major_version'] | default('') }}"
     path: "{{ client_sw_dir }}" 
     facts: false
   delegate_to: "{{ client_sw_host }}"

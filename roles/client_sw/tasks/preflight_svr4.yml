@@ -1,0 +1,66 @@
+---
+
+- name: inspect required Solaris 10 package sources
+  stat:
+    path: "{{ item.path }}"
+  delegate_to: localhost
+  register: sas_client_sw_svr4_source_stats
+  changed_when: false
+  vars:
+    ansible_become: false
+  loop: "{{ sas_client_sw_required_sources }}"
+  loop_control:
+    label: "{{ item.path }}"
+
+- name: validate required Solaris 10 package sources
+  assert:
+    that:
+      - item.item.file is match('^.+\.pkg$')
+      - item.item.path | basename == item.item.file
+      - item.stat.exists
+      - item.stat.isreg
+      - item.stat.readable
+    fail_msg: >-
+      Required Solaris 10 package source {{ item.item.path }} is not a readable
+      regular .pkg file
+  loop: "{{ sas_client_sw_svr4_source_stats.results }}"
+  loop_control:
+    label: "{{ item.item.path }}"
+
+- name: stage required Solaris 10 packages
+  copy:
+    src: "{{ item.path }}"
+    dest: "{{ package_dest_dir }}{{ item.file }}"
+  register: sas_client_sw_svr4_package_copies
+  changed_when: false
+  loop: "{{ sas_client_sw_required_sources }}"
+  loop_control:
+    label: "{{ item.file }}"
+
+- name: inspect staged Solaris 10 packages
+  stat:
+    path: "{{ package_dest_dir }}{{ item.file }}"
+  register: sas_client_sw_svr4_staged_stats
+  changed_when: false
+  when: not ansible_check_mode
+  loop: "{{ sas_client_sw_required_sources }}"
+  loop_control:
+    label: "{{ item.file }}"
+
+- name: validate staged Solaris 10 packages
+  assert:
+    that:
+      - item.stat.exists
+      - item.stat.isreg
+    fail_msg: >-
+      Required Solaris 10 package {{ item.item.file }} was not staged as a
+      regular file
+  when: not (item.skipped | default(false))
+  loop: "{{ sas_client_sw_svr4_staged_stats.results }}"
+  loop_control:
+    label: "{{ item.item.file }}"
+
+- name: record staged Solaris 10 package sources
+  set_fact:
+    sas_client_sw_svr4_staged_sources: >-
+      {{ sas_client_sw_required_sources | map(attribute='path') | list }}

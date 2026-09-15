@@ -1,26 +1,64 @@
 ---
 
-# ------------------------------------------------------------------------------
-# Solaris - install package
-# ------------------------------------------------------------------------------
+- name: validate SVR4 installation platform for {{ package }}
+  assert:
+    that:
+      - ansible_facts['distribution_major_version'] | int < 11
+    fail_msg: >-
+      Solaris 11 package installation requires native IPS handling
 
-# Package install, copy installer
 - include_tasks: package_copy.yml
+  when: >-
+    not ansible_check_mode
+    and
+    package_src not in
+    (sas_client_sw_svr4_staged_sources | default([]))
 
-# Package install, make response file
-- copy:
-    content: 'y\n'
-    dest: "{{ package_dest_dir }}/install.response"
-  changed_when: false
-  ignore_errors: true
+- name: install {{ package }} with SVR4
+  block:
+    - name: allocate {{ package }} SVR4 admin file
+      tempfile:
+        state: file
+        path: "{{ package_dest_dir }}"
+        prefix: "sas-{{ package }}-"
+        suffix: .admin
+      register: sas_client_sw_svr4_admin
+      changed_when: false
 
-# Package install
-- name: install {{ package }}
-  svr4pkg:
-    name: "{{ package }}"
-    state: present 
-    src: "{{ package_dest }}"
-    response_file: "{{ package_dest_dir }}/install.response" 
-  #command:
-  #  cmd: pkgadd -d {{ package_dest }} -r {{ package_dest_dir }}/install.response all
-  register: pkg_install 
+    - name: create {{ package }} SVR4 admin file
+      template:
+        src: solaris_svr4_admin.j2
+        dest: "{{ sas_client_sw_svr4_admin.path }}"
+        mode: '0600'
+      changed_when: false
+
+    # -d accepts an SVR4 datastream. Preserve the old module's default
+    # all-zone behavior when the managed host is a global zone.
+    - name: run interactive pkgadd for {{ package }}
+      shell:
+        cmd: >-
+          yes | pkgadd -a {{ sas_client_sw_svr4_admin.path | quote }}
+          -d {{ package_dest | quote }} {{ package | quote }}
+      environment:
+        LC_ALL: C
+      register: pkg_install
+      changed_when: pkg_install.rc in [0, 2, 10, 20]
+      failed_when: pkg_install.rc not in [0, 2, 10, 20]
+
+    - name: report {{ package }} pkgadd completion status
+      debug:
+        msg: >-
+          pkgadd for {{ package }} completed with return code
+          {{ pkg_install.rc }}
+          ({{ 'reboot required'
+              if pkg_install.rc in [10, 20] else 'warning' }}).
+      when: pkg_install.rc in [2, 10, 20]
+
+  always:
+    - name: remove {{ package }} SVR4 admin file
+      file:
+        path: "{{ sas_client_sw_svr4_admin.path }}"
+        state: absent
+      changed_when: false
+      when: sas_client_sw_svr4_admin.path is defined
+  when: not ansible_check_mode

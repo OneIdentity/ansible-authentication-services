@@ -1,0 +1,22 @@
+---
+
+- name: record Solaris 11 IPS operation directory for verification
+  set_fact:
+    sas_client_sw_ips_cleaned_stage_path: >-
+      {{ sas_client_sw_ips_stage.path | default('', true) }}
+  changed_when: false
+
+- name: remove Solaris 11 IPS operation directory
+  file:
+    path: "{{ sas_client_sw_ips_stage.path }}"
+    state: absent
+  changed_when: false
+  when:
+    - sas_client_sw_ips_stage.path is defined
+    - sas_client_sw_ips_stage.path | length > 0
+
+- name: clear Solaris 11 IPS operation state
+  set_fact:
+    sas_client_sw_ips_stage: {}
+    sas_client_sw_ips_staged_sources: []
+  changed_when: false

@@ -47,6 +47,13 @@ options:
         description:
             - Architecture (x86, amd64, etc.)
         required: true
+    ver:
+        description:
+            - Operating system major version used for version-specific package formats
+            - Required when sys is SunOS
+        type: str
+        required: false
+        default: ''
     path:
         description:
             - Client software directory
@@ -124,6 +131,12 @@ import os
 import traceback
 import glob
 import re
+import tarfile
+
+try:
+    from urllib.parse import unquote
+except ImportError:
+    from urllib import unquote
 
 
 # ------------------------------------------------------------------------------
@@ -153,10 +166,12 @@ PKG_PATHS = {
     },
     'sunos': {
         'i386': 'solaris10-x64',
+        'i86pc': 'solaris10-x64',
         'x86_64': 'solaris10-x64',
         'amd64': 'solaris10-x64',
         'sparc': 'solaris10-sparc',
         'sparc64': 'solaris10-sparc',
+        'sun4u': 'solaris10-sparc',
         'sun4v': 'solaris10-sparc'
     },
     'darwin': {
@@ -209,6 +224,11 @@ def run_module():
             'arch': {
                 'type': 'str',
                 'required': True
+            },
+            'ver': {
+                'type': 'str',
+                'required': False,
+                'default': ''
             },
             'path': {
                 'type': 'str',
@@ -271,6 +291,7 @@ def run_normal(params, result):
     sys = params['sys'].lower()
     dist = params['dist'].lower()
     arch = params['arch'].lower()
+    ver = params.get('ver', '') or ''
     facts = params['facts']
     facts_key = params['facts_key'] if params['facts_key'] else FACTS_KEY_DEFAULT
 
@@ -281,7 +302,7 @@ def run_normal(params, result):
 
         # Find packages
         if err is None:
-            err, packages = find_packages(path, sys, dist, arch)
+            err, packages = find_packages(path, sys, dist, arch, ver)
 
     except Exception:
         tb = traceback.format_exc()
@@ -329,7 +350,7 @@ def check_dir(path):
 
 
 # ------------------------------------------------------------------------------
-def find_packages(sw_path, sys, dist, arch):
+def find_packages(sw_path, sys, dist, arch, ver=''):
     """
     Find packages
     """
@@ -339,16 +360,18 @@ def find_packages(sw_path, sys, dist, arch):
     packages = {}
 
     # Find package path for specified sys and arch
-    err, pkgs_dir = find_packages_path(sys, arch)
+    err, pkgs_dir = find_packages_path(sys, arch, ver)
 
-    # Get package extension for distribution
+    # Find packages using the native Solaris 11 IPS archive format or the
+    # existing per-distribution package format.
     if not err:
-        err, pkgs_ext = find_packages_ext(dist)
-
-    # Find packages
-    if not err:
-        pkgs_path = sw_path + '/' + pkgs_dir
-        err, packages = parse_packages(pkgs_path, pkgs_ext)
+        pkgs_path = os.path.join(sw_path, pkgs_dir)
+        if sys == 'sunos' and solaris_major_version(ver) >= 11:
+            err, packages = find_packages_solaris_ips(pkgs_path)
+        else:
+            err, pkgs_ext = find_packages_ext(dist)
+            if not err:
+                err, packages = parse_packages(pkgs_path, pkgs_ext)
 
     # NOTE: Authentication Services macOS packages are grouped into dmg files,
     #       so need to do some post-processing
@@ -368,7 +391,7 @@ def find_packages(sw_path, sys, dist, arch):
 
 
 # ------------------------------------------------------------------------------
-def find_packages_path(sys, arch):
+def find_packages_path(sys, arch, ver=''):
     """
     Find package path for specified sys and arch
     """
@@ -377,12 +400,17 @@ def find_packages_path(sys, arch):
     err = None
     path = ''
 
+    if sys == 'sunos' and solaris_major_version(ver) == 0:
+        return 'Solaris major version is required for package discovery', path
+
     # Find path info
     if sys in PKG_PATHS:
         sys_archs = PKG_PATHS[sys]
 
         if arch in sys_archs:
             path = sys_archs[arch]
+            if sys == 'sunos' and solaris_major_version(ver) >= 11:
+                path = path.replace('solaris10-', 'solaris11-', 1)
 
         else:
             err = 'Unsupported architecture ' + arch
@@ -391,6 +419,102 @@ def find_packages_path(sys, arch):
         err = 'Unsupported system ' + sys
 
     return err, path
+
+
+# ------------------------------------------------------------------------------
+def solaris_major_version(ver):
+    """
+    Return the integer Solaris major version, or 0 when it is unavailable.
+    """
+
+    try:
+        return int(str(ver).partition('.')[0])
+    except (AttributeError, TypeError, ValueError):
+        return 0
+
+
+# ------------------------------------------------------------------------------
+def read_p5p_packages(archive_path):
+    """
+    Read package publisher, name, and component version from a .p5p archive.
+    """
+
+    packages = {}
+    try:
+        with tarfile.open(archive_path, mode='r:*') as archive:
+            for member in archive:
+                parts = member.name.rstrip('/').split('/')
+                if (len(parts) != 5 or parts[0] != 'publisher'
+                        or parts[2] != 'pkg' or not parts[1]
+                        or not parts[3] or not parts[4]):
+                    continue
+
+                publisher = unquote(parts[1])
+                package = unquote(parts[3])
+                version = unquote(parts[4]).split(',', 1)[0]
+                if not version:
+                    continue
+
+                existing = packages.get(package)
+                if existing and existing['publisher'] != publisher:
+                    return ('Package {} has conflicting publishers in {}'
+                            .format(package, archive_path)), {}
+                if existing and existing['vers'] != version:
+                    return ('Package {} has conflicting versions in {}'
+                            .format(package, archive_path)), {}
+
+                packages[package] = {
+                    'publisher': publisher,
+                    'vers': version
+                }
+    except (IOError, OSError, tarfile.TarError) as error:
+        return ('Unable to read Solaris IPS package archive {}: {}'
+                .format(archive_path, error)), {}
+
+    if not packages:
+        return ('Solaris IPS package archive {} contains no package manifests'
+                .format(archive_path)), {}
+
+    return None, packages
+
+
+# ------------------------------------------------------------------------------
+def find_packages_solaris_ips(pkgs_path):
+    """
+    Discover packages and component versions in Solaris IPS archives.
+    """
+
+    packages = {}
+    archives = sorted(glob.glob(os.path.join(pkgs_path, '*.p5p')))
+    if not archives:
+        return ('No Solaris IPS package archives (*.p5p) found at {}'
+                .format(pkgs_path)), {}
+
+    for archive_path in archives:
+        err, archive_packages = read_p5p_packages(archive_path)
+        if err:
+            return err, {}
+
+        for package, package_data in archive_packages.items():
+            existing = packages.get(package)
+            if (existing
+                    and existing['publisher'] != package_data['publisher']):
+                return ('Package {} has conflicting publishers in {} and {}'
+                        .format(package, existing['path'], archive_path)), {}
+            if existing and existing['vers'] != package_data['vers']:
+                return ('Package {} has conflicting versions in {} and {}'
+                        .format(package, existing['path'], archive_path)), {}
+            if existing:
+                continue
+
+            packages[package] = {
+                'path': archive_path,
+                'file': os.path.basename(archive_path),
+                'vers': package_data['vers'],
+                'publisher': package_data['publisher']
+            }
+
+    return None, packages
 
 
 # ------------------------------------------------------------------------------

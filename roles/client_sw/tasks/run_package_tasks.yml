@@ -8,17 +8,62 @@
     flag: beg
   loop: "{{ client_sw_pkg_state | oneidentity.authentication_services.pkgdict2items }}"
 
+# Build and validate the complete Solaris operation plan before staging or
+# package mutation. Other platforms retain their existing execution flow.
+- include_tasks: build_package_plan.yml
+  when: ansible_facts['os_family'] | lower == 'solaris'
+
 # Create temporary directory
 - include_tasks: temp_dir_create.yml
   when: 
     - "'present' in client_sw_pkg_state.values()"
 
-# Perform package tasks  
-- include_tasks: run_package_task.yml
-  vars:
-    package: "{{ item.key }}"
-    state: "{{ item.value }}"
-  loop: "{{ client_sw_pkg_state | oneidentity.authentication_services.pkgdict2items }}"
+- name: preflight and perform package operations
+  block:
+    # Stage every Solaris 10 source before the per-package loop can remove an
+    # installed package. This keeps multi-package replacements recoverable.
+    - include_tasks: preflight_svr4.yml
+      when:
+        - ansible_facts['os_family'] | lower == 'solaris'
+        - ansible_facts['distribution_major_version'] | int < 11
+
+    # Validate topology and every exact archive-backed FMRI before any Solaris
+    # 11 package action can begin.
+    - include_tasks: preflight_ips.yml
+      when:
+        - ansible_facts['os_family'] | lower == 'solaris'
+        - ansible_facts['distribution_major_version'] | int >= 11
+
+    - include_tasks: migrate_legacy_svr4.yml
+      when:
+        - ansible_facts['os_family'] | lower == 'solaris'
+        - ansible_facts['distribution_major_version'] | int >= 11
+
+    - include_tasks: run_ips_operations.yml
+      when:
+        - ansible_facts['os_family'] | lower == 'solaris'
+        - ansible_facts['distribution_major_version'] | int >= 11
+
+    # Perform package tasks
+    - include_tasks: run_package_task.yml
+      vars:
+        package: "{{ item.key }}"
+        state: "{{ item.value }}"
+      loop: >-
+        {{ client_sw_pkg_state
+           | oneidentity.authentication_services.pkgdict2items }}
+      when:
+        - >-
+          item.key not in (sas_client_sw_ips_processed_packages | default([]))
+        - >-
+          item.key not in
+          (sas_client_sw_legacy_processed_packages | default([]))
+
+  always:
+    - include_tasks: cleanup_ips.yml
+      when:
+        - ansible_facts['os_family'] | lower == 'solaris'
+        - ansible_facts['distribution_major_version'] | int >= 11
 
 # Remove temporary directory 
 # - include_tasks: temp_dir_delete.yml
@@ -32,3 +77,21 @@
     state: "{{ item.value }}"
     flag: end
   loop: "{{ client_sw_pkg_state | oneidentity.authentication_services.pkgdict2items }}"
+
+- name: read final Solaris service package state
+  include_tasks: read_package_version.yml
+  vars:
+    package: "{{ item }}"
+    state: check
+    flag: end
+  loop:
+    - vasclnt
+    - vasclnts
+    - vasgp
+    - vasgps
+  when:
+    - ansible_facts['os_family'] | lower == 'solaris'
+    - item not in client_sw_pkg_state
+
+- include_tasks: verify_solaris_state.yml
+  when: ansible_facts['os_family'] | lower == 'solaris'

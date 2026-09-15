@@ -1,0 +1,31 @@
+---
+
+- name: select legacy migrations from {{ sas_legacy_archive.source_file }}
+  set_fact:
+    sas_client_sw_legacy_transaction_entries: >-
+      {{ sas_client_sw_legacy_migrations
+         | selectattr('source_path', 'equalto', sas_legacy_archive.source_path)
+         | list }}
+    sas_client_sw_legacy_transaction_fmris: []
+
+- name: build exact legacy migration FMRIs
+  set_fact:
+    sas_client_sw_legacy_transaction_fmris: >-
+      {{ sas_client_sw_legacy_transaction_fmris
+         + ['pkg://' + item.source_publisher + '/' + item.package
+            + '@' + item.target_version] }}
+  loop: "{{ sas_client_sw_legacy_transaction_entries }}"
+  loop_control:
+    label: "{{ item.package }}"
+
+- name: install exact migrated packages from {{ sas_legacy_archive.source_file }}
+  command:
+    argv: >-
+      {{ ['pkg', 'install', '--accept', '-g', sas_legacy_archive.staged_path]
+         + sas_client_sw_legacy_transaction_fmris }}
+  environment:
+    LC_ALL: C
+  register: sas_client_sw_legacy_transaction
+  changed_when: sas_client_sw_legacy_transaction.rc == 0
+  failed_when: sas_client_sw_legacy_transaction.rc not in [0, 4]
+  when: sas_client_sw_legacy_transaction_entries | length > 0

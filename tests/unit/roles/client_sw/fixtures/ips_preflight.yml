@@ -1,0 +1,40 @@
+---
+
+- name: Exercise Solaris 11 IPS preflight
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    ansible_facts:
+      os_family: Solaris
+      distribution_major_version: '11'
+    sas_client_sw_package_plan: "{{ test_package_plan }}"
+    sas_client_sw_required_sources: "{{ test_required_sources }}"
+
+  tasks:
+    - name: Run IPS preflight with scoped cleanup
+      block:
+        - include_role:
+            name: client_sw
+            tasks_from: preflight_ips.yml
+
+        - name: Verify staged IPS archives
+          assert:
+            that:
+              - >-
+                sas_client_sw_ips_staged_sources | length
+                == expected_staged_source_count
+          when: expected_staged_source_count is defined
+
+        - name: Exercise post-preflight mutation marker
+          command:
+            argv:
+              - pkgrm
+              - "{{ test_mutation_package }}"
+          changed_when: false
+          when: test_mutation_package | default('') | length > 0
+
+      always:
+        - include_role:
+            name: client_sw
+            tasks_from: cleanup_ips.yml

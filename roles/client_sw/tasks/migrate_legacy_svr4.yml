@@ -1,0 +1,290 @@
+---
+
+- name: identify legacy Solaris 11 SVR4 operations
+  set_fact:
+    sas_client_sw_legacy_migrations: >-
+      {{ sas_client_sw_package_plan
+         | selectattr('migration_required', 'equalto', true)
+         | selectattr('owner', 'equalto', 'svr4')
+         | list }}
+    sas_client_sw_legacy_removals: >-
+      {{ sas_client_sw_package_plan
+         | selectattr('action', 'equalto', 'remove')
+         | selectattr('owner', 'equalto', 'svr4')
+         | list }}
+    sas_client_sw_legacy_processed_packages: >-
+      {{ (sas_client_sw_package_plan
+          | selectattr('action', 'equalto', 'remove')
+          | selectattr('owner', 'equalto', 'svr4')
+          | map(attribute='package') | list)
+         + (sas_client_sw_package_plan
+            | selectattr('migration_required', 'equalto', true)
+            | selectattr('owner', 'equalto', 'svr4')
+            | map(attribute='package') | list) }}
+
+- name: order legacy Solaris 11 SVR4 operations
+  set_fact:
+    sas_client_sw_ordered_legacy_operations: >-
+      {{ ((sas_client_sw_legacy_removals
+           + sas_client_sw_legacy_migrations)
+          | rejectattr('package', 'equalto', 'vasclnt')
+          | rejectattr('package', 'equalto', 'vasclnts') | list)
+         + ((sas_client_sw_legacy_removals
+             + sas_client_sw_legacy_migrations)
+            | selectattr('package', 'equalto', 'vasclnt') | list)
+         + ((sas_client_sw_legacy_removals
+             + sas_client_sw_legacy_migrations)
+            | selectattr('package', 'equalto', 'vasclnts') | list) }}
+
+- name: validate legacy Solaris 11 migrations
+  assert:
+    that:
+      - item.state == 'present'
+      - item.action in ['upgrade', 'downgrade', 'none']
+      - item.source_path | default('') | length > 0
+      - item.source_publisher | default('') | length > 0
+      - item.target_version | default('') | length > 0
+    fail_msg: >-
+      Legacy Solaris 11 package {{ item.package }} does not have a complete
+      migration plan
+  loop: "{{ sas_client_sw_legacy_migrations }}"
+  loop_control:
+    label: "{{ item.package }}"
+
+- name: validate staged archives for legacy Solaris 11 migrations
+  assert:
+    that:
+      - sas_legacy_matching_stages | length == 1
+      - sas_legacy_matching_stage_path | length > 0
+    fail_msg: >-
+      The migration archive for legacy Solaris 11 package {{ item.package }}
+      was not staged exactly once before package removal
+  vars:
+    sas_legacy_matching_stages: >-
+      {{ sas_client_sw_ips_staged_sources
+         | selectattr('source_path', 'equalto', item.source_path) | list }}
+    sas_legacy_matching_stage_path: >-
+      {{ ((sas_legacy_matching_stages | first).staged_path
+          | default('', true))
+         if sas_legacy_matching_stages | length == 1 else '' }}
+  loop: "{{ sas_client_sw_legacy_migrations }}"
+  loop_control:
+    label: "{{ item.package }}"
+  when: not ansible_check_mode
+
+- name: report legacy Solaris 11 requests
+  include_tasks: utils/set_state.yml
+  vars:
+    package: "{{ sas_legacy_entry.package }}"
+    flag: req
+    value: "{{ sas_legacy_entry.state }}"
+  loop: "{{ sas_client_sw_ordered_legacy_operations }}"
+  loop_control:
+    loop_var: sas_legacy_entry
+    label: "{{ sas_legacy_entry.package }}"
+  when: client_sw_reports_generate or client_sw_facts_generate
+
+- name: manage legacy Solaris 11 SVR4 operations
+  block:
+    - name: verify pkgrm is available for legacy Solaris 11 packages
+      shell:
+        cmd: command -v pkgrm
+      environment:
+        LC_ALL: C
+      changed_when: false
+      check_mode: false
+
+    - name: allocate legacy Solaris 11 operation directory
+      tempfile:
+        state: directory
+        path: >-
+          {{ sas_client_sw_legacy_stage_root | default('/var/tmp') }}
+        prefix: ansible-as-client-sw-legacy-
+      register: sas_client_sw_legacy_stage
+      changed_when: false
+      when: not ansible_check_mode
+
+    - name: allocate legacy Solaris 11 SVR4 admin file
+      tempfile:
+        state: file
+        path: "{{ sas_client_sw_legacy_stage.path }}"
+        prefix: sas-legacy-
+        suffix: .admin
+      register: sas_client_sw_legacy_admin
+      changed_when: false
+      when: not ansible_check_mode
+
+    - name: create legacy Solaris 11 SVR4 admin file
+      template:
+        src: solaris_svr4_admin.j2
+        dest: "{{ sas_client_sw_legacy_admin.path }}"
+        mode: '0600'
+      changed_when: false
+      when: not ansible_check_mode
+
+    - name: remove legacy Solaris 11 SVR4 packages
+      include_tasks: remove_legacy_svr4_package.yml
+      loop: "{{ sas_client_sw_ordered_legacy_operations }}"
+      loop_control:
+        loop_var: sas_legacy_entry
+        label: "{{ sas_legacy_entry.package }}"
+      when: not ansible_check_mode
+
+    - name: query removed legacy Solaris 11 package ownership
+      include_tasks: read_package_version.yml
+      vars:
+        package: "{{ sas_legacy_entry.package }}"
+        state: "{{ sas_legacy_entry.state }}"
+        flag: legacy_removed
+      loop: "{{ sas_client_sw_ordered_legacy_operations }}"
+      loop_control:
+        loop_var: sas_legacy_entry
+        label: "{{ sas_legacy_entry.package }}"
+      when: not ansible_check_mode
+
+    - name: verify legacy Solaris 11 packages were removed
+      assert:
+        that:
+          - >-
+            hostvars[inventory_hostname]
+            ['sas_client_sw_' + item.package
+             + '_owner_legacy_removed'] == 'absent'
+        fail_msg: >-
+          Legacy Solaris 11 package {{ item.package }} remains registered after
+          pkgrm completed
+      loop: "{{ sas_client_sw_ordered_legacy_operations }}"
+      loop_control:
+        label: "{{ item.package }}"
+      when: not ansible_check_mode
+
+    - name: install migrated Solaris 11 IPS packages
+      include_tasks: run_legacy_ips_archive_transaction.yml
+      loop: "{{ sas_client_sw_ips_staged_sources }}"
+      loop_control:
+        loop_var: sas_legacy_archive
+        label: "{{ sas_legacy_archive.source_file }}"
+      when: not ansible_check_mode
+
+    - name: refresh legacy Solaris 11 package ownership
+      include_tasks: read_package_version.yml
+      vars:
+        package: "{{ sas_legacy_entry.package }}"
+        state: "{{ sas_legacy_entry.state }}"
+        flag: beg
+      loop: "{{ sas_client_sw_ordered_legacy_operations }}"
+      loop_control:
+        loop_var: sas_legacy_entry
+        label: "{{ sas_legacy_entry.package }}"
+      when: not ansible_check_mode
+
+    - name: verify final legacy Solaris 11 package ownership
+      assert:
+        that:
+          - >-
+            (item.state == 'absent'
+             and hostvars[inventory_hostname]
+                 ['sas_client_sw_' + item.package + '_owner_beg'] == 'absent')
+            or
+            (item.state == 'present'
+             and hostvars[inventory_hostname]
+                 ['sas_client_sw_' + item.package + '_owner_beg'] == 'ips'
+             and hostvars[inventory_hostname]
+                 ['sas_client_sw_' + item.package + '_vers_beg']
+                 == item.target_version)
+        fail_msg: >-
+          Legacy Solaris 11 package {{ item.package }} did not reach its
+          requested ownership and version after migration
+      loop: "{{ sas_client_sw_ordered_legacy_operations }}"
+      loop_control:
+        label: "{{ item.package }}"
+      when: not ansible_check_mode
+
+    - name: rebuild package plan after legacy Solaris 11 operations
+      include_tasks: build_package_plan.yml
+      when: not ansible_check_mode
+
+    - name: report legacy Solaris 11 removals
+      include_tasks: utils/set_state.yml
+      vars:
+        package: "{{ sas_legacy_entry.package }}"
+        flag: act
+        value: removed
+      loop: "{{ sas_client_sw_legacy_removals }}"
+      loop_control:
+        loop_var: sas_legacy_entry
+        label: "{{ sas_legacy_entry.package }}"
+      when:
+        - not ansible_check_mode
+        - client_sw_reports_generate or client_sw_facts_generate
+
+    - name: report legacy Solaris 11 migrations
+      include_tasks: utils/set_state.yml
+      vars:
+        package: "{{ sas_legacy_entry.package }}"
+        flag: act
+        value: >-
+          {{ 'downgraded'
+             if sas_legacy_entry.action == 'downgrade' else 'upgraded' }}
+      loop: "{{ sas_client_sw_legacy_migrations }}"
+      loop_control:
+        loop_var: sas_legacy_entry
+        label: "{{ sas_legacy_entry.package }}"
+      when:
+        - not ansible_check_mode
+        - client_sw_reports_generate or client_sw_facts_generate
+
+  rescue:
+    - name: report failed legacy Solaris 11 operations
+      include_tasks: utils/set_state.yml
+      vars:
+        package: "{{ sas_legacy_entry.package }}"
+        flag: act
+        value: failed
+      loop: "{{ sas_client_sw_ordered_legacy_operations }}"
+      loop_control:
+        loop_var: sas_legacy_entry
+        label: "{{ sas_legacy_entry.package }}"
+      when: client_sw_reports_generate or client_sw_facts_generate
+
+    - fail:
+        msg: failed to migrate or remove legacy Solaris 11 SVR4 packages
+
+  always:
+    - name: remove legacy Solaris 11 operation directory
+      file:
+        path: "{{ sas_client_sw_legacy_stage.path }}"
+        state: absent
+      changed_when: false
+      when: sas_client_sw_legacy_stage.path is defined
+
+  when: sas_client_sw_ordered_legacy_operations | length > 0
+
+- name: report check-mode legacy Solaris 11 removals
+  include_tasks: utils/set_state.yml
+  vars:
+    package: "{{ sas_legacy_entry.package }}"
+    flag: act
+    value: removed
+  loop: "{{ sas_client_sw_legacy_removals }}"
+  loop_control:
+    loop_var: sas_legacy_entry
+    label: "{{ sas_legacy_entry.package }}"
+  when:
+    - ansible_check_mode
+    - client_sw_reports_generate or client_sw_facts_generate
+
+- name: report check-mode legacy Solaris 11 migrations
+  include_tasks: utils/set_state.yml
+  vars:
+    package: "{{ sas_legacy_entry.package }}"
+    flag: act
+    value: >-
+      {{ 'downgraded'
+         if sas_legacy_entry.action == 'downgrade' else 'upgraded' }}
+  loop: "{{ sas_client_sw_legacy_migrations }}"
+  loop_control:
+    loop_var: sas_legacy_entry
+    label: "{{ sas_legacy_entry.package }}"
+  when:
+    - ansible_check_mode
+    - client_sw_reports_generate or client_sw_facts_generate

@@ -1,0 +1,88 @@
+---
+
+- name: determine planned action for {{ package }}
+  set_fact:
+    sas_client_sw_planned_action: >-
+      {% if state == 'check' %}
+      check
+      {% elif state == 'absent' and sas_plan_installed_version %}
+      remove
+      {% elif state == 'absent' %}
+      none
+      {% elif state == 'present' and not sas_plan_installed_version %}
+      install
+      {% elif (state == 'present'
+           and sas_plan_installed_version
+           is version(sas_plan_target_version, '<')) %}
+      upgrade
+      {% elif (state == 'present'
+           and sas_plan_installed_version
+           is version(sas_plan_target_version, '>')) %}
+      downgrade
+      {% else %}
+      none
+      {% endif %}
+  vars:
+    sas_plan_installed_version: >-
+      {{ hostvars[inventory_hostname]
+         ['sas_client_sw_' + package + '_vers_beg'] | default('', true) }}
+    sas_plan_target_version: >-
+      {{ client_sw_pkgs['packages'][package]['vers']
+         if package in client_sw_pkgs['packages'] else '' }}
+
+- name: record planned action for {{ package }}
+  set_fact:
+    sas_client_sw_package_plan: >-
+      {{ sas_client_sw_package_plan + [{
+           'package': package,
+           'state': state,
+           'installed_version': sas_plan_installed_version,
+           'owner': sas_plan_owner,
+           'migration_required': sas_plan_migration_required,
+           'target_version': sas_plan_target_version,
+           'source_path': sas_plan_source_path,
+           'source_file': sas_plan_source_file,
+           'source_publisher': sas_plan_source_publisher,
+           'action': sas_plan_action,
+           'requires_source': sas_plan_requires_source,
+           'may_remove_installed': sas_plan_may_remove
+         }] }}
+    sas_client_sw_required_sources: >-
+      {{ sas_client_sw_required_sources
+         + ([{'path': sas_plan_source_path, 'file': sas_plan_source_file}]
+            if (sas_plan_requires_source
+                and sas_plan_source_path
+                not in (sas_client_sw_required_sources
+                        | map(attribute='path') | list))
+            else []) }}
+  vars:
+    sas_plan_installed_version: >-
+      {{ hostvars[inventory_hostname]
+         ['sas_client_sw_' + package + '_vers_beg'] | default('', true) }}
+    sas_plan_target_version: >-
+      {{ client_sw_pkgs['packages'][package]['vers']
+         if package in client_sw_pkgs['packages'] else '' }}
+    sas_plan_owner: >-
+      {{ hostvars[inventory_hostname]
+         ['sas_client_sw_' + package + '_owner_beg'] }}
+    sas_plan_migration_required: >-
+      {{ hostvars[inventory_hostname]
+         ['sas_client_sw_' + package + '_migration_required_beg'] }}
+    sas_plan_source_path: >-
+      {{ client_sw_pkgs['packages'][package]['path']
+         if package in client_sw_pkgs['packages'] else '' }}
+    sas_plan_source_file: >-
+      {{ client_sw_pkgs['packages'][package]['file']
+         if package in client_sw_pkgs['packages'] else '' }}
+    sas_plan_source_publisher: >-
+      {{ client_sw_pkgs['packages'][package]['publisher'] | default('')
+         if package in client_sw_pkgs['packages'] else '' }}
+    sas_plan_action: "{{ sas_client_sw_planned_action | trim }}"
+    sas_plan_requires_source: >-
+      {{ (sas_plan_action in ['install', 'upgrade', 'downgrade'])
+         or sas_plan_migration_required }}
+    sas_plan_may_remove: >-
+      {{ sas_plan_action == 'remove'
+         or sas_plan_migration_required
+         or (sas_plan_owner == 'svr4'
+             and sas_plan_action in ['upgrade', 'downgrade']) }}

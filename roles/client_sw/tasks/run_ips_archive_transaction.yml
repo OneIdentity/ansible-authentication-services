@@ -1,0 +1,67 @@
+---
+
+- name: select package transitions from {{ sas_ips_archive.source_file }}
+  set_fact:
+    sas_client_sw_ips_transaction_entries: >-
+      {{ sas_client_sw_ips_native_transitions
+         | selectattr('source_path', 'equalto', sas_ips_archive.source_path)
+         | list }}
+    sas_client_sw_ips_transaction_fmris: []
+
+- name: build exact FMRIs from {{ sas_ips_archive.source_file }}
+  set_fact:
+    sas_client_sw_ips_transaction_fmris: >-
+      {{ sas_client_sw_ips_transaction_fmris
+         + ['pkg://' + item.source_publisher + '/' + item.package
+            + '@' + item.target_version] }}
+  loop: "{{ sas_client_sw_ips_transaction_entries }}"
+  loop_control:
+    label: "{{ item.package }}"
+
+- name: install exact packages from {{ sas_ips_archive.source_file }}
+  block:
+    - name: run exact Solaris 11 IPS package transaction
+      command:
+        argv: >-
+          {{ ['pkg', 'install', '--accept', '-g', sas_ips_archive.staged_path]
+             + sas_client_sw_ips_transaction_fmris }}
+      environment:
+        LC_ALL: C
+      register: sas_client_sw_ips_transaction
+      changed_when: sas_client_sw_ips_transaction.rc == 0
+      failed_when: sas_client_sw_ips_transaction.rc not in [0, 4]
+
+    - name: report native Solaris 11 IPS transitions
+      include_tasks: utils/set_state.yml
+      vars:
+        package: "{{ sas_ips_report_entry.package }}"
+        flag: act
+        value: >-
+          {{ {'install': 'installed',
+              'upgrade': 'upgraded',
+              'downgrade': 'downgraded'}[sas_ips_report_entry.action] }}
+      loop: "{{ sas_client_sw_ips_transaction_entries }}"
+      loop_control:
+        loop_var: sas_ips_report_entry
+        label: "{{ sas_ips_report_entry.package }}"
+      when: client_sw_reports_generate or client_sw_facts_generate
+
+  rescue:
+    - name: report failed native Solaris 11 IPS transitions
+      include_tasks: utils/set_state.yml
+      vars:
+        package: "{{ sas_ips_report_entry.package }}"
+        flag: act
+        value: failed
+      loop: "{{ sas_client_sw_ips_transaction_entries }}"
+      loop_control:
+        loop_var: sas_ips_report_entry
+        label: "{{ sas_ips_report_entry.package }}"
+      when: client_sw_reports_generate or client_sw_facts_generate
+
+    - fail:
+        msg: >-
+          failed to install exact Solaris 11 IPS packages from
+          {{ sas_ips_archive.source_file }}
+
+  when: sas_client_sw_ips_transaction_entries | length > 0

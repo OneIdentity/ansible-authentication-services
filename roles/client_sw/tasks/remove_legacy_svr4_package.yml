@@ -1,0 +1,21 @@
+---
+
+- name: run interactive pkgrm for legacy {{ sas_legacy_entry.package }}
+  shell:
+    cmd: >-
+      yes | pkgrm -a {{ sas_client_sw_legacy_admin.path | quote }}
+      {{ sas_legacy_entry.package | quote }}
+  environment:
+    LC_ALL: C
+  register: sas_client_sw_legacy_remove
+  changed_when: sas_client_sw_legacy_remove.rc in [0, 2, 10, 20]
+  failed_when: sas_client_sw_legacy_remove.rc not in [0, 2, 10, 20]
+
+- name: report legacy {{ sas_legacy_entry.package }} pkgrm completion status
+  debug:
+    msg: >-
+      pkgrm for legacy {{ sas_legacy_entry.package }} completed with return
+      code {{ sas_client_sw_legacy_remove.rc }}
+      ({{ 'reboot required'
+          if sas_client_sw_legacy_remove.rc in [10, 20] else 'warning' }}).
+  when: sas_client_sw_legacy_remove.rc in [2, 10, 20]

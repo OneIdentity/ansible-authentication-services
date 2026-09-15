@@ -1,0 +1,116 @@
+---
+
+- name: Exercise Solaris 11 legacy SVR4 operations
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    ansible_facts:
+      os_family: Solaris
+      distribution_major_version: '11'
+    client_sw_facts_generate: false
+    client_sw_reports_generate: "{{ test_reports | default(false) }}"
+    sas_client_sw_legacy_stage_root: "{{ test_temp_dir }}"
+    client_sw_pkg_state: "{{ test_package_state }}"
+    client_sw_pkgs:
+      packages: "{{ test_packages }}"
+    sas_client_sw_package_plan: "{{ test_package_plan }}"
+    sas_client_sw_ips_staged_sources: "{{ test_staged_sources | default([]) }}"
+
+  tasks:
+    - name: Supply initial package ownership facts
+      set_fact:
+        "sas_client_sw_{{ item.package }}_owner_beg": "{{ item.owner }}"
+        "sas_client_sw_{{ item.package }}_present_beg": >-
+          {{ item.owner != 'absent' }}
+        "sas_client_sw_{{ item.package }}_migration_required_beg": >-
+          {{ item.migration_required }}
+        "sas_client_sw_{{ item.package }}_vers_beg": >-
+          {{ item.installed_version }}
+      loop: "{{ test_package_plan }}"
+      loop_control:
+        label: "{{ item.package }}"
+
+    - name: Initialize legacy operation result
+      set_fact:
+        test_legacy_operation_failed: false
+
+    - name: Run legacy Solaris 11 operation
+      block:
+        - include_role:
+            name: client_sw
+            tasks_from: migrate_legacy_svr4.yml
+      rescue:
+        - name: Record expected legacy operation failure
+          set_fact:
+            test_legacy_operation_failed: true
+
+    - name: Verify legacy operation result
+      assert:
+        that:
+          - >-
+            test_legacy_operation_failed
+            == (expected_operation_failure | default(false))
+
+    - name: Verify processed legacy packages
+      assert:
+        that:
+          - >-
+            sas_client_sw_legacy_processed_packages
+            == expected_processed_packages
+
+    - name: Verify refreshed legacy ownership
+      assert:
+        that:
+          - >-
+            hostvars[inventory_hostname]
+            ['sas_client_sw_' + item.key + '_owner_beg']
+            == item.value
+      loop: "{{ expected_final_owners | default({}) | dict2items }}"
+      loop_control:
+        label: "{{ item.key }}"
+
+    - name: Verify refreshed legacy versions
+      assert:
+        that:
+          - >-
+            hostvars[inventory_hostname]
+            ['sas_client_sw_' + item.key + '_vers_beg'] == item.value
+      loop: "{{ expected_final_versions | default({}) | dict2items }}"
+      loop_control:
+        label: "{{ item.key }}"
+
+    - name: Verify legacy package action facts
+      assert:
+        that:
+          - >-
+            hostvars[inventory_hostname]
+            ['sas_client_sw_' + item.key + '_act'] == item.value
+          - >-
+            hostvars[inventory_hostname]
+            ['sas_client_sw_' + item.key + '_req']
+            == expected_request_facts[item.key]
+      loop: "{{ expected_action_facts | default({}) | dict2items }}"
+      loop_control:
+        label: "{{ item.key }}"
+
+    - name: Verify rebuilt legacy operation plan
+      assert:
+        that:
+          - >-
+            sas_client_sw_package_plan
+            | rejectattr('action', 'equalto', 'none') | list | length == 0
+      when: expected_rebuilt_plan | default(false)
+
+    - name: Verify remaining package plan actions
+      assert:
+        that:
+          - sas_expected_plan_entries | length == 1
+          - (sas_expected_plan_entries | first).action == item.value
+      vars:
+        sas_expected_plan_entries: >-
+          {{ sas_client_sw_package_plan
+             | selectattr('package', 'equalto', item.key) | list }}
+      loop: "{{ expected_plan_actions | default({}) | dict2items }}"
+      loop_control:
+        label: "{{ item.key }}"

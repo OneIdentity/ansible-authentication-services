@@ -15,7 +15,8 @@ All of the variables shown below have a default value but can be overridden to s
     client_sw_dir: /tmp/1id/client
     ```
 
-    For example, the `client` directory on the [Safeguard Authentication Services](https://www.oneidentity.com/products/authentication-services/) 4.2.3.25456 install ISO contains the following subdirectories:
+    For example, a current [Safeguard Authentication Services](https://www.oneidentity.com/products/authentication-services/)
+    `client` directory can contain the following subdirectories:
 
     ```
     aix-71
@@ -32,6 +33,8 @@ All of the variables shown below have a default value but can be overridden to s
     macos-1012
     solaris10-sparc
     solaris10-x64
+    solaris11-sparc
+    solaris11-x64
     ``` 
 
     but if your environment only has x86_64 Linux and MacOS client systems then your `client` directory would only need to contain the following subdirectories:

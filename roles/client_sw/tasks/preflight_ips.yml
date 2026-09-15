@@ -1,0 +1,205 @@
+---
+
+- name: initialize Solaris 11 IPS preflight state
+  set_fact:
+    sas_client_sw_ips_stage: {}
+    sas_client_sw_ips_staged_sources: []
+    sas_client_sw_ips_cleaned_stage_path: ''
+
+- name: query Solaris 11 linked-image topology
+  command:
+    argv:
+      - pkg
+      - list-linked
+      - -H
+  environment:
+    LC_ALL: C
+  register: sas_client_sw_ips_linked_images
+  changed_when: false
+  check_mode: false
+
+- name: reject unsupported Solaris 11 linked images
+  assert:
+    that:
+      - >-
+        sas_client_sw_ips_linked_images.stdout | default('') | trim
+        | length == 0
+    fail_msg: >-
+      Solaris 11 linked images are not supported by this release. This includes
+      images with linked children and images that are themselves linked children
+
+- name: verify Solaris 11 pkgrepo is available
+  command:
+    argv:
+      - pkgrepo
+      - version
+  environment:
+    LC_ALL: C
+  changed_when: false
+  check_mode: false
+
+- name: validate required Solaris 11 package metadata
+  assert:
+    that:
+      - item.source_path | default('') | length > 0
+      - item.source_file | default('') is match('^.+\.p5p$')
+      - item.source_path | basename == item.source_file
+      - item.source_publisher | default('') | length > 0
+      - item.target_version | default('') | length > 0
+      - >-
+        item.source_path
+        in (sas_client_sw_required_sources | map(attribute='path') | list)
+    fail_msg: >-
+      Required Solaris 11 package {{ item.package }} has incomplete archive or
+      exact FMRI metadata
+  loop: >-
+    {{ sas_client_sw_package_plan
+       | selectattr('requires_source', 'equalto', true) | list }}
+  loop_control:
+    label: "{{ item.package }}"
+
+- name: inspect required Solaris 11 archive sources
+  stat:
+    path: "{{ item.path }}"
+    get_checksum: false
+  delegate_to: localhost
+  register: sas_client_sw_ips_source_stats
+  changed_when: false
+  vars:
+    ansible_become: false
+  loop: "{{ sas_client_sw_required_sources }}"
+  loop_control:
+    label: "{{ item.path }}"
+
+- name: validate required Solaris 11 archive sources
+  assert:
+    that:
+      - item.item.file is match('^.+\.p5p$')
+      - item.item.path | basename == item.item.file
+      - >-
+        item.item.path
+        in (sas_client_sw_package_plan
+            | selectattr('requires_source', 'equalto', true)
+            | map(attribute='source_path') | list)
+      - item.stat.exists
+      - item.stat.isreg
+      - item.stat.readable
+    fail_msg: >-
+      Required Solaris 11 archive source {{ item.item.path }} is not a readable
+      regular .p5p file used by the operation plan
+  loop: "{{ sas_client_sw_ips_source_stats.results }}"
+  loop_control:
+    label: "{{ item.item.path }}"
+
+- name: stage and validate Solaris 11 IPS archives
+  block:
+    - name: allocate Solaris 11 IPS operation directory
+      tempfile:
+        state: directory
+        path: "{{ sas_client_sw_ips_stage_root | default('/var/tmp') }}"
+        prefix: ansible-as-client-sw-ips-
+      register: sas_client_sw_ips_stage
+      changed_when: false
+
+    - name: make Solaris 11 IPS operation directory searchable
+      file:
+        path: "{{ sas_client_sw_ips_stage.path }}"
+        state: directory
+        mode: '0755'
+      changed_when: false
+
+    - name: record Solaris 11 staged archive paths
+      set_fact:
+        sas_client_sw_ips_staged_sources: >-
+          {{ sas_client_sw_ips_staged_sources + [{
+               'source_path': item.path,
+               'source_file': item.file,
+               'staged_path': sas_client_sw_ips_stage.path
+                              + '/'
+                              + ('%03d' | format(sas_ips_source_index))
+                              + '-'
+                              + item.file
+             }] }}
+      loop: "{{ sas_client_sw_required_sources }}"
+      loop_control:
+        index_var: sas_ips_source_index
+        label: "{{ item.file }}"
+
+    - name: copy required Solaris 11 IPS archives
+      copy:
+        src: "{{ item.source_path }}"
+        dest: "{{ item.staged_path }}"
+        mode: '0644'
+      changed_when: false
+      loop: "{{ sas_client_sw_ips_staged_sources }}"
+      loop_control:
+        label: "{{ item.source_file }}"
+
+    - name: inspect staged Solaris 11 IPS archives
+      stat:
+        path: "{{ item.staged_path }}"
+        get_checksum: false
+      register: sas_client_sw_ips_staged_stats
+      changed_when: false
+      loop: "{{ sas_client_sw_ips_staged_sources }}"
+      loop_control:
+        label: "{{ item.source_file }}"
+
+    - name: validate staged Solaris 11 IPS archives
+      assert:
+        that:
+          - item.stat.exists
+          - item.stat.isreg
+          - item.stat.readable
+        fail_msg: >-
+          Required Solaris 11 archive {{ item.item.source_file }} was not staged
+          as a readable regular file
+      loop: "{{ sas_client_sw_ips_staged_stats.results }}"
+      loop_control:
+        label: "{{ item.item.source_file }}"
+
+    - name: query exact Solaris 11 package FMRIs
+      command:
+        argv:
+          - pkgrepo
+          - -s
+          - "{{ sas_ips_staged_source.staged_path }}"
+          - list
+          - >-
+            pkg://{{ item.source_publisher }}/{{ item.package
+            }}@{{ item.target_version }}
+      environment:
+        LC_ALL: C
+      register: sas_client_sw_ips_fmri_queries
+      changed_when: false
+      failed_when: false
+      vars:
+        sas_ips_staged_source: >-
+          {{ sas_client_sw_ips_staged_sources
+             | selectattr('source_path', 'equalto', item.source_path)
+             | list | first }}
+      loop: >-
+        {{ sas_client_sw_package_plan
+           | selectattr('requires_source', 'equalto', true) | list }}
+      loop_control:
+        label: >-
+          pkg://{{ item.source_publisher }}/{{ item.package
+          }}@{{ item.target_version }}
+
+    - name: validate exact Solaris 11 package FMRIs
+      assert:
+        that:
+          - item.rc == 0
+        fail_msg: >-
+          Required exact FMRI pkg://{{ item.item.source_publisher
+          }}/{{ item.item.package }}@{{ item.item.target_version }} was not
+          found in its staged Solaris 11 archive: {{ item.stderr | trim }}
+      loop: "{{ sas_client_sw_ips_fmri_queries.results }}"
+      loop_control:
+        label: >-
+          pkg://{{ item.item.source_publisher }}/{{ item.item.package
+          }}@{{ item.item.target_version }}
+
+  when:
+    - not ansible_check_mode
+    - sas_client_sw_required_sources | length > 0

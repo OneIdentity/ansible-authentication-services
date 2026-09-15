@@ -1,0 +1,33 @@
+---
+
+- name: Exercise Solaris 10 SVR4 media preflight
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    ansible_facts:
+      os_family: Solaris
+      distribution_major_version: '10'
+    client_sw_tmp_dir: "{{ test_temp_dir }}"
+    sas_client_sw_required_sources: "{{ test_required_sources }}"
+
+  tasks:
+    - include_role:
+        name: client_sw
+        tasks_from: temp_dir_create.yml
+
+    - include_role:
+        name: client_sw
+        tasks_from: preflight_svr4.yml
+
+    - include_role:
+        name: client_sw
+        tasks_from: os/solaris/remove.yml
+      vars:
+        package: "{{ test_remove_package }}"
+      when: test_remove_package | default('') | length > 0
+
+    - name: Verify staged SVR4 sources
+      assert:
+        that:
+          - sas_client_sw_svr4_staged_sources == expected_staged_sources
